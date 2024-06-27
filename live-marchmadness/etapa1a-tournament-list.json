@@ -1,0 +1,41 @@
+{
+    "league": {
+        "id": "cd4268ee-07aa-4c4d-a435-ec44ad2c76cb",
+        "name": "NCAA MEN",
+        "alias": "NCAAM"
+    },
+    "season": {
+        "id": "3dcf4c11-e7f8-4996-a34d-49069d14d465",
+        "year": 2023,
+        "type": "PST"
+    },
+    "tournaments": [{
+        "id": "0857b34c-f2c4-4285-9132-1e319eb671fa",
+        "name": "CIT",
+        "location": "Campus Sites",
+        "status": "scheduled",
+        "start_date": "2024-03-20",
+        "end_date": "2024-03-23"
+    }, {
+        "id": "3f50b4cf-b319-4df2-90c0-8fc549742710",
+        "name": "NCAA Men's Division I Basketball Tournament",
+        "location": "Glendale, AZ, USA",
+        "status": "scheduled",
+        "start_date": "2024-03-19",
+        "end_date": "2024-04-08"
+    }, {
+        "id": "8f568540-cbc3-4a4a-bd3a-1a51ad7c46a7",
+        "name": "CBI",
+        "location": "Daytona Beach, FL, USA",
+        "status": "scheduled",
+        "start_date": "2024-03-23",
+        "end_date": "2024-03-27"
+    }, {
+        "id": "e9c4f18c-b781-493f-9103-46b2ea668726",
+        "name": "NIT",
+        "location": "Indianapolis, IN, USA",
+        "status": "scheduled",
+        "start_date": "2024-03-19",
+        "end_date": "2024-04-04"
+    }]
+}

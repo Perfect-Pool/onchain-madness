@@ -1,0 +1,3939 @@
+{
+  "id": "6b1b9057-68b6-4705-9642-0d5e5f2c9dd1",
+  "name": "NCAA Men's Division I Basketball Tournament",
+  "location": "Indianapolis, IN, USA",
+  "status": "closed",
+  "league": {
+    "id": "cd4268ee-07aa-4c4d-a435-ec44ad2c76cb",
+    "name": "NCAA MEN",
+    "alias": "NCAAM"
+  },
+  "season": {
+    "id": "5a7542d2-1c3a-41fa-b7ab-11550a79043f",
+    "year": 2020,
+    "type": "PST"
+  },
+  "rounds": [
+    {
+      "id": "514720af-3310-4678-9b7e-32fd9dfc0149",
+      "sequence": 1,
+      "name": "First Four",
+      "games": [],
+      "bracketed": [
+        {
+          "bracket": {
+            "id": "264eedb3-96b1-4986-8938-d6d525ae3f2b",
+            "name": "West Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 1
+          },
+          "games": [
+            {
+              "id": "a198b209-ebef-4ced-a114-8aecd928e92c",
+              "status": "closed",
+              "title": "First Four - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-19T00:40:00+00:00",
+              "home_points": 54,
+              "away_points": 53,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "eecdd0a2-3fc3-4761-a6da-813f5751aabf",
+                "name": "Assembly Hall",
+                "capacity": 17222,
+                "address": "1001 East 17th Street",
+                "city": "Bloomington",
+                "state": "IN",
+                "zip": "47408",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Norfolk State Spartans",
+                "alias": "NORF",
+                "id": "a8f75c12-c4db-401f-99e3-b48209d85274",
+                "seed": 16
+              },
+              "away": {
+                "name": "Appalachian State Mountaineers",
+                "alias": "APP",
+                "id": "87d88c93-29bc-4306-b0a6-87c6f6e80da1",
+                "seed": 16
+              }
+            },
+            {
+              "id": "71748c14-f585-427b-bc69-e19f00f8673f",
+              "status": "closed",
+              "title": "First Four - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-18T22:27:00+00:00",
+              "home_points": 52,
+              "away_points": 53,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "9cfb4bc5-e327-4e7a-bc26-ef57336d45b3",
+                "name": "Mackey Arena",
+                "capacity": 14846,
+                "address": "900 John R Wooden Drive",
+                "city": "West Lafayette",
+                "state": "IN",
+                "zip": "47907",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Wichita State Shockers",
+                "alias": "WICH",
+                "id": "f38b58de-3273-4723-a78b-2f918e9aa2d5",
+                "seed": 11
+              },
+              "away": {
+                "name": "Drake Bulldogs",
+                "alias": "DRKE",
+                "id": "aed211c3-23a4-4188-ad70-22c6eba7d765",
+                "seed": 11
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "fc86df71-e069-4a23-b546-5a5f90ce2a1c",
+            "name": "East Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 4
+          },
+          "games": [
+            {
+              "id": "3120112d-bad6-4580-9048-c86c95e8e2d8",
+              "status": "closed",
+              "title": "First Four - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-19T02:19:00+00:00",
+              "home_points": 80,
+              "away_points": 86,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "9cfb4bc5-e327-4e7a-bc26-ef57336d45b3",
+                "name": "Mackey Arena",
+                "capacity": 14846,
+                "address": "900 John R Wooden Drive",
+                "city": "West Lafayette",
+                "state": "IN",
+                "zip": "47907",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Michigan State Spartans",
+                "alias": "MSU",
+                "id": "a41d5a05-4c11-4171-a57e-e7a1ea325a6d",
+                "seed": 11
+              },
+              "away": {
+                "name": "UCLA Bruins",
+                "alias": "UCLA",
+                "id": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                "seed": 11
+              }
+            },
+            {
+              "id": "5f63243e-0584-4ee6-b822-778a653c7ea8",
+              "status": "closed",
+              "title": "First Four - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-18T21:10:00+00:00",
+              "home_points": 52,
+              "away_points": 60,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "eecdd0a2-3fc3-4761-a6da-813f5751aabf",
+                "name": "Assembly Hall",
+                "capacity": 17222,
+                "address": "1001 East 17th Street",
+                "city": "Bloomington",
+                "state": "IN",
+                "zip": "47408",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Mount St. Mary's Mountaineers",
+                "alias": "MSM",
+                "id": "5fe4a398-1699-4442-a364-305b2f0ac01e",
+                "seed": 16
+              },
+              "away": {
+                "name": "Texas Southern Tigers",
+                "alias": "TXSO",
+                "id": "eb157f98-0697-459c-9293-ddb162ceb28b",
+                "seed": 16
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ebf6e859-4fd7-47f8-9981-cad1086739fe",
+      "sequence": 2,
+      "name": "First Round",
+      "games": [],
+      "bracketed": [
+        {
+          "bracket": {
+            "id": "736b3a55-5aad-445b-82f1-f575d7afadc4",
+            "name": "South Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 2
+          },
+          "games": [
+            {
+              "id": "f52e6b78-80cf-4621-9da0-dd55e4adb10b",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-19T23:10:00+00:00",
+              "home_points": 62,
+              "away_points": 85,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "9cfb4bc5-e327-4e7a-bc26-ef57336d45b3",
+                "name": "Mackey Arena",
+                "capacity": 14846,
+                "address": "900 John R Wooden Drive",
+                "city": "West Lafayette",
+                "state": "IN",
+                "zip": "47907",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "North Carolina Tar Heels",
+                "alias": "UNC",
+                "id": "e9ca48b2-00ba-41c0-a02b-6885a2da1ff1",
+                "seed": 8
+              },
+              "away": {
+                "name": "Wisconsin Badgers",
+                "alias": "WIS",
+                "id": "c7569eae-5b93-4197-b204-6f3a62146b25",
+                "seed": 9
+              }
+            },
+            {
+              "id": "4454008d-f957-45cd-a4b5-fb58e2e1f912",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 6",
+              "coverage": "full",
+              "scheduled": "2021-03-19T16:45:00+00:00",
+              "home_points": 85,
+              "away_points": 68,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Arkansas Razorbacks",
+                "alias": "ARK",
+                "id": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                "seed": 3
+              },
+              "away": {
+                "name": "Colgate Raiders",
+                "alias": "COLG",
+                "id": "80a19b57-d6ab-4bee-934f-33a72c2e958a",
+                "seed": 14
+              }
+            },
+            {
+              "id": "5d2e7595-eedc-4fe3-af0a-294b781f915f",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-20T02:10:00+00:00",
+              "home_points": 73,
+              "away_points": 63,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Villanova Wildcats",
+                "alias": "VILL",
+                "id": "4383eb6a-7fd8-4ff2-94c5-43c933121e88",
+                "seed": 5
+              },
+              "away": {
+                "name": "Winthrop Eagles",
+                "alias": "WIN",
+                "id": "ca441726-0c57-4456-b1e7-fff098484fb5",
+                "seed": 12
+              }
+            },
+            {
+              "id": "49ec36b2-0029-400e-aeaf-15a87f8ad863",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 7",
+              "coverage": "full",
+              "scheduled": "2021-03-19T16:15:00+00:00",
+              "home_points": 75,
+              "away_points": 70,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Florida Gators",
+                "alias": "FLA",
+                "id": "912f8837-1d81-4ef9-a576-a21f271d4c64",
+                "seed": 7
+              },
+              "away": {
+                "name": "Virginia Tech Hokies",
+                "alias": "VT",
+                "id": "324ccccc-575b-4b82-acb0-fbb8e68da13b",
+                "seed": 10
+              }
+            },
+            {
+              "id": "16a8b6c7-74df-4dcf-ba2f-281c64bd5b9f",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-19T19:30:00+00:00",
+              "home_points": 79,
+              "away_points": 55,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "19229f3d-7040-4c4b-9b8b-4c3854115b02",
+                "name": "Lucas Oil Stadium Unity",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Baylor Bears",
+                "alias": "BAY",
+                "id": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                "seed": 1
+              },
+              "away": {
+                "name": "Hartford Hawks",
+                "alias": "HART",
+                "id": "dba620d9-7282-4638-bf05-13caf48eeed1",
+                "seed": 16
+              }
+            },
+            {
+              "id": "725a5ecf-4357-4141-ac15-d219495796df",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-19T23:25:00+00:00",
+              "home_points": 69,
+              "away_points": 78,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "af04f3ff-c833-4907-947b-b4bf4832e1ec",
+                "name": "Lucas Oil Stadium Equality",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Purdue Boilermakers",
+                "alias": "PUR",
+                "id": "12d7f888-675b-459f-9099-a38f771d8a95",
+                "seed": 4
+              },
+              "away": {
+                "name": "North Texas Mean Green",
+                "alias": "UNT",
+                "id": "10f450ce-143b-4e46-8bfe-52c644b68b07",
+                "seed": 13
+              }
+            },
+            {
+              "id": "93cb0c48-f203-46bc-bf2b-52faf708931e",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 5",
+              "coverage": "full",
+              "scheduled": "2021-03-19T17:45:00+00:00",
+              "home_points": 65,
+              "away_points": 53,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Mountain"
+              },
+              "venue": {
+                "id": "eecdd0a2-3fc3-4761-a6da-813f5751aabf",
+                "name": "Assembly Hall",
+                "capacity": 17222,
+                "address": "1001 East 17th Street",
+                "city": "Bloomington",
+                "state": "IN",
+                "zip": "47408",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Texas Tech Red Raiders",
+                "alias": "TTU",
+                "id": "f8c705b7-87d3-411a-9c8b-5124daab0469",
+                "seed": 6
+              },
+              "away": {
+                "name": "Utah State Aggies",
+                "alias": "USU",
+                "id": "7672ff16-8436-47e6-8546-0fb5494ec7ee",
+                "seed": 11
+              }
+            },
+            {
+              "id": "a9198f5c-6720-4bc3-9e8d-999b57600b39",
+              "status": "closed",
+              "title": "South Regional - First Round - Game 8",
+              "coverage": "full",
+              "scheduled": "2021-03-19T19:02:00+00:00",
+              "home_points": 72,
+              "away_points": 75,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "9cfb4bc5-e327-4e7a-bc26-ef57336d45b3",
+                "name": "Mackey Arena",
+                "capacity": 14846,
+                "address": "900 John R Wooden Drive",
+                "city": "West Lafayette",
+                "state": "IN",
+                "zip": "47907",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Ohio State Buckeyes",
+                "alias": "OSU",
+                "id": "857462b3-0ab6-4d26-9669-10ca354e382b",
+                "seed": 2
+              },
+              "away": {
+                "name": "Oral Roberts Golden Eagles",
+                "alias": "ORU",
+                "id": "095417ae-62b0-4109-afc4-d92918599dd4",
+                "seed": 15
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "264eedb3-96b1-4986-8938-d6d525ae3f2b",
+            "name": "West Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 1
+          },
+          "games": [
+            {
+              "id": "0cf6e707-8996-4917-adc9-9682583eaa4c",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-21T01:20:00+00:00",
+              "home_points": 98,
+              "away_points": 55,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Gonzaga Bulldogs",
+                "alias": "GONZ",
+                "id": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                "seed": 1
+              },
+              "away": {
+                "name": "Norfolk State Spartans",
+                "alias": "NORF",
+                "id": "a8f75c12-c4db-401f-99e3-b48209d85274",
+                "seed": 16,
+                "source": {
+                  "id": "a198b209-ebef-4ced-a114-8aecd928e92c",
+                  "title": "First Four - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "a8f75c12-c4db-401f-99e3-b48209d85274",
+                  "away_team": "87d88c93-29bc-4306-b0a6-87c6f6e80da1",
+                  "scheduled": "2021-03-19T00:40:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "96fcd696-6fd5-43d3-9f3b-76f0d2d1b38b",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 5",
+              "coverage": "full",
+              "scheduled": "2021-03-20T20:35:00+00:00",
+              "home_points": 72,
+              "away_points": 56,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "USC Trojans",
+                "alias": "USC",
+                "id": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                "seed": 6
+              },
+              "away": {
+                "name": "Drake Bulldogs",
+                "alias": "DRKE",
+                "id": "aed211c3-23a4-4188-ad70-22c6eba7d765",
+                "seed": 11,
+                "source": {
+                  "id": "71748c14-f585-427b-bc69-e19f00f8673f",
+                  "title": "First Four - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "f38b58de-3273-4723-a78b-2f918e9aa2d5",
+                  "away_team": "aed211c3-23a4-4188-ad70-22c6eba7d765",
+                  "scheduled": "2021-03-18T22:27:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "6764b6aa-12a3-4c46-b2fd-012cc02f212e",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-20T23:25:00+00:00",
+              "home_points": 72,
+              "away_points": 68,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "af04f3ff-c833-4907-947b-b4bf4832e1ec",
+                "name": "Lucas Oil Stadium Equality",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Oklahoma Sooners",
+                "alias": "OKLA",
+                "id": "b2fda957-e15c-4fb2-8a13-6e58496f561e",
+                "seed": 8
+              },
+              "away": {
+                "name": "Missouri Tigers",
+                "alias": "MIZZ",
+                "id": "77ca152a-cb2f-48a5-97b2-492351250d94",
+                "seed": 9
+              }
+            },
+            {
+              "id": "2748b95a-76a1-4bd7-90a6-3810257c0617",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 8",
+              "coverage": "full",
+              "scheduled": "2021-03-20T22:35:00+00:00",
+              "home_points": 86,
+              "away_points": 74,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Arizona"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Iowa Hawkeyes",
+                "alias": "IOWA",
+                "id": "c10544de-e3bd-4776-ba2e-83df8c017fd1",
+                "seed": 2
+              },
+              "away": {
+                "name": "Grand Canyon Antelopes",
+                "alias": "GC",
+                "id": "f7e6acc3-0778-4de5-940a-d88e20df1159",
+                "seed": 15
+              }
+            },
+            {
+              "id": "c72a637a-3471-4bd2-923e-5092499224e8",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-20T23:15:00+00:00",
+              "home_points": 58,
+              "away_points": 62,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "eecdd0a2-3fc3-4761-a6da-813f5751aabf",
+                "name": "Assembly Hall",
+                "capacity": 17222,
+                "address": "1001 East 17th Street",
+                "city": "Bloomington",
+                "state": "IN",
+                "zip": "47408",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Virginia Cavaliers",
+                "alias": "UVA",
+                "id": "56913910-87f7-4ad7-ae3b-5cd9fb218fd9",
+                "seed": 4
+              },
+              "away": {
+                "name": "Ohio Bobcats",
+                "alias": "OHIO",
+                "id": "327f09e2-e75f-4014-8ef7-caf9202cd583",
+                "seed": 13
+              }
+            },
+            {
+              "id": "4f7514d1-2fc6-4a86-986b-dd5f2b6d59d1",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-20T19:30:00+00:00",
+              "home_points": 63,
+              "away_points": 62,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "19229f3d-7040-4c4b-9b8b-4c3854115b02",
+                "name": "Lucas Oil Stadium Unity",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Creighton Bluejays",
+                "alias": "CREI",
+                "id": "7d797407-623e-476d-b299-46de4275414d",
+                "seed": 5
+              },
+              "away": {
+                "name": "UC Santa Barbara Gauchos",
+                "alias": "UCSB",
+                "id": "3b6293f3-03db-46d2-8793-248963c2d83b",
+                "seed": 12
+              }
+            },
+            {
+              "id": "4e514dce-1805-4555-8323-c3b7a98e91c4",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 6",
+              "coverage": "full",
+              "scheduled": "2021-03-20T17:15:00+00:00",
+              "home_points": 93,
+              "away_points": 84,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Kansas Jayhawks",
+                "alias": "KU",
+                "id": "fae4855b-1b64-4b40-a632-9ed345e1e952",
+                "seed": 3
+              },
+              "away": {
+                "name": "Eastern Washington Eagles",
+                "alias": "EWU",
+                "id": "54df21af-8f65-42fc-bc01-8bf750856d70",
+                "seed": 14
+              }
+            },
+            {
+              "id": "3b593a48-f25a-4f3e-940d-5af2804f8977",
+              "status": "closed",
+              "title": "West Regional - First Round - Game 7",
+              "coverage": "boxscore",
+              "scheduled": "2021-03-21T01:57:00+00:00",
+              "home_points": 1,
+              "away_points": 0,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Oregon Ducks",
+                "alias": "ORE",
+                "id": "1da70895-f77f-44ef-b216-d63c02e696eb",
+                "seed": 7
+              },
+              "away": {
+                "name": "Virginia Commonwealth Rams",
+                "alias": "VCU",
+                "id": "c1c1e6df-a383-4fbd-ba7b-32d4f9ef9518",
+                "seed": 10
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "240c8c0b-6899-42fc-9c73-bd938b758fea",
+            "name": "Midwest Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 3
+          },
+          "games": [
+            {
+              "id": "3b86ad13-b302-454c-9f4b-264f664431e8",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 5",
+              "coverage": "full",
+              "scheduled": "2021-03-20T01:40:00+00:00",
+              "home_points": 62,
+              "away_points": 78,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "San Diego State Aztecs",
+                "alias": "SDSU",
+                "id": "e6914f16-ca37-4d2e-ba26-a425910283e2",
+                "seed": 6
+              },
+              "away": {
+                "name": "Syracuse Orange",
+                "alias": "SYR",
+                "id": "8cd24de1-2be8-4b77-bcfa-47be0495a5f4",
+                "seed": 11
+              }
+            },
+            {
+              "id": "f4b3c35b-05dd-472b-b6a0-2076cd171b46",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-19T17:15:00+00:00",
+              "home_points": 78,
+              "away_points": 49,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Illinois Fighting Illini",
+                "alias": "ILL",
+                "id": "150148c2-ca8f-414f-8f41-d94a55d4a122",
+                "seed": 1
+              },
+              "away": {
+                "name": "Drexel Dragons",
+                "alias": "DREX",
+                "id": "f2d01b77-0f5d-4574-9e49-2a3eaf822e44",
+                "seed": 16
+              }
+            },
+            {
+              "id": "4f3a1336-5a8f-44d4-aaa4-1d2900e805b5",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 8",
+              "coverage": "full",
+              "scheduled": "2021-03-19T23:15:00+00:00",
+              "home_points": 87,
+              "away_points": 56,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "eecdd0a2-3fc3-4761-a6da-813f5751aabf",
+                "name": "Assembly Hall",
+                "capacity": 17222,
+                "address": "1001 East 17th Street",
+                "city": "Bloomington",
+                "state": "IN",
+                "zip": "47408",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Houston Cougars",
+                "alias": "HOU",
+                "id": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                "seed": 2
+              },
+              "away": {
+                "name": "Cleveland State Vikings",
+                "alias": "CLEV",
+                "id": "e30c0417-b220-424e-886e-dd1249e2ca5a",
+                "seed": 15
+              }
+            },
+            {
+              "id": "8d3b6530-e070-4b7a-9a2d-f2c8c87df688",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 6",
+              "coverage": "full",
+              "scheduled": "2021-03-20T02:32:00+00:00",
+              "home_points": 84,
+              "away_points": 67,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "19229f3d-7040-4c4b-9b8b-4c3854115b02",
+                "name": "Lucas Oil Stadium Unity",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "West Virginia Mountaineers",
+                "alias": "WVU",
+                "id": "f770d3a2-221c-49ce-9c7a-680f7417fe9e",
+                "seed": 3
+              },
+              "away": {
+                "name": "Morehead State Eagles",
+                "alias": "MORE",
+                "id": "b7747a03-c85b-4de6-94bf-1b5b68553248",
+                "seed": 14
+              }
+            },
+            {
+              "id": "7f522972-d0ed-418e-869a-c1206c47f15c",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 7",
+              "coverage": "full",
+              "scheduled": "2021-03-20T01:20:00+00:00",
+              "home_points": 56,
+              "away_points": 60,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Clemson Tigers",
+                "alias": "CLEM",
+                "id": "dcf5c2e7-c227-4c20-af26-715d5f859412",
+                "seed": 7
+              },
+              "away": {
+                "name": "Rutgers Scarlet Knights",
+                "alias": "RUTG",
+                "id": "b03bb029-4499-4a2c-9074-5071ed360b21",
+                "seed": 10
+              }
+            },
+            {
+              "id": "f3430a09-48da-46a6-8218-0a63ecdcfa30",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-19T20:15:00+00:00",
+              "home_points": 71,
+              "away_points": 60,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Loyola Chicago Ramblers",
+                "alias": "L-IL",
+                "id": "61a3908a-7492-4b6f-809e-12c61976bb0a",
+                "seed": 8
+              },
+              "away": {
+                "name": "Georgia Tech Yellow Jackets",
+                "alias": "GT",
+                "id": "0f63a6f5-bda7-4fd9-9271-8d33f555ca19",
+                "seed": 9
+              }
+            },
+            {
+              "id": "7a1ca78c-7163-4a32-aa52-51f5c6fbd2a5",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-19T22:35:00+00:00",
+              "home_points": 69,
+              "away_points": 60,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": { "venue": "US/Eastern", "home": "US/Central" },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Oklahoma State Cowboys",
+                "alias": "OKST",
+                "id": "8ab00d43-840a-4c96-bdee-bf88fa6e3f11",
+                "seed": 4
+              },
+              "away": {
+                "name": "Liberty Flames",
+                "alias": "LIB",
+                "id": "559db90c-741f-40d1-aa81-3fdd1d4889f3",
+                "seed": 13
+              }
+            },
+            {
+              "id": "c42b0939-9b71-4a1b-a895-c558979178cc",
+              "status": "closed",
+              "title": "Midwest Regional - First Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-19T20:35:00+00:00",
+              "home_points": 56,
+              "away_points": 70,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Tennessee Volunteers",
+                "alias": "TENN",
+                "id": "b827dbdf-230f-4916-9703-3bb9004e26eb",
+                "seed": 5
+              },
+              "away": {
+                "name": "Oregon State Beavers",
+                "alias": "ORST",
+                "id": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                "seed": 12
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "fc86df71-e069-4a23-b546-5a5f90ce2a1c",
+            "name": "East Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 4
+          },
+          "games": [
+            {
+              "id": "4a55270b-36cc-47a3-a5ba-31946509051c",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-20T16:45:00+00:00",
+              "home_points": 64,
+              "away_points": 54,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Florida State Seminoles",
+                "alias": "FSU",
+                "id": "d3c8a767-b6fc-45d4-a5f2-18406f2993f1",
+                "seed": 4
+              },
+              "away": {
+                "name": "UNC Greensboro Spartans",
+                "alias": "UNCG",
+                "id": "612f7f66-1de1-4d42-b842-9a508daab911",
+                "seed": 13
+              }
+            },
+            {
+              "id": "c0babfbb-e556-463e-9ae0-a7272b8f8b86",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 5",
+              "coverage": "full",
+              "scheduled": "2021-03-21T01:40:00+00:00",
+              "home_points": 62,
+              "away_points": 73,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Mountain",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "BYU Cougars",
+                "alias": "BYU",
+                "id": "c31455b2-8a45-4248-aa8f-ce7eab1c6b02",
+                "seed": 6
+              },
+              "away": {
+                "name": "UCLA Bruins",
+                "alias": "UCLA",
+                "id": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                "seed": 11,
+                "source": {
+                  "id": "3120112d-bad6-4580-9048-c86c95e8e2d8",
+                  "title": "First Four - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "a41d5a05-4c11-4171-a57e-e7a1ea325a6d",
+                  "away_team": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                  "scheduled": "2021-03-19T02:19:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "75b19363-e303-46f1-8742-2b295707c4a3",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-20T16:15:00+00:00",
+              "home_points": 96,
+              "away_points": 73,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Mountain",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Colorado Buffaloes",
+                "alias": "COLO",
+                "id": "9fccbf28-2858-4263-821c-fdefb3c7efa3",
+                "seed": 5
+              },
+              "away": {
+                "name": "Georgetown Hoyas",
+                "alias": "GTWN",
+                "id": "8736b67f-5924-400b-bf94-3bd804c36600",
+                "seed": 12
+              }
+            },
+            {
+              "id": "f41776fc-0955-45f2-b185-cbb7d048f6da",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-20T17:45:00+00:00",
+              "home_points": 76,
+              "away_points": 61,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "eecdd0a2-3fc3-4761-a6da-813f5751aabf",
+                "name": "Assembly Hall",
+                "capacity": 17222,
+                "address": "1001 East 17th Street",
+                "city": "Bloomington",
+                "state": "IN",
+                "zip": "47408",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "LSU Tigers",
+                "alias": "LSU",
+                "id": "70e2bedd-3a0a-479c-ac99-e3f58aa6824b",
+                "seed": 8
+              },
+              "away": {
+                "name": "St. Bonaventure Bonnies",
+                "alias": "SBON",
+                "id": "22d90601-19d4-461b-a901-924d12f116ed",
+                "seed": 9
+              }
+            },
+            {
+              "id": "e35c2d7a-29c7-47f5-8a3e-9b46d7b34878",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 8",
+              "coverage": "full",
+              "scheduled": "2021-03-20T20:00:00+00:00",
+              "home_points": 68,
+              "away_points": 55,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Alabama Crimson Tide",
+                "alias": "ALA",
+                "id": "c2104cdc-c83d-40d2-a3cd-df986e29f5d3",
+                "seed": 2
+              },
+              "away": {
+                "name": "Iona Gaels",
+                "alias": "IONA",
+                "id": "255c2a87-40c0-4989-bbb9-d286aac5d28e",
+                "seed": 15
+              }
+            },
+            {
+              "id": "f12075dc-609a-4787-9aa0-f49a536e2ccb",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 6",
+              "coverage": "full",
+              "scheduled": "2021-03-21T02:13:00+00:00",
+              "home_points": 52,
+              "away_points": 53,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "19229f3d-7040-4c4b-9b8b-4c3854115b02",
+                "name": "Lucas Oil Stadium Unity",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Texas Longhorns",
+                "alias": "TEX",
+                "id": "6ed15092-2670-450a-99c2-61d861e87644",
+                "seed": 3
+              },
+              "away": {
+                "name": "Abilene Christian Wildcats",
+                "alias": "AC",
+                "id": "a52b2ece-1f87-45b5-ae1e-8d0920479965",
+                "seed": 14
+              }
+            },
+            {
+              "id": "3a0513d7-3227-4947-bfaa-891ee5aa84a5",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-20T19:00:00+00:00",
+              "home_points": 82,
+              "away_points": 66,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "9cfb4bc5-e327-4e7a-bc26-ef57336d45b3",
+                "name": "Mackey Arena",
+                "capacity": 14846,
+                "address": "900 John R Wooden Drive",
+                "city": "West Lafayette",
+                "state": "IN",
+                "zip": "47907",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Michigan Wolverines",
+                "alias": "MICH",
+                "id": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                "seed": 1
+              },
+              "away": {
+                "name": "Texas Southern Tigers",
+                "alias": "TXSO",
+                "id": "eb157f98-0697-459c-9293-ddb162ceb28b",
+                "seed": 16,
+                "source": {
+                  "id": "5f63243e-0584-4ee6-b822-778a653c7ea8",
+                  "title": "First Four - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "5fe4a398-1699-4442-a364-305b2f0ac01e",
+                  "away_team": "eb157f98-0697-459c-9293-ddb162ceb28b",
+                  "scheduled": "2021-03-18T21:10:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "2cd72bf6-db0d-43cf-b882-bfa22b63dcfb",
+              "status": "closed",
+              "title": "East Regional - First Round - Game 7",
+              "coverage": "full",
+              "scheduled": "2021-03-20T23:10:00+00:00",
+              "home_points": 54,
+              "away_points": 63,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "9cfb4bc5-e327-4e7a-bc26-ef57336d45b3",
+                "name": "Mackey Arena",
+                "capacity": 14846,
+                "address": "900 John R Wooden Drive",
+                "city": "West Lafayette",
+                "state": "IN",
+                "zip": "47907",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Connecticut Huskies",
+                "alias": "CONN",
+                "id": "efba5350-79bc-47aa-a189-db177b95b491",
+                "seed": 7
+              },
+              "away": {
+                "name": "Maryland Terrapins",
+                "alias": "MD",
+                "id": "2778d005-cc14-4e58-9bf2-3fc37bffb62f",
+                "seed": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "6989e744-2808-45a2-ad19-326bb807b533",
+      "sequence": 3,
+      "name": "Second Round",
+      "games": [],
+      "bracketed": [
+        {
+          "bracket": {
+            "id": "736b3a55-5aad-445b-82f1-f575d7afadc4",
+            "name": "South Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 2
+          },
+          "games": [
+            {
+              "id": "9dcb36c9-0eb5-4380-be31-90b728c0f6f5",
+              "status": "closed",
+              "title": "South Regional - Second Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-22T01:00:00+00:00",
+              "home_points": 84,
+              "away_points": 61,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Villanova Wildcats",
+                "alias": "VILL",
+                "id": "4383eb6a-7fd8-4ff2-94c5-43c933121e88",
+                "seed": 5,
+                "source": {
+                  "id": "5d2e7595-eedc-4fe3-af0a-294b781f915f",
+                  "title": "South Regional - First Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "4383eb6a-7fd8-4ff2-94c5-43c933121e88",
+                  "away_team": "ca441726-0c57-4456-b1e7-fff098484fb5",
+                  "scheduled": "2021-03-20T02:10:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "North Texas Mean Green",
+                "alias": "UNT",
+                "id": "10f450ce-143b-4e46-8bfe-52c644b68b07",
+                "seed": 13,
+                "source": {
+                  "id": "725a5ecf-4357-4141-ac15-d219495796df",
+                  "title": "South Regional - First Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "12d7f888-675b-459f-9099-a38f771d8a95",
+                  "away_team": "10f450ce-143b-4e46-8bfe-52c644b68b07",
+                  "scheduled": "2021-03-19T23:25:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "723db48b-ed18-4055-a588-f966d65f076a",
+              "status": "closed",
+              "title": "South Regional - Second Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-21T18:40:00+00:00",
+              "home_points": 76,
+              "away_points": 63,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Baylor Bears",
+                "alias": "BAY",
+                "id": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                "seed": 1,
+                "source": {
+                  "id": "16a8b6c7-74df-4dcf-ba2f-281c64bd5b9f",
+                  "title": "South Regional - First Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                  "away_team": "dba620d9-7282-4638-bf05-13caf48eeed1",
+                  "scheduled": "2021-03-19T19:30:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Wisconsin Badgers",
+                "alias": "WIS",
+                "id": "c7569eae-5b93-4197-b204-6f3a62146b25",
+                "seed": 9,
+                "source": {
+                  "id": "f52e6b78-80cf-4621-9da0-dd55e4adb10b",
+                  "title": "South Regional - First Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "e9ca48b2-00ba-41c0-a02b-6885a2da1ff1",
+                  "away_team": "c7569eae-5b93-4197-b204-6f3a62146b25",
+                  "scheduled": "2021-03-19T23:10:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "fb74e750-f2cf-47dc-970a-24493e666f9b",
+              "status": "closed",
+              "title": "South Regional - Second Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-21T22:15:00+00:00",
+              "home_points": 68,
+              "away_points": 66,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Arkansas Razorbacks",
+                "alias": "ARK",
+                "id": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                "seed": 3,
+                "source": {
+                  "id": "4454008d-f957-45cd-a4b5-fb58e2e1f912",
+                  "title": "South Regional - First Round - Game 6",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                  "away_team": "80a19b57-d6ab-4bee-934f-33a72c2e958a",
+                  "scheduled": "2021-03-19T16:45:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Texas Tech Red Raiders",
+                "alias": "TTU",
+                "id": "f8c705b7-87d3-411a-9c8b-5124daab0469",
+                "seed": 6,
+                "source": {
+                  "id": "93cb0c48-f203-46bc-bf2b-52faf708931e",
+                  "title": "South Regional - First Round - Game 5",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "f8c705b7-87d3-411a-9c8b-5124daab0469",
+                  "away_team": "7672ff16-8436-47e6-8546-0fb5494ec7ee",
+                  "scheduled": "2021-03-19T17:45:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "cd0130a5-fd6c-49e6-a3c7-85edcd0851a4",
+              "status": "closed",
+              "title": "South Regional - Second Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-21T23:45:00+00:00",
+              "home_points": 78,
+              "away_points": 81,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "truTV",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "246"
+                }
+              ],
+              "home": {
+                "name": "Florida Gators",
+                "alias": "FLA",
+                "id": "912f8837-1d81-4ef9-a576-a21f271d4c64",
+                "seed": 7,
+                "source": {
+                  "id": "49ec36b2-0029-400e-aeaf-15a87f8ad863",
+                  "title": "South Regional - First Round - Game 7",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "912f8837-1d81-4ef9-a576-a21f271d4c64",
+                  "away_team": "324ccccc-575b-4b82-acb0-fbb8e68da13b",
+                  "scheduled": "2021-03-19T16:15:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oral Roberts Golden Eagles",
+                "alias": "ORU",
+                "id": "095417ae-62b0-4109-afc4-d92918599dd4",
+                "seed": 15,
+                "source": {
+                  "id": "a9198f5c-6720-4bc3-9e8d-999b57600b39",
+                  "title": "South Regional - First Round - Game 8",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "857462b3-0ab6-4d26-9669-10ca354e382b",
+                  "away_team": "095417ae-62b0-4109-afc4-d92918599dd4",
+                  "scheduled": "2021-03-19T19:02:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "fc86df71-e069-4a23-b546-5a5f90ce2a1c",
+            "name": "East Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 4
+          },
+          "games": [
+            {
+              "id": "ab3ce71b-ee5f-4ada-95a0-94d2182dfc44",
+              "status": "closed",
+              "title": "East Regional - Second Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-22T23:10:00+00:00",
+              "home_points": 86,
+              "away_points": 78,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "19229f3d-7040-4c4b-9b8b-4c3854115b02",
+                "name": "Lucas Oil Stadium Unity",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Michigan Wolverines",
+                "alias": "MICH",
+                "id": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                "seed": 1,
+                "source": {
+                  "id": "3a0513d7-3227-4947-bfaa-891ee5aa84a5",
+                  "title": "East Regional - First Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                  "away_team": "eb157f98-0697-459c-9293-ddb162ceb28b",
+                  "scheduled": "2021-03-20T19:00:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "LSU Tigers",
+                "alias": "LSU",
+                "id": "70e2bedd-3a0a-479c-ac99-e3f58aa6824b",
+                "seed": 8,
+                "source": {
+                  "id": "f41776fc-0955-45f2-b185-cbb7d048f6da",
+                  "title": "East Regional - First Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "70e2bedd-3a0a-479c-ac99-e3f58aa6824b",
+                  "away_team": "22d90601-19d4-461b-a901-924d12f116ed",
+                  "scheduled": "2021-03-20T17:45:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "6e518f6c-3a88-465a-80f0-386e1e2559aa",
+              "status": "closed",
+              "title": "East Regional - Second Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-22T21:15:00+00:00",
+              "home_points": 67,
+              "away_points": 47,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "UCLA Bruins",
+                "alias": "UCLA",
+                "id": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                "seed": 11,
+                "source": {
+                  "id": "c0babfbb-e556-463e-9ae0-a7272b8f8b86",
+                  "title": "East Regional - First Round - Game 5",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c31455b2-8a45-4248-aa8f-ce7eab1c6b02",
+                  "away_team": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                  "scheduled": "2021-03-21T01:40:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Abilene Christian Wildcats",
+                "alias": "AC",
+                "id": "a52b2ece-1f87-45b5-ae1e-8d0920479965",
+                "seed": 14,
+                "source": {
+                  "id": "f12075dc-609a-4787-9aa0-f49a536e2ccb",
+                  "title": "East Regional - First Round - Game 6",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "6ed15092-2670-450a-99c2-61d861e87644",
+                  "away_team": "a52b2ece-1f87-45b5-ae1e-8d0920479965",
+                  "scheduled": "2021-03-21T02:13:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "fe4b38a7-f4a1-4ab7-8eef-22160198d84f",
+              "status": "closed",
+              "title": "East Regional - Second Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-23T00:50:00+00:00",
+              "home_points": 96,
+              "away_points": 77,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Alabama Crimson Tide",
+                "alias": "ALA",
+                "id": "c2104cdc-c83d-40d2-a3cd-df986e29f5d3",
+                "seed": 2,
+                "source": {
+                  "id": "e35c2d7a-29c7-47f5-8a3e-9b46d7b34878",
+                  "title": "East Regional - First Round - Game 8",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c2104cdc-c83d-40d2-a3cd-df986e29f5d3",
+                  "away_team": "255c2a87-40c0-4989-bbb9-d286aac5d28e",
+                  "scheduled": "2021-03-20T20:00:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Maryland Terrapins",
+                "alias": "MD",
+                "id": "2778d005-cc14-4e58-9bf2-3fc37bffb62f",
+                "seed": 10,
+                "source": {
+                  "id": "2cd72bf6-db0d-43cf-b882-bfa22b63dcfb",
+                  "title": "East Regional - First Round - Game 7",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "efba5350-79bc-47aa-a189-db177b95b491",
+                  "away_team": "2778d005-cc14-4e58-9bf2-3fc37bffb62f",
+                  "scheduled": "2021-03-20T23:10:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "608609b8-b2cf-4df7-8017-46b4543e8a9a",
+              "status": "closed",
+              "title": "East Regional - Second Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-22T23:45:00+00:00",
+              "home_points": 71,
+              "away_points": 53,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Mountain"
+              },
+              "venue": {
+                "id": "dbd763f5-27b5-428b-a655-276929ec571f",
+                "name": "Indiana Farmers Coliseum",
+                "capacity": 6500,
+                "address": "1202 E 38th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46205",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Florida State Seminoles",
+                "alias": "FSU",
+                "id": "d3c8a767-b6fc-45d4-a5f2-18406f2993f1",
+                "seed": 4,
+                "source": {
+                  "id": "4a55270b-36cc-47a3-a5ba-31946509051c",
+                  "title": "East Regional - First Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "d3c8a767-b6fc-45d4-a5f2-18406f2993f1",
+                  "away_team": "612f7f66-1de1-4d42-b842-9a508daab911",
+                  "scheduled": "2021-03-20T16:45:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Colorado Buffaloes",
+                "alias": "COLO",
+                "id": "9fccbf28-2858-4263-821c-fdefb3c7efa3",
+                "seed": 5,
+                "source": {
+                  "id": "75b19363-e303-46f1-8742-2b295707c4a3",
+                  "title": "East Regional - First Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "9fccbf28-2858-4263-821c-fdefb3c7efa3",
+                  "away_team": "8736b67f-5924-400b-bf94-3bd804c36600",
+                  "scheduled": "2021-03-20T16:15:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "240c8c0b-6899-42fc-9c73-bd938b758fea",
+            "name": "Midwest Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 3
+          },
+          "games": [
+            {
+              "id": "7bce0f6c-2b4c-4fe2-9930-e410078dae60",
+              "status": "closed",
+              "title": "Midwest Regional - Second Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-22T01:57:00+00:00",
+              "home_points": 70,
+              "away_points": 80,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Oklahoma State Cowboys",
+                "alias": "OKST",
+                "id": "8ab00d43-840a-4c96-bdee-bf88fa6e3f11",
+                "seed": 4,
+                "source": {
+                  "id": "7a1ca78c-7163-4a32-aa52-51f5c6fbd2a5",
+                  "title": "Midwest Regional - First Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "8ab00d43-840a-4c96-bdee-bf88fa6e3f11",
+                  "away_team": "559db90c-741f-40d1-aa81-3fdd1d4889f3",
+                  "scheduled": "2021-03-19T22:35:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oregon State Beavers",
+                "alias": "ORST",
+                "id": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                "seed": 12,
+                "source": {
+                  "id": "c42b0939-9b71-4a1b-a895-c558979178cc",
+                  "title": "Midwest Regional - First Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "b827dbdf-230f-4916-9703-3bb9004e26eb",
+                  "away_team": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                  "scheduled": "2021-03-19T20:35:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "1d8e8cc6-31fc-4a85-bf3a-a0da508081b2",
+              "status": "closed",
+              "title": "Midwest Regional - Second Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-21T16:10:00+00:00",
+              "home_points": 58,
+              "away_points": 71,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Illinois Fighting Illini",
+                "alias": "ILL",
+                "id": "150148c2-ca8f-414f-8f41-d94a55d4a122",
+                "seed": 1,
+                "source": {
+                  "id": "f4b3c35b-05dd-472b-b6a0-2076cd171b46",
+                  "title": "Midwest Regional - First Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "150148c2-ca8f-414f-8f41-d94a55d4a122",
+                  "away_team": "f2d01b77-0f5d-4574-9e49-2a3eaf822e44",
+                  "scheduled": "2021-03-19T17:15:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Loyola Chicago Ramblers",
+                "alias": "L-IL",
+                "id": "61a3908a-7492-4b6f-809e-12c61976bb0a",
+                "seed": 8,
+                "source": {
+                  "id": "f3430a09-48da-46a6-8218-0a63ecdcfa30",
+                  "title": "Midwest Regional - First Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "61a3908a-7492-4b6f-809e-12c61976bb0a",
+                  "away_team": "0f63a6f5-bda7-4fd9-9271-8d33f555ca19",
+                  "scheduled": "2021-03-19T20:15:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "838e67c3-16cf-4233-bd40-2e94db68b2be",
+              "status": "closed",
+              "title": "Midwest Regional - Second Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-21T23:10:00+00:00",
+              "home_points": 63,
+              "away_points": 60,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "19229f3d-7040-4c4b-9b8b-4c3854115b02",
+                "name": "Lucas Oil Stadium Unity",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Houston Cougars",
+                "alias": "HOU",
+                "id": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                "seed": 2,
+                "source": {
+                  "id": "4f3a1336-5a8f-44d4-aaa4-1d2900e805b5",
+                  "title": "Midwest Regional - First Round - Game 8",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                  "away_team": "e30c0417-b220-424e-886e-dd1249e2ca5a",
+                  "scheduled": "2021-03-19T23:15:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Rutgers Scarlet Knights",
+                "alias": "RUTG",
+                "id": "b03bb029-4499-4a2c-9074-5071ed360b21",
+                "seed": 10,
+                "source": {
+                  "id": "7f522972-d0ed-418e-869a-c1206c47f15c",
+                  "title": "Midwest Regional - First Round - Game 7",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "dcf5c2e7-c227-4c20-af26-715d5f859412",
+                  "away_team": "b03bb029-4499-4a2c-9074-5071ed360b21",
+                  "scheduled": "2021-03-20T01:20:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "76967bd3-81ef-4bf1-b1fb-9f17b1d00d2a",
+              "status": "closed",
+              "title": "Midwest Regional - Second Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-21T21:15:00+00:00",
+              "home_points": 72,
+              "away_points": 75,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "West Virginia Mountaineers",
+                "alias": "WVU",
+                "id": "f770d3a2-221c-49ce-9c7a-680f7417fe9e",
+                "seed": 3,
+                "source": {
+                  "id": "8d3b6530-e070-4b7a-9a2d-f2c8c87df688",
+                  "title": "Midwest Regional - First Round - Game 6",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "f770d3a2-221c-49ce-9c7a-680f7417fe9e",
+                  "away_team": "b7747a03-c85b-4de6-94bf-1b5b68553248",
+                  "scheduled": "2021-03-20T02:32:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Syracuse Orange",
+                "alias": "SYR",
+                "id": "8cd24de1-2be8-4b77-bcfa-47be0495a5f4",
+                "seed": 11,
+                "source": {
+                  "id": "3b86ad13-b302-454c-9f4b-264f664431e8",
+                  "title": "Midwest Regional - First Round - Game 5",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "e6914f16-ca37-4d2e-ba26-a425910283e2",
+                  "away_team": "8cd24de1-2be8-4b77-bcfa-47be0495a5f4",
+                  "scheduled": "2021-03-20T01:40:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "264eedb3-96b1-4986-8938-d6d525ae3f2b",
+            "name": "West Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 1
+          },
+          "games": [
+            {
+              "id": "527ac731-1afc-4836-afeb-57b230e85d7d",
+              "status": "closed",
+              "title": "West Regional - Second Round - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-22T18:40:00+00:00",
+              "home_points": 87,
+              "away_points": 71,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Gonzaga Bulldogs",
+                "alias": "GONZ",
+                "id": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                "seed": 1,
+                "source": {
+                  "id": "0cf6e707-8996-4917-adc9-9682583eaa4c",
+                  "title": "West Regional - First Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                  "away_team": "a8f75c12-c4db-401f-99e3-b48209d85274",
+                  "scheduled": "2021-03-21T01:20:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oklahoma Sooners",
+                "alias": "OKLA",
+                "id": "b2fda957-e15c-4fb2-8a13-6e58496f561e",
+                "seed": 8,
+                "source": {
+                  "id": "6764b6aa-12a3-4c46-b2fd-012cc02f212e",
+                  "title": "West Regional - First Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "b2fda957-e15c-4fb2-8a13-6e58496f561e",
+                  "away_team": "77ca152a-cb2f-48a5-97b2-492351250d94",
+                  "scheduled": "2021-03-20T23:25:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "379b3d92-bb20-4725-9d21-3cfa05651ba7",
+              "status": "closed",
+              "title": "West Regional - Second Round - Game 4",
+              "coverage": "full",
+              "scheduled": "2021-03-22T16:10:00+00:00",
+              "home_points": 80,
+              "away_points": 95,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Iowa Hawkeyes",
+                "alias": "IOWA",
+                "id": "c10544de-e3bd-4776-ba2e-83df8c017fd1",
+                "seed": 2,
+                "source": {
+                  "id": "2748b95a-76a1-4bd7-90a6-3810257c0617",
+                  "title": "West Regional - First Round - Game 8",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c10544de-e3bd-4776-ba2e-83df8c017fd1",
+                  "away_team": "f7e6acc3-0778-4de5-940a-d88e20df1159",
+                  "scheduled": "2021-03-20T22:35:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oregon Ducks",
+                "alias": "ORE",
+                "id": "1da70895-f77f-44ef-b216-d63c02e696eb",
+                "seed": 7,
+                "source": {
+                  "id": "3b593a48-f25a-4f3e-940d-5af2804f8977",
+                  "title": "West Regional - First Round - Game 7",
+                  "status": "closed",
+                  "coverage": "boxscore",
+                  "home_team": "1da70895-f77f-44ef-b216-d63c02e696eb",
+                  "away_team": "c1c1e6df-a383-4fbd-ba7b-32d4f9ef9518",
+                  "scheduled": "2021-03-21T01:57:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "d4ec6993-2a14-441f-b8b1-b3fc18b222dc",
+              "status": "closed",
+              "title": "West Regional - Second Round - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-22T22:10:00+00:00",
+              "home_points": 72,
+              "away_points": 58,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TNT",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "245"
+                }
+              ],
+              "home": {
+                "name": "Creighton Bluejays",
+                "alias": "CREI",
+                "id": "7d797407-623e-476d-b299-46de4275414d",
+                "seed": 5,
+                "source": {
+                  "id": "4f7514d1-2fc6-4a86-986b-dd5f2b6d59d1",
+                  "title": "West Regional - First Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "7d797407-623e-476d-b299-46de4275414d",
+                  "away_team": "3b6293f3-03db-46d2-8793-248963c2d83b",
+                  "scheduled": "2021-03-20T19:30:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Ohio Bobcats",
+                "alias": "OHIO",
+                "id": "327f09e2-e75f-4014-8ef7-caf9202cd583",
+                "seed": 13,
+                "source": {
+                  "id": "c72a637a-3471-4bd2-923e-5092499224e8",
+                  "title": "West Regional - First Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "56913910-87f7-4ad7-ae3b-5cd9fb218fd9",
+                  "away_team": "327f09e2-e75f-4014-8ef7-caf9202cd583",
+                  "scheduled": "2021-03-20T23:15:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "ad99b4f0-b9ef-4467-88d6-0556b269ae01",
+              "status": "closed",
+              "title": "West Regional - Second Round - Game 3",
+              "coverage": "full",
+              "scheduled": "2021-03-23T01:45:00+00:00",
+              "home_points": 51,
+              "away_points": 85,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Kansas Jayhawks",
+                "alias": "KU",
+                "id": "fae4855b-1b64-4b40-a632-9ed345e1e952",
+                "seed": 3,
+                "source": {
+                  "id": "4e514dce-1805-4555-8323-c3b7a98e91c4",
+                  "title": "West Regional - First Round - Game 6",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "fae4855b-1b64-4b40-a632-9ed345e1e952",
+                  "away_team": "54df21af-8f65-42fc-bc01-8bf750856d70",
+                  "scheduled": "2021-03-20T17:15:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "USC Trojans",
+                "alias": "USC",
+                "id": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                "seed": 6,
+                "source": {
+                  "id": "96fcd696-6fd5-43d3-9f3b-76f0d2d1b38b",
+                  "title": "West Regional - First Round - Game 5",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                  "away_team": "aed211c3-23a4-4188-ad70-22c6eba7d765",
+                  "scheduled": "2021-03-20T20:35:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "312858ad-385b-486d-90cd-b4b8f2ba9954",
+      "sequence": 4,
+      "name": "Sweet 16",
+      "games": [],
+      "bracketed": [
+        {
+          "bracket": {
+            "id": "264eedb3-96b1-4986-8938-d6d525ae3f2b",
+            "name": "West Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 1
+          },
+          "games": [
+            {
+              "id": "abcbd23d-9777-4342-871a-a661c247f62c",
+              "status": "closed",
+              "title": "West Regional - Sweet 16 - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-29T01:50:00+00:00",
+              "home_points": 82,
+              "away_points": 68,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "USC Trojans",
+                "alias": "USC",
+                "id": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                "seed": 6,
+                "source": {
+                  "id": "ad99b4f0-b9ef-4467-88d6-0556b269ae01",
+                  "title": "West Regional - Second Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "fae4855b-1b64-4b40-a632-9ed345e1e952",
+                  "away_team": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                  "scheduled": "2021-03-23T01:45:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oregon Ducks",
+                "alias": "ORE",
+                "id": "1da70895-f77f-44ef-b216-d63c02e696eb",
+                "seed": 7,
+                "source": {
+                  "id": "379b3d92-bb20-4725-9d21-3cfa05651ba7",
+                  "title": "West Regional - Second Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c10544de-e3bd-4776-ba2e-83df8c017fd1",
+                  "away_team": "1da70895-f77f-44ef-b216-d63c02e696eb",
+                  "scheduled": "2021-03-22T16:10:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "57081b7d-bfa8-430e-b351-a74eefdd38c4",
+              "status": "closed",
+              "title": "West Regional - Sweet 16 - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-28T18:10:00+00:00",
+              "home_points": 83,
+              "away_points": 65,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Gonzaga Bulldogs",
+                "alias": "GONZ",
+                "id": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                "seed": 1,
+                "source": {
+                  "id": "527ac731-1afc-4836-afeb-57b230e85d7d",
+                  "title": "West Regional - Second Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                  "away_team": "b2fda957-e15c-4fb2-8a13-6e58496f561e",
+                  "scheduled": "2021-03-22T18:40:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Creighton Bluejays",
+                "alias": "CREI",
+                "id": "7d797407-623e-476d-b299-46de4275414d",
+                "seed": 5,
+                "source": {
+                  "id": "d4ec6993-2a14-441f-b8b1-b3fc18b222dc",
+                  "title": "West Regional - Second Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "7d797407-623e-476d-b299-46de4275414d",
+                  "away_team": "327f09e2-e75f-4014-8ef7-caf9202cd583",
+                  "scheduled": "2021-03-22T22:10:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "736b3a55-5aad-445b-82f1-f575d7afadc4",
+            "name": "South Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 2
+          },
+          "games": [
+            {
+              "id": "5c4063f9-92cb-4dc4-8b0b-c1934b9497c2",
+              "status": "closed",
+              "title": "South Regional - Sweet 16 - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-27T21:15:00+00:00",
+              "home_points": 62,
+              "away_points": 51,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Baylor Bears",
+                "alias": "BAY",
+                "id": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                "seed": 1,
+                "source": {
+                  "id": "723db48b-ed18-4055-a588-f966d65f076a",
+                  "title": "South Regional - Second Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                  "away_team": "c7569eae-5b93-4197-b204-6f3a62146b25",
+                  "scheduled": "2021-03-21T18:40:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Villanova Wildcats",
+                "alias": "VILL",
+                "id": "4383eb6a-7fd8-4ff2-94c5-43c933121e88",
+                "seed": 5,
+                "source": {
+                  "id": "9dcb36c9-0eb5-4380-be31-90b728c0f6f5",
+                  "title": "South Regional - Second Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "4383eb6a-7fd8-4ff2-94c5-43c933121e88",
+                  "away_team": "10f450ce-143b-4e46-8bfe-52c644b68b07",
+                  "scheduled": "2021-03-22T01:00:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "12fc454d-a522-4b4a-b711-b23c0c22d70b",
+              "status": "closed",
+              "title": "South Regional - Sweet 16 - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-27T23:30:00+00:00",
+              "home_points": 72,
+              "away_points": 70,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Arkansas Razorbacks",
+                "alias": "ARK",
+                "id": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                "seed": 3,
+                "source": {
+                  "id": "fb74e750-f2cf-47dc-970a-24493e666f9b",
+                  "title": "South Regional - Second Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                  "away_team": "f8c705b7-87d3-411a-9c8b-5124daab0469",
+                  "scheduled": "2021-03-21T22:15:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oral Roberts Golden Eagles",
+                "alias": "ORU",
+                "id": "095417ae-62b0-4109-afc4-d92918599dd4",
+                "seed": 15,
+                "source": {
+                  "id": "cd0130a5-fd6c-49e6-a3c7-85edcd0851a4",
+                  "title": "South Regional - Second Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "912f8837-1d81-4ef9-a576-a21f271d4c64",
+                  "away_team": "095417ae-62b0-4109-afc4-d92918599dd4",
+                  "scheduled": "2021-03-21T23:45:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "fc86df71-e069-4a23-b546-5a5f90ce2a1c",
+            "name": "East Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 4
+          },
+          "games": [
+            {
+              "id": "99b951de-8ea7-4131-9c1e-19d5aaf95ffb",
+              "status": "closed",
+              "title": "East Regional - Sweet 16 - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-28T23:15:00+00:00",
+              "home_points": 78,
+              "away_points": 88,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Alabama Crimson Tide",
+                "alias": "ALA",
+                "id": "c2104cdc-c83d-40d2-a3cd-df986e29f5d3",
+                "seed": 2,
+                "source": {
+                  "id": "fe4b38a7-f4a1-4ab7-8eef-22160198d84f",
+                  "title": "East Regional - Second Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c2104cdc-c83d-40d2-a3cd-df986e29f5d3",
+                  "away_team": "2778d005-cc14-4e58-9bf2-3fc37bffb62f",
+                  "scheduled": "2021-03-23T00:50:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "UCLA Bruins",
+                "alias": "UCLA",
+                "id": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                "seed": 11,
+                "source": {
+                  "id": "6e518f6c-3a88-465a-80f0-386e1e2559aa",
+                  "title": "East Regional - Second Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                  "away_team": "a52b2ece-1f87-45b5-ae1e-8d0920479965",
+                  "scheduled": "2021-03-22T21:15:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "5335b3e0-9769-4e05-9380-4b35404f53f8",
+              "status": "closed",
+              "title": "East Regional - Sweet 16 - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-28T21:00:00+00:00",
+              "home_points": 76,
+              "away_points": 58,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Michigan Wolverines",
+                "alias": "MICH",
+                "id": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                "seed": 1,
+                "source": {
+                  "id": "ab3ce71b-ee5f-4ada-95a0-94d2182dfc44",
+                  "title": "East Regional - Second Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                  "away_team": "70e2bedd-3a0a-479c-ac99-e3f58aa6824b",
+                  "scheduled": "2021-03-22T23:10:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Florida State Seminoles",
+                "alias": "FSU",
+                "id": "d3c8a767-b6fc-45d4-a5f2-18406f2993f1",
+                "seed": 4,
+                "source": {
+                  "id": "608609b8-b2cf-4df7-8017-46b4543e8a9a",
+                  "title": "East Regional - Second Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "d3c8a767-b6fc-45d4-a5f2-18406f2993f1",
+                  "away_team": "9fccbf28-2858-4263-821c-fdefb3c7efa3",
+                  "scheduled": "2021-03-22T23:45:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "240c8c0b-6899-42fc-9c73-bd938b758fea",
+            "name": "Midwest Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 3
+          },
+          "games": [
+            {
+              "id": "76bacfc2-2122-4435-835a-a5aa89999f59",
+              "status": "closed",
+              "title": "Midwest Regional - Sweet 16 - Game 2",
+              "coverage": "full",
+              "scheduled": "2021-03-28T01:55:00+00:00",
+              "home_points": 62,
+              "away_points": 46,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Eastern"
+              },
+              "venue": {
+                "id": "0c9f2d1d-5a8d-4a23-b2fa-9d66ac531db5",
+                "name": "Hinkle Fieldhouse",
+                "capacity": 9100,
+                "address": "510 W 49th Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46208",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Houston Cougars",
+                "alias": "HOU",
+                "id": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                "seed": 2,
+                "source": {
+                  "id": "838e67c3-16cf-4233-bd40-2e94db68b2be",
+                  "title": "Midwest Regional - Second Round - Game 4",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                  "away_team": "b03bb029-4499-4a2c-9074-5071ed360b21",
+                  "scheduled": "2021-03-21T23:10:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Syracuse Orange",
+                "alias": "SYR",
+                "id": "8cd24de1-2be8-4b77-bcfa-47be0495a5f4",
+                "seed": 11,
+                "source": {
+                  "id": "76967bd3-81ef-4bf1-b1fb-9f17b1d00d2a",
+                  "title": "Midwest Regional - Second Round - Game 3",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "f770d3a2-221c-49ce-9c7a-680f7417fe9e",
+                  "away_team": "8cd24de1-2be8-4b77-bcfa-47be0495a5f4",
+                  "scheduled": "2021-03-21T21:15:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            },
+            {
+              "id": "dfd69d7d-3cac-4210-ae3c-84be8135ea4b",
+              "status": "closed",
+              "title": "Midwest Regional - Sweet 16 - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-27T18:40:00+00:00",
+              "home_points": 58,
+              "away_points": 65,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "24bb478e-eb31-5f8a-8c8d-07f513169ec1",
+                "name": "Gainbridge Fieldhouse",
+                "capacity": 20000,
+                "address": "125 S. Pennsylvania Street",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46204",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Loyola Chicago Ramblers",
+                "alias": "L-IL",
+                "id": "61a3908a-7492-4b6f-809e-12c61976bb0a",
+                "seed": 8,
+                "source": {
+                  "id": "1d8e8cc6-31fc-4a85-bf3a-a0da508081b2",
+                  "title": "Midwest Regional - Second Round - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "150148c2-ca8f-414f-8f41-d94a55d4a122",
+                  "away_team": "61a3908a-7492-4b6f-809e-12c61976bb0a",
+                  "scheduled": "2021-03-21T16:10:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oregon State Beavers",
+                "alias": "ORST",
+                "id": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                "seed": 12,
+                "source": {
+                  "id": "7bce0f6c-2b4c-4fe2-9930-e410078dae60",
+                  "title": "Midwest Regional - Second Round - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "8ab00d43-840a-4c96-bdee-bf88fa6e3f11",
+                  "away_team": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                  "scheduled": "2021-03-22T01:57:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "500c882a-ca37-4c82-a755-f490deb8e495",
+      "sequence": 5,
+      "name": "Elite Eight",
+      "games": [],
+      "bracketed": [
+        {
+          "bracket": {
+            "id": "736b3a55-5aad-445b-82f1-f575d7afadc4",
+            "name": "South Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 2
+          },
+          "games": [
+            {
+              "id": "b4acae85-f5e1-4a16-ba42-329ca4b74525",
+              "status": "closed",
+              "title": "South Regional - Elite Eight - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-30T02:02:00+00:00",
+              "home_points": 81,
+              "away_points": 72,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Central"
+              },
+              "venue": {
+                "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+                "name": "Lucas Oil Stadium",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Baylor Bears",
+                "alias": "BAY",
+                "id": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                "seed": 1,
+                "source": {
+                  "id": "5c4063f9-92cb-4dc4-8b0b-c1934b9497c2",
+                  "title": "South Regional - Sweet 16 - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+                  "away_team": "4383eb6a-7fd8-4ff2-94c5-43c933121e88",
+                  "scheduled": "2021-03-27T21:15:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Arkansas Razorbacks",
+                "alias": "ARK",
+                "id": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                "seed": 3,
+                "source": {
+                  "id": "12fc454d-a522-4b4a-b711-b23c0c22d70b",
+                  "title": "South Regional - Sweet 16 - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+                  "away_team": "095417ae-62b0-4109-afc4-d92918599dd4",
+                  "scheduled": "2021-03-27T23:30:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "fc86df71-e069-4a23-b546-5a5f90ce2a1c",
+            "name": "East Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 4
+          },
+          "games": [
+            {
+              "id": "178ddf65-a0ae-424c-9685-9a9221f49fdf",
+              "status": "closed",
+              "title": "East Regional - Elite Eight - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-31T01:57:00+00:00",
+              "home_points": 49,
+              "away_points": 51,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Eastern",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+                "name": "Lucas Oil Stadium",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Michigan Wolverines",
+                "alias": "MICH",
+                "id": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                "seed": 1,
+                "source": {
+                  "id": "5335b3e0-9769-4e05-9380-4b35404f53f8",
+                  "title": "East Regional - Sweet 16 - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "bdc2561d-f603-4fab-a262-f1d2af462277",
+                  "away_team": "d3c8a767-b6fc-45d4-a5f2-18406f2993f1",
+                  "scheduled": "2021-03-28T21:00:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "UCLA Bruins",
+                "alias": "UCLA",
+                "id": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                "seed": 11,
+                "source": {
+                  "id": "99b951de-8ea7-4131-9c1e-19d5aaf95ffb",
+                  "title": "East Regional - Sweet 16 - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "c2104cdc-c83d-40d2-a3cd-df986e29f5d3",
+                  "away_team": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+                  "scheduled": "2021-03-28T23:15:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "264eedb3-96b1-4986-8938-d6d525ae3f2b",
+            "name": "West Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 1
+          },
+          "games": [
+            {
+              "id": "114edec7-461f-42e6-afb3-3684bfe690a8",
+              "status": "closed",
+              "title": "West Regional - Elite Eight - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-30T23:15:00+00:00",
+              "home_points": 85,
+              "away_points": 66,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Pacific",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+                "name": "Lucas Oil Stadium",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                {
+                  "network": "TBS",
+                  "type": "TV",
+                  "locale": "National",
+                  "channel": "247"
+                }
+              ],
+              "home": {
+                "name": "Gonzaga Bulldogs",
+                "alias": "GONZ",
+                "id": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                "seed": 1,
+                "source": {
+                  "id": "57081b7d-bfa8-430e-b351-a74eefdd38c4",
+                  "title": "West Regional - Sweet 16 - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+                  "away_team": "7d797407-623e-476d-b299-46de4275414d",
+                  "scheduled": "2021-03-28T18:10:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "USC Trojans",
+                "alias": "USC",
+                "id": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                "seed": 6,
+                "source": {
+                  "id": "abcbd23d-9777-4342-871a-a661c247f62c",
+                  "title": "West Regional - Sweet 16 - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+                  "away_team": "1da70895-f77f-44ef-b216-d63c02e696eb",
+                  "scheduled": "2021-03-29T01:50:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "bracket": {
+            "id": "240c8c0b-6899-42fc-9c73-bd938b758fea",
+            "name": "Midwest Regional",
+            "location": "Indianapolis, IN, USA",
+            "rank": 3
+          },
+          "games": [
+            {
+              "id": "43d976b9-00d8-4f85-85b5-79f2bb00d6bd",
+              "status": "closed",
+              "title": "Midwest Regional - Elite Eight - Game 1",
+              "coverage": "full",
+              "scheduled": "2021-03-29T23:15:00+00:00",
+              "home_points": 67,
+              "away_points": 61,
+              "neutral_site": true,
+              "conference_game": false,
+              "track_on_court": true,
+              "time_zones": {
+                "venue": "US/Eastern",
+                "home": "US/Central",
+                "away": "US/Pacific"
+              },
+              "venue": {
+                "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+                "name": "Lucas Oil Stadium",
+                "capacity": 70000,
+                "address": "500 South Capitol Avenue",
+                "city": "Indianapolis",
+                "state": "IN",
+                "zip": "46225",
+                "country": "USA"
+              },
+              "broadcasts": [
+                { "network": "CBS", "type": "TV", "locale": "National" }
+              ],
+              "home": {
+                "name": "Houston Cougars",
+                "alias": "HOU",
+                "id": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                "seed": 2,
+                "source": {
+                  "id": "76bacfc2-2122-4435-835a-a5aa89999f59",
+                  "title": "Midwest Regional - Sweet 16 - Game 2",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+                  "away_team": "8cd24de1-2be8-4b77-bcfa-47be0495a5f4",
+                  "scheduled": "2021-03-28T01:55:00+00:00",
+                  "outcome": "win"
+                }
+              },
+              "away": {
+                "name": "Oregon State Beavers",
+                "alias": "ORST",
+                "id": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                "seed": 12,
+                "source": {
+                  "id": "dfd69d7d-3cac-4210-ae3c-84be8135ea4b",
+                  "title": "Midwest Regional - Sweet 16 - Game 1",
+                  "status": "closed",
+                  "coverage": "full",
+                  "home_team": "61a3908a-7492-4b6f-809e-12c61976bb0a",
+                  "away_team": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+                  "scheduled": "2021-03-27T18:40:00+00:00",
+                  "outcome": "win"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "20677542-9f44-4e4f-9d30-ff0994aacd7c",
+      "sequence": 6,
+      "name": "Final Four",
+      "games": [
+        {
+          "id": "18707c0f-0794-4587-bfb5-979d161cf80a",
+          "status": "closed",
+          "title": "Final Four - Semifinals - Game 2",
+          "coverage": "full",
+          "scheduled": "2021-04-03T21:14:00+00:00",
+          "home_points": 78,
+          "away_points": 59,
+          "neutral_site": true,
+          "conference_game": false,
+          "track_on_court": true,
+          "time_zones": {
+            "venue": "US/Eastern",
+            "home": "US/Central",
+            "away": "US/Central"
+          },
+          "venue": {
+            "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+            "name": "Lucas Oil Stadium",
+            "capacity": 70000,
+            "address": "500 South Capitol Avenue",
+            "city": "Indianapolis",
+            "state": "IN",
+            "zip": "46225",
+            "country": "USA"
+          },
+          "broadcasts": [
+            { "network": "CBS", "type": "TV", "locale": "National" }
+          ],
+          "home": {
+            "name": "Baylor Bears",
+            "alias": "BAY",
+            "id": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+            "seed": 1,
+            "source": {
+              "id": "b4acae85-f5e1-4a16-ba42-329ca4b74525",
+              "title": "South Regional - Elite Eight - Game 1",
+              "status": "closed",
+              "coverage": "full",
+              "home_team": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+              "away_team": "c70c23c4-ab09-4797-a1af-792c848ab17f",
+              "scheduled": "2021-03-30T02:02:00+00:00",
+              "outcome": "win"
+            }
+          },
+          "away": {
+            "name": "Houston Cougars",
+            "alias": "HOU",
+            "id": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+            "seed": 2,
+            "source": {
+              "id": "43d976b9-00d8-4f85-85b5-79f2bb00d6bd",
+              "title": "Midwest Regional - Elite Eight - Game 1",
+              "status": "closed",
+              "coverage": "full",
+              "home_team": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+              "away_team": "532d3874-b4b3-4c5c-acc6-749a6db26c8f",
+              "scheduled": "2021-03-29T23:15:00+00:00",
+              "outcome": "win"
+            }
+          }
+        },
+        {
+          "id": "7ce1b1cc-01d6-408d-8bb4-d05c6782d583",
+          "status": "closed",
+          "title": "Final Four - Semifinals - Game 1",
+          "coverage": "full",
+          "scheduled": "2021-04-04T00:42:00+00:00",
+          "home_points": 93,
+          "away_points": 90,
+          "neutral_site": true,
+          "conference_game": false,
+          "track_on_court": true,
+          "time_zones": {
+            "venue": "US/Eastern",
+            "home": "US/Pacific",
+            "away": "US/Pacific"
+          },
+          "venue": {
+            "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+            "name": "Lucas Oil Stadium",
+            "capacity": 70000,
+            "address": "500 South Capitol Avenue",
+            "city": "Indianapolis",
+            "state": "IN",
+            "zip": "46225",
+            "country": "USA"
+          },
+          "broadcasts": [
+            { "network": "CBS", "type": "TV", "locale": "National" }
+          ],
+          "home": {
+            "name": "Gonzaga Bulldogs",
+            "alias": "GONZ",
+            "id": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+            "seed": 1,
+            "source": {
+              "id": "114edec7-461f-42e6-afb3-3684bfe690a8",
+              "title": "West Regional - Elite Eight - Game 1",
+              "status": "closed",
+              "coverage": "full",
+              "home_team": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+              "away_team": "3a000455-de7c-4ca8-880e-abdce7f21da9",
+              "scheduled": "2021-03-30T23:15:00+00:00",
+              "outcome": "win"
+            }
+          },
+          "away": {
+            "name": "UCLA Bruins",
+            "alias": "UCLA",
+            "id": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+            "seed": 11,
+            "source": {
+              "id": "178ddf65-a0ae-424c-9685-9a9221f49fdf",
+              "title": "East Regional - Elite Eight - Game 1",
+              "status": "closed",
+              "coverage": "full",
+              "home_team": "bdc2561d-f603-4fab-a262-f1d2af462277",
+              "away_team": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+              "scheduled": "2021-03-31T01:57:00+00:00",
+              "outcome": "win"
+            }
+          }
+        }
+      ],
+      "bracketed": []
+    },
+    {
+      "id": "8072d5c8-0182-48ff-b20b-f3d65a7c5a56",
+      "sequence": 7,
+      "name": "National Championship",
+      "games": [
+        {
+          "id": "0912cf5a-e69a-4c0e-830c-f8b61ccf7696",
+          "status": "closed",
+          "title": "National Championship",
+          "coverage": "full",
+          "scheduled": "2021-04-06T01:20:00+00:00",
+          "home_points": 70,
+          "away_points": 86,
+          "neutral_site": true,
+          "conference_game": false,
+          "track_on_court": true,
+          "time_zones": {
+            "venue": "US/Eastern",
+            "home": "US/Pacific",
+            "away": "US/Central"
+          },
+          "venue": {
+            "id": "12155ac5-1553-48d6-969d-dafc574d0406",
+            "name": "Lucas Oil Stadium",
+            "capacity": 70000,
+            "address": "500 South Capitol Avenue",
+            "city": "Indianapolis",
+            "state": "IN",
+            "zip": "46225",
+            "country": "USA"
+          },
+          "broadcasts": [
+            { "network": "CBS", "type": "TV", "locale": "National" }
+          ],
+          "home": {
+            "name": "Gonzaga Bulldogs",
+            "alias": "GONZ",
+            "id": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+            "seed": 1,
+            "source": {
+              "id": "7ce1b1cc-01d6-408d-8bb4-d05c6782d583",
+              "title": "Final Four - Semifinals - Game 1",
+              "status": "closed",
+              "coverage": "full",
+              "home_team": "2f4d21f8-6d5f-48a5-abca-52a30583871a",
+              "away_team": "ec0d6b67-4b16-4b50-92b2-1a651dae6b0f",
+              "scheduled": "2021-04-04T00:42:00+00:00",
+              "outcome": "win"
+            }
+          },
+          "away": {
+            "name": "Baylor Bears",
+            "alias": "BAY",
+            "id": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+            "seed": 1,
+            "source": {
+              "id": "18707c0f-0794-4587-bfb5-979d161cf80a",
+              "title": "Final Four - Semifinals - Game 2",
+              "status": "closed",
+              "coverage": "full",
+              "home_team": "db6e1cab-3fa3-4a93-a673-8b2a358ff4bf",
+              "away_team": "1f99a164-d593-4d81-85d5-0d7889d6f486",
+              "scheduled": "2021-04-03T21:14:00+00:00",
+              "outcome": "win"
+            }
+          }
+        }
+      ],
+      "bracketed": []
+    }
+  ]
+}

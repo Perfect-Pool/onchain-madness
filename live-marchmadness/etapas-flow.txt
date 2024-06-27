@@ -1,0 +1,38 @@
+Consulta aberta: https://developer.sportradar.com/io-docs
+A ideia é fazer consultas à API de 30 em 30 min durante o andamento do MarchMadness
+
+ETAPA 1:
+Pós Selection Sunday, antes do FirstFour (início das bets):
+
+- Consultar o ID do March Madness para 2024 (colocar o ano anterior, post-season <PST>)
+http://api.sportradar.us/ncaamb/trial/v8/en/tournaments/2023/PST/schedule.json?api_key=<API_KEY>
+-- capturar os dados do "NCAA Men's Division I Basketball Tournament"
+
+- Consultar Tournament schedule com o ID do tournament acima
+http://api.sportradar.us/ncaamb/trial/v8/en/tournaments/3f50b4cf-b319-4df2-90c0-8fc549742710/schedule.json?api_key=<API_KEY>
+-- capturar os IDs dos games e suas datas
+
+- Registrar as equipes no contrato, colocando as variáveis FFG1, FFG2, FFG3 e FFG4 nos espaços em branco.
+
+ETAPA 2:
+Andamento do FirstFour
+
+- Consultar os jogos por ID para ver como os resultados se dão
+http://api.sportradar.us/ncaamb/trial/v8/en/games/8f71a807-95a3-4b43-86cd-d885dc39be8d/summary.json?api_key=<API_KEY>
+-- conforme os jogos forem sendo definidos, escrever na blockchain o resultado das brackets
+(Jogos finalizados terão o status "closed")
+
+- Usar uma função updateFirstFour(sigla, novaSigla) para atualizar os dados de sigla das equipes vencedoras.
+
+
+ETAPA 3:
+Abertura do First Round (as apostas se encerram no começo da primeira partida do round 1)
+
+- Consultar o tournament schedule para encontrar qual partida começa primeiro. 
+    Se ela estiver a menos de 30 min do começo, alterar o status do contrato de betsOn para onGoing
+
+ETAPA 4:
+Rounds onGoing
+
+- A partir daqui o fluxo vai se resumir em consultar o tournament schedule e atualizar os jogos não finalizados.
+    No contrato, mudamos o currentRound sempre que 

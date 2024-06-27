@@ -1,0 +1,46 @@
+{
+    "id": "8f71a807-95a3-4b43-86cd-d885dc39be8d",
+    "title": "First Four - Game 1",
+    "status": "scheduled",
+    "coverage": "full",
+    "neutral_site": true,
+    "scheduled": "2024-03-19T22:40:00+00:00",
+    "conference_game": false,
+    "track_on_court": true,
+    "time_zones": {
+        "venue": "US/Eastern",
+        "home": "US/Eastern",
+        "away": "US/Eastern"
+    },
+    "venue": {
+        "id": "e43e6693-1879-433e-8287-0929d4b9b375",
+        "name": "UD Arena",
+        "capacity": 13435,
+        "address": "1801 South Edwin C Moses Boulevard",
+        "city": "Dayton",
+        "state": "OH",
+        "zip": "45417",
+        "country": "USA",
+        "location": {
+            "lat": "39.735556",
+            "lng": "-84.2"
+        }
+    },
+    "home": {
+        "name": "Howard Bison",
+        "alias": "HOW",
+        "market": "Howard",
+        "id": "22fbe5dc-c6db-4675-b3a3-2d8af7f5d313",
+        "points": 0,
+        "seed": 16
+    },
+    "away": {
+        "name": "Wagner Seahawks",
+        "alias": "WAG",
+        "market": "Wagner",
+        "id": "3b644902-cd06-4930-9a3e-6c78cfb1f464",
+        "points": 0,
+        "seed": 16
+    },
+    "officials": []
+}

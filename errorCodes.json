@@ -1,0 +1,7 @@
+{
+  "GamesHub": {
+    "GH-01": "Caller is not a Project Contract or an Administrator",
+    "GH-02": "Invalid Contract Address",
+    "GH-03": "Contract Call Failed"
+  }
+}
