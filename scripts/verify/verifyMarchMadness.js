@@ -30,7 +30,6 @@ async function main() {
     address: addressDeployer,
     constructorArguments: [
       contracts[networkName]["MM_BASE"],
-      contracts[networkName]["GAMES_HUB"],
       contracts[networkName]["Executor"],
     ],
     contract: "contracts/games/MarchMadnessFactory.sol:MarchMadnessFactory",

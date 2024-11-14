@@ -8,11 +8,6 @@ async function main() {
   const networkName = hre.network.name;
   const networkData = data[networkName];
 
-  const GamesHub = await ethers.getContractAt(
-    "GamesHub",
-    networkData.GAMES_HUB
-  );
-  console.log(`GamesHub loaded at ${GamesHub.address}`);
   console.log(`Executor Address: ${networkData.Executor}`);
 
   if (networkData.MM_BASE === "") {
@@ -24,15 +19,6 @@ async function main() {
     console.log(`MarchMadness deployed at ${marchMadness.address}`);
     networkData.MM_BASE = marchMadness.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    console.log(`Setting MarchMadness address to GamesHub...`);
-    await GamesHub.setGameContact(
-      marchMadness.address,
-      ethers.utils.id("MM_BASE"),
-      true
-    );
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
   } else {
@@ -47,7 +33,6 @@ async function main() {
     );
     const marchMadnessFactory = await MarchMadnessFactory.deploy(
       networkData.MM_BASE,
-      networkData.GAMES_HUB,
       networkData.Executor
     );
     await marchMadnessFactory.deployed();
@@ -57,15 +42,6 @@ async function main() {
     );
     networkData.MM_DEPLOYER = marchMadnessFactory.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-
-    console.log(`Setting MarchMadness address to GamesHub...`);
-    await GamesHub.setGameContact(
-      marchMadnessFactory.address,
-      ethers.utils.id("MM_DEPLOYER"),
-      false
-    );
   } else {
     console.log(
       `MarchMadnessFactory already deployed at ${networkData.MM_DEPLOYER}`

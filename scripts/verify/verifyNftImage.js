@@ -15,7 +15,6 @@ async function main() {
   await hre.run("verify:verify", {
     address: address,
     constructorArguments: [
-      contracts[networkName]["GAMES_HUB"],
     ],
     contract: "contracts/utils/NftImage.sol:NftImage",
     libraries:{

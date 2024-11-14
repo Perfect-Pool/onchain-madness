@@ -2,10 +2,10 @@
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
-import "../interfaces/IGamesHub.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./MarchMadness.sol";
 
-contract MarchMadnessFactory {
+contract MarchMadnessFactory is Ownable {
     /** EVENTS **/
     event BetsClosed(uint256 year);
     event FirstFourDecided(uint256 year, string[4] winners);
@@ -26,15 +26,13 @@ contract MarchMadnessFactory {
 
     /** STATE VARIABLES **/
     address public immutable implementation;
-    IGamesHub public immutable gamesHub;
     address public executor;
     bool public paused = false;
 
     mapping(uint256 => address) public tournaments;
 
-    constructor(address _implementation, address _gamesHub, address _executor) {
+    constructor(address _implementation, address _executor) {
         implementation = _implementation;
-        gamesHub = IGamesHub(_gamesHub);
         executor = _executor;
     }
 
@@ -43,28 +41,13 @@ contract MarchMadnessFactory {
         _;
     }
 
-    modifier onlyAdministrator() {
-        require(gamesHub.checkRole(keccak256("ADMIN"), msg.sender), "MF-02");
-        _;
-    }
-
     function createMarchMadness(
-        uint256 year,
-        string[8] memory _firstFour,
-        string[16] memory _south,
-        string[16] memory _west,
-        string[16] memory _midwest,
-        string[16] memory _east
+        uint256 year
     ) public onlyExecutor returns (address) {
         address clone = Clones.clone(implementation);
         MarchMadness(clone).initialize(
             year,
-            _firstFour,
-            _south,
-            _west,
-            _midwest,
-            _east,
-            address(gamesHub)
+            address(this)
         );
         emit MarchMadnessCreated(clone, year);
         tournaments[year] = clone;
@@ -72,197 +55,10 @@ contract MarchMadnessFactory {
     }
 
     /**
-     * @dev Determines the winners of the First Four matches.
-     * @param year The year of the tournament.
-     * @param teamNames The array of team names for the First Four matches.
-     * @param scores The array of scores for the First Four matches.
-     * @param winners The array of winners for the First Four matches.
-     */
-    function determineFirstFourWinners(
-        uint256 year,
-        string[8] memory teamNames,
-        uint256[8] memory scores,
-        string[4] memory winners
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineFirstFourWinners(
-            teamNames,
-            scores,
-            winners
-        );
-
-        emit FirstFourDecided(year, winners);
-    }
-
-    /**
-     * @dev Opens the bets for the current year.
-     * @param year The year of the tournament.
-     */
-    function closeBets(uint256 year) public onlyExecutor {
-        MarchMadness(tournaments[year]).closeBets();
-
-        emit BetsClosed(year);
-    }
-
-    /**
-     * @dev Advances the round to the next one.
-     * @param year The year of the tournament.
-     */
-    function advanceRound(uint256 year) public onlyExecutor {
-        MarchMadness(tournaments[year]).advanceRound();
-        emit RoundAdvanced(year, MarchMadness(tournaments[year]).currentRound());
-    }
-
-    /**
-     * @dev Determines the winners of the Round 1 matches in a specific region.
-     * @param year The year of the tournament.
-     * @param regionName The name of the region.
-     * @param teamNames The array of team names for the Round 1 matches.
-     * @param scores The array of scores for the Round 1 matches.
-     * @param winners The array of winners for the Round 1 matches.
-     */
-    function determineRound1Winners(
-        uint256 year,
-        string memory regionName,
-        string[16] memory teamNames,
-        uint256[16] memory scores,
-        string[8] memory winners
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineRound1Winners(
-            regionName,
-            teamNames,
-            scores,
-            winners
-        );
-    }
-
-    /**
-     * @dev Determines the winners of the Round 2 matches in a specific region and prepares Round 3 matches.
-     * @param year The year of the tournament.
-     * @param regionName The name of the region.
-     * @param teamNames The array of team names for the Round 2 matches.
-     * @param scores The array of scores for the Round 2 matches.
-     * @param winners The array of winners for the Round 2 matches.
-     */
-    function determineRound2Winners(
-        uint256 year,
-        string memory regionName,
-        string[8] memory teamNames,
-        uint256[8] memory scores,
-        string[4] memory winners
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineRound2Winners(
-            regionName,
-            teamNames,
-            scores,
-            winners
-        );
-    }
-
-    /**
-     * @dev Determines the winners of the Round 3 matches in a specific region and prepares the Round 4 match.
-     * @param year The year of the tournament.
-     * @param regionName The name of the region.
-     * @param teamNames The array of team names for the Round 3 matches.
-     * @param scores The array of scores for the Round 3 matches.
-     * @param winners The array of winners for the Round 3 matches.
-     */
-    function determineRound3Winners(
-        uint256 year,
-        string memory regionName,
-        string[4] memory teamNames,
-        uint256[4] memory scores,
-        string[2] memory winners
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineRound3Winners(
-            regionName,
-            teamNames,
-            scores,
-            winners
-        );
-    }
-
-    /**
-     * @dev Determines the winner of the Round 4 match in a specific region and prepares the team placement in the Final Four.
-     * @param year The year of the tournament.
-     * @param regionName The name of the region.
-     * @param teamNameHome The team name for the home side of the Round 4 match.
-     * @param teamNameAway The team name for the away side of the Round 4 match.
-     * @param scoreHome The score for the home team in the Round 4 match.
-     * @param scoreAway The score for the away team in the Round 4 match.
-     * @param winner The winner of the Round 4 match.
-     */
-    function determineRound4Winners(
-        uint256 year,
-        string memory regionName,
-        string memory teamNameHome,
-        string memory teamNameAway,
-        uint256 scoreHome,
-        uint256 scoreAway,
-        string memory winner
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineRound4Winners(
-            regionName,
-            teamNameHome,
-            teamNameAway,
-            scoreHome,
-            scoreAway,
-            winner
-        );
-    }
-
-    /**
-     * @dev Determines the winners of the Final Four matches and prepares the championship match.
-     * @param year The year of the tournament.
-     * @param teamNames The array of team names for the Final Four matches.
-     * @param scores The array of scores for the Final Four matches.
-     * @param winners The array of winners for the Final Four matches.
-     */
-    function determineFinalFourWinners(
-        uint256 year,
-        string[4] memory teamNames,
-        uint256[4] memory scores,
-        string[2] memory winners
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineFinalFourWinners(
-            teamNames,
-            scores,
-            winners
-        );
-    }
-
-    /**
-     * @dev Determines the winner of the championship match.
-     * @param year The year of the tournament.
-     * @param teamNameHome The name of the home team in the championship match.
-     * @param teamNameAway The name of the away team in the championship match.
-     * @param scoreHome The score of the home team in the championship match.
-     * @param scoreAway The score of the away team in the championship match.
-     * @param winner The winner of the championship match.
-     */
-    function determineChampion(
-        uint256 year,
-        string memory teamNameHome,
-        string memory teamNameAway,
-        uint256 scoreHome,
-        uint256 scoreAway,
-        string memory winner
-    ) public onlyExecutor {
-        MarchMadness(tournaments[year]).determineChampion(
-            teamNameHome,
-            teamNameAway,
-            scoreHome,
-            scoreAway,
-            winner
-        );
-
-        emit TournamentFinished(year);
-    }
-
-    /**
      * @dev Sets a new executor address.
      * @param _executor The address of the executor.
      */
-    function setExecutor(address _executor) public onlyAdministrator {
+    function setExecutor(address _executor) public onlyOwner {
         executor = _executor;
 
         emit ExecutorChanged(_executor);
@@ -282,9 +78,191 @@ contract MarchMadnessFactory {
      * @dev Pause / unpause the contract.
      * @param _paused The new paused state.
      */
-    function pause(bool _paused) public onlyAdministrator {
+    function pause(bool _paused) public onlyOwner {
         paused = _paused;
         emit Paused(_paused);
+    }
+
+    /**
+     * @dev Initializes a First Four match with two teams.
+     * @param year The year of the tournament
+     * @param _matchCode The code identifying the First Four match (FFG1-FFG4)
+     * @param _home The name of the home team
+     * @param _away The name of the away team
+     */
+    function initFirstFourMatch(
+        uint256 year,
+        string memory _matchCode,
+        string memory _home,
+        string memory _away
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).initFirstFourMatch(_matchCode, _home, _away);
+    }
+
+    /**
+     * @dev Initializes a region with 16 teams and sets up first round matches.
+     * @param year The year of the tournament
+     * @param _regionName The name of the region (SOUTH, WEST, MIDWEST, EAST)
+     * @param teamNames Array of 16 team names for the region, ordered by seeding
+     */
+    function initRegion(
+        uint256 year,
+        string memory _regionName,
+        string[16] memory teamNames
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).initRegion(_regionName, teamNames);
+    }
+
+    /**
+     * @dev Records the result of a First Four match and sets the winner.
+     * @param year The year of the tournament
+     * @param matchCode The code of the First Four match (FFG1-FFG4)
+     * @param _homeId ID of the home team
+     * @param _awayId ID of the away team
+     * @param _homePoints Points scored by the home team
+     * @param _awayPoints Points scored by the away team
+     * @param _winner Winner of the match (1 for home, 2 for away)
+     */
+    function determineFirstFourWinner(
+        uint256 year,
+        string memory matchCode,
+        uint8 _homeId,
+        uint8 _awayId,
+        uint256 _homePoints,
+        uint256 _awayPoints,
+        uint8 _winner
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).determineFirstFourWinner(
+            matchCode,
+            _homeId,
+            _awayId,
+            _homePoints,
+            _awayPoints,
+            _winner
+        );
+    }
+
+    /**
+     * @dev Closes the betting period and starts the tournament.
+     * @param year The year of the tournament
+     */
+    function closeBets(uint256 year) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).closeBets();
+        emit BetsClosed(year);
+    }
+
+    /**
+     * @dev Advances the tournament to the next round.
+     * @param year The year of the tournament
+     */
+    function advanceRound(uint256 year) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).advanceRound();
+        emit RoundAdvanced(year, MarchMadness(tournaments[year]).currentRound());
+    }
+
+    /**
+     * @dev Records the result of a match and sets up the next round match.
+     * @param year The year of the tournament
+     * @param regionName The name of the region
+     * @param winner The name of the winning team
+     * @param round Current round number (1-4)
+     * @param matchIndex Index of the match in the current round
+     * @param homePoints Points scored by home team
+     * @param awayPoints Points scored by away team
+     */
+    function determineMatchWinner(
+        uint256 year,
+        string memory regionName,
+        string memory winner,
+        uint8 round,
+        uint8 matchIndex,
+        uint256 homePoints,
+        uint256 awayPoints
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).determineMatchWinner(
+            regionName,
+            winner,
+            round,
+            matchIndex,
+            homePoints,
+            awayPoints
+        );
+    }
+
+    /**
+     * @dev Records the result of a region's final match and sets up Final Four match.
+     * @param year The year of the tournament
+     * @param regionName The name of the region
+     * @param winner The name of the winning team
+     * @param homePoints Points scored by home team
+     * @param awayPoints Points scored by away team
+     */
+    function determineFinalRegionWinner(
+        uint256 year,
+        string memory regionName,
+        string memory winner,
+        uint256 homePoints,
+        uint256 awayPoints
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).determineFinalRegionWinner(
+            regionName,
+            winner,
+            homePoints,
+            awayPoints
+        );
+    }
+
+    /**
+     * @dev Records the result of a Final Four match and sets up championship match.
+     * @param year The year of the tournament
+     * @param gameIndex Index of the Final Four match (0 or 1)
+     * @param winners The name of the winning team
+     * @param homePoints Points scored by home team
+     * @param awayPoints Points scored by away team
+     */
+    function determineFinalFourWinner(
+        uint256 year,
+        uint8 gameIndex,
+        string memory winners,
+        uint256 homePoints,
+        uint256 awayPoints
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).determineFinalFourWinner(
+            gameIndex,
+            winners,
+            homePoints,
+            awayPoints
+        );
+    }
+
+    /**
+     * @dev Records the result of the championship match and completes the tournament.
+     * @param year The year of the tournament
+     * @param winner The name of the winning team
+     * @param homePoints Points scored by home team
+     * @param awayPoints Points scored by away team
+     */
+    function determineChampion(
+        uint256 year,
+        string memory winner,
+        uint256 homePoints,
+        uint256 awayPoints
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        MarchMadness(tournaments[year]).determineChampion(
+            winner,
+            homePoints,
+            awayPoints
+        );
+        emit TournamentFinished(year);
     }
 
     /**

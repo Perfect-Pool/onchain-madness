@@ -18,10 +18,6 @@ async function main() {
     );
   }
 
-  const gamesHubAddress = networkData.GAMES_HUB;
-  console.log(`GamesHub loaded at ${gamesHubAddress}`);
-  const GamesHub = await ethers.getContractAt("GamesHub", gamesHubAddress);
-
   const name = "MM_IMAGE";
 
   if (networkData.MM_IMAGE === "") {
@@ -33,20 +29,13 @@ async function main() {
       },
     });
     const nftImage = await NftImage.deploy(
-      gamesHubAddress
+      
     );
     await nftImage.deployed();
     console.log(`NftImage deployed at ${nftImage.address}`);
 
     networkData.MM_IMAGE = nftImage.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-
-    console.log("Setting NftImage address to GamesHub...");
-    await GamesHub.setGameContact(
-      nftImage.address,
-      ethers.utils.id(name),
-      true
-    );
   } else {
     console.log(`NftImage already deployed at ${networkData.MM_IMAGE}`);
   }

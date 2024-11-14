@@ -14,7 +14,7 @@ async function main() {
 
   await hre.run("verify:verify", {
     address: address,
-    constructorArguments: [contracts[networkName]["GAMES_HUB"]],
+    constructorArguments: [],
     contract: "contracts/utils/OnchainMadnessTicket.sol:OnchainMadnessTicket",
   });
 }
