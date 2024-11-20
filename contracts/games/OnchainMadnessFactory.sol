@@ -1,17 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./MarchMadness.sol";
+import "./OnchainMadness.sol";
 
-contract MarchMadnessFactory is Ownable {
+contract OnchainMadnessFactory is Ownable {
     /** EVENTS **/
     event BetsClosed(uint256 year);
     event FirstFourDecided(uint256 year, string[4] winners);
     event RoundAdvanced(uint256 year, uint8 round);
     event TournamentFinished(uint256 year);
-    event MarchMadnessCreated(address indexed proxy, uint256 year);
+    event OnchainMadnessCreated(address indexed proxy, uint256 year);
     event ExecutorChanged(address indexed executor);
     event TournamentReset(uint256 indexed year);
     event Paused(bool paused);
@@ -31,7 +31,7 @@ contract MarchMadnessFactory is Ownable {
 
     mapping(uint256 => address) public tournaments;
 
-    constructor(address _implementation, address _executor) {
+    constructor(address _implementation, address _executor) Ownable(msg.sender) {
         implementation = _implementation;
         executor = _executor;
     }
@@ -41,15 +41,15 @@ contract MarchMadnessFactory is Ownable {
         _;
     }
 
-    function createMarchMadness(
+    function createOnchainMadness(
         uint256 year
     ) public onlyExecutor returns (address) {
         address clone = Clones.clone(implementation);
-        MarchMadness(clone).initialize(
+        OnchainMadness(clone).initialize(
             year,
             address(this)
         );
-        emit MarchMadnessCreated(clone, year);
+        emit OnchainMadnessCreated(clone, year);
         tournaments[year] = clone;
         return clone;
     }
@@ -65,7 +65,7 @@ contract MarchMadnessFactory is Ownable {
     }
 
     /**
-     * @dev Resets the address of the MarchMadness contract for a specific year.
+     * @dev Resets the address of the OnchainMadness contract for a specific year.
      * @param year The year of the tournament.
      */
     function resetGame(uint256 year) public onlyExecutor {
@@ -97,7 +97,7 @@ contract MarchMadnessFactory is Ownable {
         string memory _away
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).initFirstFourMatch(_matchCode, _home, _away);
+        OnchainMadness(tournaments[year]).initFirstFourMatch(_matchCode, _home, _away);
     }
 
     /**
@@ -112,7 +112,7 @@ contract MarchMadnessFactory is Ownable {
         string[16] memory teamNames
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).initRegion(_regionName, teamNames);
+        OnchainMadness(tournaments[year]).initRegion(_regionName, teamNames);
     }
 
     /**
@@ -135,7 +135,7 @@ contract MarchMadnessFactory is Ownable {
         uint8 _winner
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).determineFirstFourWinner(
+        OnchainMadness(tournaments[year]).determineFirstFourWinner(
             matchCode,
             _homeId,
             _awayId,
@@ -151,7 +151,7 @@ contract MarchMadnessFactory is Ownable {
      */
     function closeBets(uint256 year) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).closeBets();
+        OnchainMadness(tournaments[year]).closeBets();
         emit BetsClosed(year);
     }
 
@@ -161,8 +161,8 @@ contract MarchMadnessFactory is Ownable {
      */
     function advanceRound(uint256 year) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).advanceRound();
-        emit RoundAdvanced(year, MarchMadness(tournaments[year]).currentRound());
+        OnchainMadness(tournaments[year]).advanceRound();
+        emit RoundAdvanced(year, OnchainMadness(tournaments[year]).currentRound());
     }
 
     /**
@@ -185,7 +185,7 @@ contract MarchMadnessFactory is Ownable {
         uint256 awayPoints
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).determineMatchWinner(
+        OnchainMadness(tournaments[year]).determineMatchWinner(
             regionName,
             winner,
             round,
@@ -211,7 +211,7 @@ contract MarchMadnessFactory is Ownable {
         uint256 awayPoints
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).determineFinalRegionWinner(
+        OnchainMadness(tournaments[year]).determineFinalRegionWinner(
             regionName,
             winner,
             homePoints,
@@ -235,7 +235,7 @@ contract MarchMadnessFactory is Ownable {
         uint256 awayPoints
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).determineFinalFourWinner(
+        OnchainMadness(tournaments[year]).determineFinalFourWinner(
             gameIndex,
             winners,
             homePoints,
@@ -257,7 +257,7 @@ contract MarchMadnessFactory is Ownable {
         uint256 awayPoints
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
-        MarchMadness(tournaments[year]).determineChampion(
+        OnchainMadness(tournaments[year]).determineChampion(
             winner,
             homePoints,
             awayPoints
@@ -275,7 +275,7 @@ contract MarchMadnessFactory is Ownable {
     function getAllRegionsData(
         uint256 year
     ) public view returns (bytes[4] memory) {
-        MarchMadness tournament = MarchMadness(tournaments[year]);
+        OnchainMadness tournament = OnchainMadness(tournaments[year]);
         return [
             tournament.getRegionData(tournament.SOUTH()),
             tournament.getRegionData(tournament.WEST()),
@@ -293,7 +293,7 @@ contract MarchMadnessFactory is Ownable {
     function getFirstFourData(
         uint256 year
     ) public view returns (bytes[4] memory) {
-        return MarchMadness(tournaments[year]).getFirstFourData();
+        return OnchainMadness(tournaments[year]).getFirstFourData();
     }
 
     /**
@@ -304,7 +304,7 @@ contract MarchMadnessFactory is Ownable {
      * @return The Final Four data in bytes format.
      */
     function getFinalFourData(uint256 year) public view returns (bytes memory) {
-        return MarchMadness(tournaments[year]).getFinalFourData();
+        return OnchainMadness(tournaments[year]).getFinalFourData();
     }
 
     /**
@@ -316,8 +316,8 @@ contract MarchMadnessFactory is Ownable {
     function getGameStatus(uint256 year) public view returns (bytes memory) {
         return
             abi.encode(
-                MarchMadness(tournaments[year]).currentRound(),
-                MarchMadness(tournaments[year]).status()
+                OnchainMadness(tournaments[year]).currentRound(),
+                OnchainMadness(tournaments[year]).status()
             );
     }
 
@@ -331,16 +331,16 @@ contract MarchMadnessFactory is Ownable {
         uint256 year
     ) public view returns (bytes[4] memory) {
         bytes[4] memory allTeams;
-        allTeams[0] = MarchMadness(tournaments[year]).getAllTeams(
+        allTeams[0] = OnchainMadness(tournaments[year]).getAllTeams(
             keccak256("SOUTH")
         );
-        allTeams[1] = MarchMadness(tournaments[year]).getAllTeams(
+        allTeams[1] = OnchainMadness(tournaments[year]).getAllTeams(
             keccak256("WEST")
         );
-        allTeams[2] = MarchMadness(tournaments[year]).getAllTeams(
+        allTeams[2] = OnchainMadness(tournaments[year]).getAllTeams(
             keccak256("MIDWEST")
         );
-        allTeams[3] = MarchMadness(tournaments[year]).getAllTeams(
+        allTeams[3] = OnchainMadness(tournaments[year]).getAllTeams(
             keccak256("EAST")
         );
 
@@ -350,13 +350,13 @@ contract MarchMadnessFactory is Ownable {
     function getFinalResult(
         uint256 year
     ) public view returns (uint8[63] memory) {
-        return MarchMadness(tournaments[year]).getFinalResult();
+        return OnchainMadness(tournaments[year]).getFinalResult();
     }
 
     function getTeamSymbols(
         uint256 year,
         uint8[63] memory teamIds
     ) public view returns (string[63] memory) {
-        return MarchMadness(tournaments[year]).getTeamSymbols(teamIds);
+        return OnchainMadness(tournaments[year]).getTeamSymbols(teamIds);
     }
 }

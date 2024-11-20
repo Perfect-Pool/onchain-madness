@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 /**
- * @title MarchMadness
- * @dev Contract for managing NCAA March Madness tournament brackets
+ * @title OnchainMadness
+ * @dev Contract for managing NCAA Male Basketball tournament brackets
  * Tournament structure:
  * - First Four: 4 play-in matches before Round 1
  * - 4 Regions (South, West, Midwest, East): each with 16 teams
@@ -30,7 +30,7 @@ pragma solidity ^0.8.19;
  * - Round 2 to Round 3
  * - Round 3 to Round 4
  */
-contract MarchMadness {
+contract OnchainMadness {
     /** CONSTANTS **/
     bytes32 public constant SOUTH = keccak256("SOUTH");
     bytes32 public constant WEST = keccak256("WEST");
@@ -93,7 +93,7 @@ contract MarchMadness {
     }
 
     /**
-     * @dev Initializes the MarchMadness contract with tournament year and game contract.
+     * @dev Initializes the OnchainMadness contract with tournament year and game contract.
      * @param _year The year of the tournament
      * @param _gameContract The address of the game contract that manages this tournament
      */
