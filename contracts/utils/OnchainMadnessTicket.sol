@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "../interfaces/IMarchMadnessFactory.sol";
+import "../interfaces/IOnchainMadnessFactory.sol";
 import "../interfaces/IGamesHub.sol";
 
 interface IERC20 {
@@ -127,7 +127,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param bets The array of bets for the game.
      */
     function safeMint(uint256 _gameYear, uint8[63] memory bets) public {
-        IMarchMadnessFactory madnessContract = IMarchMadnessFactory(
+        IOnchainMadnessFactory madnessContract = IOnchainMadnessFactory(
             gamesHub.games(keccak256("MM_DEPLOYER"))
         );
         require(!madnessContract.paused(), "Game paused.");
@@ -162,7 +162,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _tokenId The ID of the ticket to claim tokens from.
      */
     function claimTokens(uint256 _tokenId) public nonReentrant {
-        IMarchMadnessFactory madnessContract = IMarchMadnessFactory(
+        IOnchainMadnessFactory madnessContract = IOnchainMadnessFactory(
             gamesHub.games(keccak256("MM_DEPLOYER"))
         );
         require(!madnessContract.paused(), "Game paused.");
@@ -266,8 +266,8 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      */
     function tokenURI(
         uint256 _tokenId
-    ) public view override returns (string memory) {
-        require(_exists(_tokenId), "Token not minted.");
+    ) public view virtual override returns (string memory) {
+        require(ownerOf(_tokenId) != address(0), "ERC721: invalid token ID");
 
         INftMetadata nftMetadata = INftMetadata(
             gamesHub.helpers(keccak256("MM_METADATA"))
@@ -304,7 +304,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory) {
         uint8[63] memory bets = nftBet[_tokenId];
-        uint8[63] memory results = IMarchMadnessFactory(
+        uint8[63] memory results = IOnchainMadnessFactory(
             gamesHub.games(keccak256("MM_DEPLOYER"))
         ).getFinalResult(
             tokenToGameYear[_tokenId]
@@ -328,7 +328,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function getTeamSymbols(
         uint256 _tokenId
     ) public view returns (string[63] memory) {
-        return IMarchMadnessFactory(
+        return IOnchainMadnessFactory(
             gamesHub.games(keccak256("MM_DEPLOYER"))
         ).getTeamSymbols(
                 tokenToGameYear[_tokenId],
@@ -345,7 +345,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function amountPrizeClaimed(
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
-        IMarchMadnessFactory madnessContract = IMarchMadnessFactory(
+        IOnchainMadnessFactory madnessContract = IOnchainMadnessFactory(
             gamesHub.games(keccak256("MM_DEPLOYER"))
         );
         return (
