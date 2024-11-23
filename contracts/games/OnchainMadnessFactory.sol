@@ -28,7 +28,7 @@ contract OnchainMadnessFactory is Ownable {
     address public immutable implementation;
     address public executor;
     bool public paused = false;
-
+    mapping(bytes32 => address) private _contracts;
     mapping(uint256 => address) public tournaments;
 
     constructor(address _implementation, address _executor) Ownable(msg.sender) {
@@ -41,6 +41,11 @@ contract OnchainMadnessFactory is Ownable {
         _;
     }
 
+    /**
+     * @dev Creates a new OnchainMadness contract for a specific year using the clone pattern.
+     * @param year The year of the tournament to create
+     * @return The address of the newly created OnchainMadness contract
+     */
     function createOnchainMadness(
         uint256 year
     ) public onlyExecutor returns (address) {
@@ -266,6 +271,24 @@ contract OnchainMadnessFactory is Ownable {
     }
 
     /**
+     * @dev Sets a contract address for a given name in the contracts mapping.
+     * @param _name The name identifier for the contract
+     * @param _contract The address of the contract to set
+     */
+    function setContract(string memory _name, address _contract) external onlyOwner {
+        _contracts[keccak256(bytes(_name))] = _contract;
+    }
+
+    /**
+     * @dev Retrieves a contract address by its name from the contracts mapping.
+     * @param _name The name identifier of the contract
+     * @return The address of the requested contract
+     */
+    function contracts(string memory _name) public view returns (address) {
+        return _contracts[keccak256(bytes(_name))];
+    }
+
+    /**
      * @dev Get the data for a specific region.
      * * Region Data (encoded): string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
      * * Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
@@ -347,12 +370,23 @@ contract OnchainMadnessFactory is Ownable {
         return allTeams;
     }
 
+    /**
+     * @dev Retrieves the final result array of winner IDs for all matches in a tournament.
+     * @param year The year of the tournament
+     * @return An array of 63 winner IDs representing all match results
+     */
     function getFinalResult(
         uint256 year
     ) public view returns (uint8[63] memory) {
         return OnchainMadness(tournaments[year]).getFinalResult();
     }
 
+    /**
+     * @dev Converts an array of team IDs to their corresponding team symbols/names.
+     * @param year The year of the tournament
+     * @param teamIds Array of team IDs to convert
+     * @return Array of team symbols/names corresponding to the input IDs
+     */
     function getTeamSymbols(
         uint256 year,
         uint8[63] memory teamIds

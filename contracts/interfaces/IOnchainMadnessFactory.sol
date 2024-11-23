@@ -16,4 +16,6 @@ interface IOnchainMadnessFactory {
     ) external view returns (string[63] memory);
 
     function paused() external view returns (bool);
+
+    function contracts(string memory _name) external view returns (address);
 }

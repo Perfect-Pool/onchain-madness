@@ -4,22 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
-import "../interfaces/IGamesHub.sol";
-
-interface IERC20 {
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    function transfer(
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    function decimals() external view returns (uint8);
-}
+import "../interfaces/IERC20.sol";
 
 interface INftMetadata {
     function buildMetadata(
@@ -28,97 +13,104 @@ interface INftMetadata {
     ) external view returns (string memory);
 }
 
+interface IPerfectPool {
+    function increasePool(
+        uint256 amountUSDC,
+        uint8[] calldata percentage,
+        address[] calldata receivers
+    ) external;
+
+    function balanceOf(address account) external view returns (uint256);
+
+    function transfer(
+        address recipient,
+        uint256 amount
+    ) external returns (bool);
+
+    function perfectPrize(uint256 year, address gameContract) external;
+
+    function increaseWinnersQty(uint256 year) external;
+}
+
 contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     event BetPlaced(
         address indexed _player,
         uint256 indexed _gameYear,
-        uint256 indexed _tokenId,
-        bytes32 _betCode
+        uint256 indexed _tokenId
     );
     event GamePotPlaced(uint256 indexed _gameYear, uint256 _pot);
-    event GamePotDismissed(uint256 indexed _gameYear);
-    event NoWinners(uint256 indexed _gameYear);
+    event GamePotIncreased(uint256 indexed _gameYear, uint256 _amount);
     event PrizeClaimed(uint256 indexed _tokenId, uint256 _amount);
     event PriceChanged(uint256 _newPrice);
-    event ProtocolFeeChanged(uint8 _newFee);
 
     uint256 private _nextTokenId;
-    IGamesHub public gamesHub;
-    IERC20 public token;
-
-    uint256 public jackpot;
+    uint256 public poolNumber;
     uint256 public price;
-    uint8 public protocolFee = 100;
+    address public nftDeployer;
+    address public creator;
+    bool public isPrivatePool;
+    bool public isProtocolPool;
+    bytes32 private pin;
+
+    IOnchainMadnessFactory public gameDeployer;
+    IPerfectPool private perfectPool;
+    IERC20 private USDC;
+    struct Game {
+        uint256 pot;
+        uint256 maxScore;
+        uint256 potClaimed;
+        bool claimEnabled;
+        mapping(uint256 => uint256) scoreBetQty;
+        uint256[] tokens; // Array to store all token IDs for this game
+        uint256 tokensIterationIndex; // Index to track iteration progress
+    }
+
+    mapping(uint256 => Game) private games;
 
     mapping(uint256 => uint256) private tokenToGameYear;
     mapping(uint256 => uint8[63]) private nftBet;
     mapping(bytes32 => uint256[]) private betCodeToTokenIds;
-    mapping(bytes32 => uint256) private betQty;
-    mapping(bytes32 => uint256) private gamePot;
-    mapping(uint256 => uint256) private gameYearPot;
-    mapping(bytes32 => uint256) private gamePotClaimed;
-    mapping(uint256 => uint256) private gameAllBets;
     mapping(uint256 => uint256) private tokenClaimed;
+    mapping(address => uint256) public ppShare;
 
-    modifier onlyAdmin() {
-        require(
-            gamesHub.checkRole(gamesHub.ADMIN_ROLE(), msg.sender),
-            "Caller is not admin"
-        );
+    modifier onlyNftDeployer() {
+        require(msg.sender == nftDeployer, "Caller is not nft deployer");
         _;
     }
 
-    modifier onlyGameContract() {
-        require(
-            msg.sender == gamesHub.games(keccak256("MM_DEPLOYER")),
-            "Caller is not game contract"
-        );
-        _;
-    }
-
-    constructor(address _gamesHub) ERC721("OnchainMadnessTicket", "OMT") {
-        gamesHub = IGamesHub(_gamesHub);
-        token = IERC20(gamesHub.helpers(keccak256("TOKEN")));
-
+    constructor() ERC721("OnchainMadnessTicket", "OMT") {
         _nextTokenId = 1;
-        jackpot = 0;
-        price = 10 * 10 ** token.decimals();
+        price = 10 * 10 ** USDC.decimals();
     }
 
-    /**
-     * @dev Change the token and the price of the ticket. Only callable by the admin.
-     * @param _token The address of the new token contract.
-     * @param _newPrice The new price of the ticket.
-     */
-    function changeToken(address _token, uint256 _newPrice) public onlyAdmin {
-        token = IERC20(_token);
-        price = _newPrice;
+    function initialize(
+        address _nftDeployer,
+        address _gameDeployer,
+        address _token,
+        uint256 _poolNumber,
+        address _creator,
+        bool _isProtocolPool,
+        bool _isPrivatePool,
+        string calldata _pin
+    ) public {
+        gameDeployer = IOnchainMadnessFactory(_gameDeployer);
+        USDC = IERC20(_token);
+        poolNumber = _poolNumber;
+        nftDeployer = _nftDeployer;
+        creator = _creator;
+        isProtocolPool = _isProtocolPool;
+        isPrivatePool = _isPrivatePool;
+        pin = keccak256(abi.encodePacked(_pin));
+        perfectPool = IPerfectPool(gameDeployer.contracts("PERFECTPOOL"));
     }
 
     /**
      * @dev Change the price of the ticket. Only callable by the admin.
      * @param _newPrice The new price of the ticket.
      */
-    function changePrice(uint256 _newPrice) public onlyAdmin {
+    function changePrice(uint256 _newPrice) external onlyNftDeployer {
         price = _newPrice;
         emit PriceChanged(_newPrice);
-    }
-
-    /**
-     * @dev Change the protocol fee. Only callable by the admin.
-     * @param _newFee The new protocol fee.
-     */
-    function changeProtocolFee(uint8 _newFee) public onlyAdmin {
-        protocolFee = _newFee;
-        emit ProtocolFeeChanged(_newFee);
-    }
-
-    /**
-     * @dev Change the GamesHub contract address. Only callable by the admin.
-     * @param _gamesHub The address of the new GamesHub contract.
-     */
-    function changeGamesHub(address _gamesHub) public onlyAdmin {
-        gamesHub = IGamesHub(_gamesHub);
     }
 
     /**
@@ -126,137 +118,165 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _gameYear The ID of the game to bet on.
      * @param bets The array of bets for the game.
      */
-    function safeMint(uint256 _gameYear, uint8[63] memory bets) public {
-        IOnchainMadnessFactory madnessContract = IOnchainMadnessFactory(
-            gamesHub.games(keccak256("MM_DEPLOYER"))
-        );
-        require(!madnessContract.paused(), "Game paused.");
-        
+    function safeMint(
+        address _player,
+        uint256 _gameYear,
+        uint8[63] memory bets,
+        string calldata _pin
+    ) external onlyNftDeployer {
+        require(!gameDeployer.paused(), "Game paused.");
+
         (, uint8 status) = abi.decode(
-            madnessContract.getGameStatus(_gameYear),
+            gameDeployer.getGameStatus(_gameYear),
             (uint8, uint8)
         );
         require(status == 1, "Bets closed.");
+        USDC.transferFrom(_player, address(this), price);
 
-        uint256 _fee = (price * protocolFee) / 1000;
-        uint256 _gamePot = price - _fee;
-        token.transferFrom(msg.sender, address(this), _gamePot);
-        token.transfer(gamesHub.helpers(keccak256("TREASURY")), _fee);
+        if (isPrivatePool) {
+            require(keccak256(abi.encodePacked(_pin)) == pin, "Invalid pin.");
+        }
 
-        bytes32 betCode = keccak256(abi.encodePacked(_gameYear, bets));
-        gamePot[betCode] += _gamePot;
-        gameYearPot[_gameYear] += _gamePot;
+        //pool Slice is 10% of the price
+        uint256 poolSlice = price / 10;
+        uint256 _gamePot = price - poolSlice;
+
+        uint8[] memory percentages = new uint8[](1);
+        percentages[0] = 100;
+
+        address[] memory recipients = new address[](1);
+        recipients[0] = address(this);
+
+        USDC.approve(address(perfectPool), poolSlice);
+        uint256 balanceBefore = perfectPool.balanceOf(address(this));
+        perfectPool.increasePool(poolSlice, percentages, recipients);
+
+        uint256 shareAmount = perfectPool.balanceOf(address(this)) -
+            balanceBefore;
+
+        ppShare[gameDeployer.contracts("TREASURY")] += (shareAmount / 2);
+        ppShare[isProtocolPool ? _player : creator] += (shareAmount -
+            (shareAmount / 2));
+
+        games[_gameYear].pot += _gamePot;
         tokenToGameYear[_nextTokenId] = _gameYear;
         nftBet[_nextTokenId] = bets;
-        betQty[betCode]++;
-        gameAllBets[_gameYear]++;
-        betCodeToTokenIds[betCode].push(_nextTokenId);
 
-        _safeMint(msg.sender, _nextTokenId);
-        emit BetPlaced(msg.sender, _gameYear, _nextTokenId, betCode);
+        // Add token to game's token array
+        games[_gameYear].tokens.push(_nextTokenId);
+
+        _safeMint(_player, _nextTokenId);
+        emit BetPlaced(_player, _gameYear, _nextTokenId);
         _nextTokenId++;
+    }
+
+    /**
+     * @dev Iterates through the next token in a game year, updating score statistics
+     * @param _gameYear The year of the game to iterate
+     * @return success Whether there are more tokens to iterate
+     * @return score The score of the current token
+     */
+    function iterateNextToken(
+        uint256 _gameYear
+    ) external onlyNftDeployer returns (bool success, uint8 score) {
+        Game storage game = games[_gameYear];
+
+        // Check if we have finished iterating all tokens
+        if (game.tokensIterationIndex >= game.tokens.length) {
+            return (false, 0);
+        }
+
+        // Get the current token ID and validate its bets
+        uint256 currentTokenId = game.tokens[game.tokensIterationIndex];
+        (, score) = betValidator(currentTokenId);
+
+        // Update score statistics
+        game.scoreBetQty[score]++;
+
+        // Update max score if this is higher
+        if (score > game.maxScore) {
+            game.maxScore = score;
+        }
+
+        if (score == 64) {
+            perfectPool.increaseWinnersQty(_gameYear);
+        }
+
+        // Move to next token
+        game.tokensIterationIndex++;
+
+        // Check if we have finished iterating all tokens and activates claim
+        if (game.tokensIterationIndex >= game.tokens.length) {
+            game.claimEnabled = true;
+        }
+
+        return (true, score);
     }
 
     /**
      * @dev Claim the tokens won by a ticket. Only callable by the owner of the ticket.
      * @param _tokenId The ID of the ticket to claim tokens from.
      */
-    function claimTokens(uint256 _tokenId) public nonReentrant {
-        IOnchainMadnessFactory madnessContract = IOnchainMadnessFactory(
-            gamesHub.games(keccak256("MM_DEPLOYER"))
-        );
-        require(!madnessContract.paused(), "Game paused.");
+    function claimPrize(address _player, uint256 _tokenId) external nonReentrant onlyNftDeployer {
+        require(!gameDeployer.paused(), "Game paused.");
         require(tokenClaimed[_tokenId] == 0, "Tokens already claimed.");
+        require(
+            games[tokenToGameYear[_tokenId]].claimEnabled,
+            "Game not finished."
+        );
 
         (, uint8 status) = abi.decode(
-            madnessContract.getGameStatus(tokenToGameYear[_tokenId]),
+            gameDeployer.getGameStatus(tokenToGameYear[_tokenId]),
             (uint8, uint8)
         );
         require(status == 3, "Game not finished.");
 
         uint256 _gameYear = tokenToGameYear[_tokenId];
-        bytes32 betCode = keccak256(
-            abi.encodePacked(
-                _gameYear,
-                madnessContract.getFinalResult(_gameYear)
-            )
-        );
+        (, uint8 tokenScore) = betValidator(_tokenId);
 
-        require(betQty[betCode] > 0, "No winners.");
         require(
-            gamePotClaimed[betCode] < gamePot[betCode],
-            "Game pot dismissed."
+            games[_gameYear].maxScore != tokenScore,
+            "You are not a winner"
         );
 
-        uint256 amount = gamePot[betCode] / betQty[betCode];
-        uint256 availableClaim = gamePot[betCode] - gamePotClaimed[betCode];
+        uint256 amount = games[_gameYear].pot /
+            games[_gameYear].scoreBetQty[tokenScore];
+        uint256 availableClaim = games[_gameYear].pot -
+            games[_gameYear].potClaimed;
 
         // This is to avoid rounding errors that could leave some tokens unclaimed
         if (availableClaim < amount) {
             amount = availableClaim;
         }
 
-        gamePotClaimed[betCode] += amount;
-        token.transfer(msg.sender, amount);
+        games[_gameYear].potClaimed += amount;
+        USDC.transfer(_player, amount);
         tokenClaimed[_tokenId] = amount;
 
         emit PrizeClaimed(_tokenId, amount);
     }
 
     /**
-     * @dev Set the game pot for a specific game. Only callable by the game contract.
-     * @param _gameYear The ID of the game to set the pot for.
-     * @param betCode The bet code for the game.
+     * @dev Claim the ppShare tokens owned by the caller. Only callable by the caller itself
      */
-    function setGamePot(
-        uint256 _gameYear,
-        bytes32 betCode
-    ) public onlyGameContract {
-        if (betQty[betCode] > 0) {
-            gamePot[betCode] += jackpot;
-            jackpot = 0;
-            emit GamePotPlaced(_gameYear, gamePot[betCode]);
-            return;
-        }
-        jackpot += gamePot[betCode];
-        gamePot[betCode] = 0;
-        emit NoWinners(_gameYear);
-    }
-
-    /**
-     * @dev Dismiss the game pot for a specific game. Only callable by the game contract.
-     * @param _gameYear The ID of the game to dismiss the pot for.
-     */
-    function dismissGamePot(
-        uint256 _gameYear,
-        bytes32 betCode
-    ) public onlyGameContract {
-        uint256 availableClaim = gamePot[betCode] - gamePotClaimed[betCode];
-        if (availableClaim == 0) {
-            return;
-        }
-
-        uint256 protocolSlice = availableClaim / 2;
-        if (protocolSlice > 0) {
-            token.transfer(
-                gamesHub.helpers(keccak256("TREASURY")),
-                protocolSlice
-            );
-        }
-
-        jackpot += (availableClaim - protocolSlice);
-        gamePotClaimed[betCode] = gamePot[betCode];
-
-        emit GamePotDismissed(_gameYear);
+    function claimPPShare(address _player) external onlyNftDeployer{
+        require(ppShare[_player] > 0, "No ppShare tokens to claim.");
+        perfectPool.transfer(_player, ppShare[_player]);
+        ppShare[_player] = 0;
     }
 
     /**
      * @dev Increase the pot by a certain amount. Only callable by the admin.
+     * @param _gameYear The ID of the game to set the pot for.
      * @param _amount The amount to increase the pot by.
      */
-    function increaseJackpot(uint256 _amount) public onlyAdmin {
-        token.transferFrom(msg.sender, address(this), _amount);
-        jackpot += _amount;
+    function increaseGamePot(
+        uint256 _gameYear,
+        uint256 _amount
+    ) public {
+        USDC.transferFrom(msg.sender, address(this), _amount);
+        games[_gameYear].pot += _amount;
+        emit GamePotIncreased(_gameYear, _amount);
     }
 
     /**
@@ -270,7 +290,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         require(ownerOf(_tokenId) != address(0), "ERC721: invalid token ID");
 
         INftMetadata nftMetadata = INftMetadata(
-            gamesHub.helpers(keccak256("MM_METADATA"))
+            gameDeployer.contracts("MM_METADATA")
         );
         return nftMetadata.buildMetadata(tokenToGameYear[_tokenId], _tokenId);
     }
@@ -298,27 +318,28 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     /**
      * @dev Validate the bets for a specific token.
      * @param _tokenId The ID of the token.
-     * @return The array of validation results for the bets.
+     * @return validator The array of validation results for the bets.
+     * @return points The number of points won by the player
      */
     function betValidator(
         uint256 _tokenId
-    ) public view returns (uint8[63] memory) {
+    ) public view returns (uint8[63] memory validator, uint8 points) {
         uint8[63] memory bets = nftBet[_tokenId];
-        uint8[63] memory results = IOnchainMadnessFactory(
-            gamesHub.games(keccak256("MM_DEPLOYER"))
-        ).getFinalResult(
-            tokenToGameYear[_tokenId]
-        );
-        uint8[63] memory validator;
+        uint8[63] memory results = gameDeployer.getFinalResult(tokenToGameYear[_tokenId]);
 
         for (uint256 i = 0; i < 63; i++) {
             if (results[i] == 0) {
                 validator[i] = 0;
             } else {
-                validator[i] = bets[i] == results[i] ? 1 : 2;
+                if (bets[i] == results[i]) {
+                    points++;
+                    validator[i] = 1;
+                } else {
+                    validator[i] = 2;
+                }
             }
         }
-        return validator;
+        return (validator, points);
     }
 
     /**
@@ -328,12 +349,8 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function getTeamSymbols(
         uint256 _tokenId
     ) public view returns (string[63] memory) {
-        return IOnchainMadnessFactory(
-            gamesHub.games(keccak256("MM_DEPLOYER"))
-        ).getTeamSymbols(
-                tokenToGameYear[_tokenId],
-                nftBet[_tokenId]
-            );
+        return
+            gameDeployer.getTeamSymbols(tokenToGameYear[_tokenId], nftBet[_tokenId]);
     }
 
     /**
@@ -345,42 +362,22 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function amountPrizeClaimed(
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
-        IOnchainMadnessFactory madnessContract = IOnchainMadnessFactory(
-            gamesHub.games(keccak256("MM_DEPLOYER"))
-        );
+        uint256 _gameYear = tokenToGameYear[_tokenId];
+        (, uint8 score) = betValidator(_tokenId);
         return (
-            gamePot[
-                keccak256(
-                    abi.encodePacked(
-                        tokenToGameYear[_tokenId],
-                        madnessContract.getFinalResult(
-                            tokenToGameYear[_tokenId]
-                        )
-                    )
-                )
-            ] /
-                betQty[
-                    keccak256(
-                        abi.encodePacked(
-                            tokenToGameYear[_tokenId],
-                            madnessContract.getFinalResult(
-                                tokenToGameYear[_tokenId]
-                            )
-                        )
-                    )
-                ],
+            games[_gameYear].pot / games[_gameYear].scoreBetQty[score],
             tokenClaimed[_tokenId]
         );
     }
 
     /**
-     * #dev Get the potential payout for a specific game.
+     * @dev Get the potential payout for a specific game.
      * @param gameYear The ID of the game
      */
     function potentialPayout(
         uint256 gameYear
     ) public view returns (uint256 payout) {
-        return jackpot + gameYearPot[gameYear];
+        return games[gameYear].pot;
     }
 
     /**
@@ -390,7 +387,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function playerQuantity(
         uint256 gameYear
     ) public view returns (uint256 players) {
-        return gameAllBets[gameYear];
+        return games[gameYear].tokens.length;
     }
 
     /**

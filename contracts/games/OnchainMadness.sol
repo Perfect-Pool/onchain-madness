@@ -467,8 +467,8 @@ contract OnchainMadness {
     /**
      * @dev Records the result of the championship match and completes the tournament.
      * @param winner The name of the winning team
-     * @param homePoints Points scored by home team
-     * @param awayPoints Points scored by away team
+     * @param homePoints Points scored by the home team
+     * @param awayPoints Points scored by the away team
      */
     function determineChampion(
         string memory winner,
@@ -624,8 +624,8 @@ contract OnchainMadness {
     }
 
     /**
-     * @dev Build a single array of all winners IDs for all regions, in the order: East, South, West, Midwest and the Final Four
-     * @return The full array of winners IDs.
+     * @dev Gets the winners of all matches in the tournament.
+     * @return An array of 63 winner IDs representing the winners of all matches in order
      */
     function getFinalResult() public view returns (uint8[63] memory) {
         uint8[63] memory winners;

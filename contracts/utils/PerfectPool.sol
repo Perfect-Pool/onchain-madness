@@ -23,15 +23,18 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     bool public definitiveLockMint;
 
     uint256 public totalUSDCDeposited;
-    uint8 public constant PERFECT_RESULT_PERCENTAGE = 100;
+    uint256 public withdrawalBlockedTimestamp;
 
     mapping(address => bool) public authorizedMinters;
     mapping(address => bool) public onchainMadnessContracts;
+    mapping(uint256 => uint256) public yearToWinnersQty;
+    mapping(uint256 => uint256) public yearToPrize;
 
     event PoolIncreased(uint256 amountUSDC, uint256 tokensMinted);
     event TokensBurned(address indexed burner, uint256 amount);
     event USDCWithdrawn(address indexed user, uint256 amount);
     event PerfectPrizeAwarded(address winner, uint256 amount);
+    event WinnersQtyIncreased(uint256 year, uint256 qty);
 
     /**
      * @dev Initializes the PerfectPool token with USDC integration
@@ -104,6 +107,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      */
     function withdraw(uint256 amount) external nonReentrant {
         require(!lockWithdrawal, "Withdrawals are locked");
+        require(withdrawalBlockedTimestamp < block.timestamp, "Only the game winner can withdraw for now.");
         require(amount > 0, "Amount must be greater than 0");
         require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
@@ -134,20 +138,56 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Awards the perfect prize to an Onchain Madness winner
-     * @dev Transfers a predefined percentage of USDC to the winning address
-     * @param winner Address of the Onchain Madness winner receiving the prize
+     * @notice Increases the total number of winners for a specific year
+     * @dev Only callable by the game contract
+     * @param year The year of the Onchain Madness game
      */
-    function perfectPrize(address winner) external nonReentrant {
+    function increaseWinnersQty(uint256 year) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
-        require(winner != address(0), "Invalid winner address");
+        yearToWinnersQty[year]++;
 
-        uint256 prizeAmount = (USDC.balanceOf(address(this)) *
-            PERFECT_RESULT_PERCENTAGE) / 100;
-        require(USDC.transfer(winner, prizeAmount), "USDC transfer failed");
+        emit WinnersQtyIncreased(year, yearToWinnersQty[year]);
+    }
+
+    /**
+     * @notice Reset data for a specific year, when it not time locked. To initalize a new season of games.
+     * @dev Only callable by the game contract
+     * @param year The year of the Onchain Madness game
+     */
+    function resetData(uint256 year) external nonReentrant {
+        require(onchainMadnessContracts[msg.sender], "Not authorized");
+        require(withdrawalBlockedTimestamp < block.timestamp, "Not all game winners have withdrawn.");
+
+        yearToWinnersQty[year] = 0;
+        yearToPrize[year] = 0;
+    }
+
+    /**
+     * @notice Awards the perfect prize to an Onchain Madness game contract
+     * @dev Transfers a predefined percentage of USDC to the winning contract
+     * @param year The year of the Onchain Madness game
+     * @param gameContract The address of the Onchain Madness contract
+     */
+    function perfectPrize(uint256 year, address gameContract) external nonReentrant {
+        require(onchainMadnessContracts[msg.sender], "Not authorized");
+        require(yearToWinnersQty[year] > 0, "No winners");
+
+        // if the prize has not been claimed yet
+        if(yearToPrize[year] == 0) {
+            yearToPrize[year] = USDC.balanceOf(address(this));
+        }
+
+        uint256 prizeAmount = yearToPrize[year] / yearToWinnersQty[year];
+
+        // if there is not enough USDC in the contract
+        if(USDC.balanceOf(address(this)) < prizeAmount) {
+            prizeAmount = USDC.balanceOf(address(this));
+        }
+        
+        require(USDC.transfer(gameContract, prizeAmount), "USDC transfer failed");
 
         totalUSDCDeposited -= prizeAmount;
-        emit PerfectPrizeAwarded(winner, prizeAmount);
+        emit PerfectPrizeAwarded(gameContract, prizeAmount);
     }
 
     /**
