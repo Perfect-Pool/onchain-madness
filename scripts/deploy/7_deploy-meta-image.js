@@ -18,9 +18,17 @@ async function main() {
     );
   }
 
-  const name = "MM_IMAGE";
+  const OnchainMadnessFactory = await ethers.getContractAt(
+    "OnchainMadnessFactory",
+    networkData.OM_DEPLOYER
+  );
+  console.log(
+    `OnchainMadnessFactory loaded at ${OnchainMadnessFactory.address}`
+  );
 
-  if (networkData.MM_IMAGE === "") {
+  const name = "OM_IMAGE";
+
+  if (networkData.OM_IMAGE === "") {
     console.log("Deploying NftImage...");
     // Linking BuildImage library
     const NftImage = await ethers.getContractFactory("NftImage", {
@@ -29,15 +37,26 @@ async function main() {
       },
     });
     const nftImage = await NftImage.deploy(
-      
+      networkData.OM_DEPLOYER
     );
     await nftImage.deployed();
     console.log(`NftImage deployed at ${nftImage.address}`);
 
-    networkData.MM_IMAGE = nftImage.address;
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+
+    console.log(
+      `Setting NftImage address to OnchainMadnessFactory...`
+    );
+    await OnchainMadnessFactory.setContract(
+      name,
+      nftImage.address
+    );
+
+    networkData.OM_IMAGE = nftImage.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
+
   } else {
-    console.log(`NftImage already deployed at ${networkData.MM_IMAGE}`);
+    console.log(`NftImage already deployed at ${networkData.OM_IMAGE}`);
   }
 }
 

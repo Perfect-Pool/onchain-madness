@@ -10,41 +10,41 @@ async function main() {
 
   console.log(`Executor Address: ${networkData.Executor}`);
 
-  if (networkData.MM_BASE === "") {
-    console.log(`Deploying MarchMadness...`);
-    const MarchMadness = await ethers.getContractFactory("MarchMadness");
-    const marchMadness = await MarchMadness.deploy();
-    await marchMadness.deployed();
+  if (networkData.OM_BASE === "") {
+    console.log(`Deploying OnchainMadness...`);
+    const OnchainMadness = await ethers.getContractFactory("OnchainMadness");
+    const onchainMadness = await OnchainMadness.deploy();
+    await onchainMadness.deployed();
 
-    console.log(`MarchMadness deployed at ${marchMadness.address}`);
-    networkData.MM_BASE = marchMadness.address;
+    console.log(`OnchainMadness deployed at ${onchainMadness.address}`);
+    networkData.OM_BASE = onchainMadness.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
   } else {
-    console.log(`MarchMadness already deployed at ${networkData.MM_BASE}`);
+    console.log(`OnchainMadness already deployed at ${networkData.OM_BASE}`);
   }
 
-  //MM_DEPLOYER
-  if (networkData.MM_DEPLOYER === "") {
-    console.log(`Deploying MarchMadnessFactory...`);
-    const MarchMadnessFactory = await ethers.getContractFactory(
-      "MarchMadnessFactory"
+  //OM_DEPLOYER
+  if (networkData.OM_DEPLOYER === "") {
+    console.log(`Deploying OnchainMadnessFactory...`);
+    const OnchainMadnessFactory = await ethers.getContractFactory(
+      "OnchainMadnessFactory"
     );
-    const marchMadnessFactory = await MarchMadnessFactory.deploy(
-      networkData.MM_BASE,
+    const onchainMadnessFactory = await OnchainMadnessFactory.deploy(
+      networkData.OM_BASE,
       networkData.Executor
     );
-    await marchMadnessFactory.deployed();
+    await onchainMadnessFactory.deployed();
 
     console.log(
-      `MarchMadnessFactory deployed at ${marchMadnessFactory.address}`
+      `OnchainMadnessFactory deployed at ${onchainMadnessFactory.address}`
     );
-    networkData.MM_DEPLOYER = marchMadnessFactory.address;
+    networkData.OM_DEPLOYER = onchainMadnessFactory.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
   } else {
     console.log(
-      `MarchMadnessFactory already deployed at ${networkData.MM_DEPLOYER}`
+      `OnchainMadnessFactory already deployed at ${networkData.OM_DEPLOYER}`
     );
   }
 }

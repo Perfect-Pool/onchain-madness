@@ -70,6 +70,20 @@ async function main() {
       "DinamicData": contracts[networkName].Libraries.DinamicData,
     }
   });
+
+  const addressOnchainMadnessLib = contracts[networkName].Libraries.OnchainMadnessLib;
+  if (!addressOnchainMadnessLib) {
+    console.error("OnchainMadnessLib address not found in contracts.json");
+    process.exit(1);
+  }
+
+  console.log("Verifying OnchainMadnessLib at address", addressOnchainMadnessLib);
+
+  await hre.run("verify:verify", {
+    address: addressOnchainMadnessLib,
+    constructorArguments: [],
+    contract: "contracts/libraries/OnchainMadnessLib.sol:OnchainMadnessLib",
+  });
 }
 
 main()

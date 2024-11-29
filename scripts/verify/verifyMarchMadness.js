@@ -4,35 +4,35 @@ async function main() {
   const contracts = require("../../contracts.json");
   const networkName = hre.network.name;
 
-  const address = contracts[networkName]["MM_BASE"];
+  const address = contracts[networkName]["OM_BASE"];
   if (!address) {
-    console.error("MarchMadness address not found in contracts.json");
+    console.error("OnchainMadness address not found in contracts.json");
     process.exit(1);
   }
 
-  console.log("Verifying MarchMadness at address", address);
+  console.log("Verifying OnchainMadness at address", address);
 
   await hre.run("verify:verify", {
     address: address,
     constructorArguments: [],
-    contract: "contracts/games/MarchMadness.sol:MarchMadness",
+    contract: "contracts/games/OnchainMadness.sol:OnchainMadness",
   });
 
-  const addressDeployer = contracts[networkName]["MM_DEPLOYER"];
+  const addressDeployer = contracts[networkName]["OM_DEPLOYER"];
   if (!addressDeployer) {
-    console.error("MarchMadnessFactory address not found in contracts.json");
+    console.error("OnchainMadnessFactory address not found in contracts.json");
     process.exit(1);
   }
 
-  console.log("Verifying MarchMadnessFactory at address", addressDeployer);
+  console.log("Verifying OnchainMadnessFactory at address", addressDeployer);
 
   await hre.run("verify:verify", {
     address: addressDeployer,
     constructorArguments: [
-      contracts[networkName]["MM_BASE"],
+      contracts[networkName]["OM_BASE"],
       contracts[networkName]["Executor"],
     ],
-    contract: "contracts/games/MarchMadnessFactory.sol:MarchMadnessFactory",
+    contract: "contracts/games/OnchainMadnessFactory.sol:OnchainMadnessFactory",
   });
 }
 

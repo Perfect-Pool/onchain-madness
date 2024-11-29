@@ -4,15 +4,34 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
+import "../interfaces/ITicketStorage.sol";
 import "../interfaces/IERC20.sol";
+import "../libraries/OnchainMadnessLib.sol";
 
+/**
+ * @title IOnchainMadnessTicketFactory
+ * @dev Interface for the ticket factory to manage pool IDs
+ */
+interface IOnchainMadnessTicketFactory {
+    function getPoolId(address _gameContract) external view returns (uint256);
+}
+
+/**
+ * @title INftMetadata
+ * @dev Interface for generating NFT metadata
+ */
 interface INftMetadata {
     function buildMetadata(
+        uint256 _poolId,
         uint256 _gameYear,
         uint256 _tokenId
     ) external view returns (string memory);
 }
 
+/**
+ * @title IPerfectPool
+ * @dev Interface for interacting with the PerfectPool contract
+ */
 interface IPerfectPool {
     function increasePool(
         uint256 amountUSDC,
@@ -30,100 +49,127 @@ interface IPerfectPool {
     function perfectPrize(uint256 year, address gameContract) external;
 
     function increaseWinnersQty(uint256 year) external;
+
+    function setAuthorizedMinter(
+        address minter,
+        bool authorized
+    ) external;
+
+    function setOnchainMadnessContract(
+        address contractAddress,
+        bool authorized
+    ) external;
 }
 
+/**
+ * @title OnchainMadnessTicket
+ * @author PerfectPool Team
+ * @notice NFT contract representing tournament bracket predictions
+ * @dev Implementation contract to be cloned by OnchainMadnessTicketFactory
+ * Features:
+ * - ERC721 NFT representing bracket predictions
+ * - Integration with PerfectPool for prize distribution
+ * - Bracket validation and scoring system
+ * - Support for private and protocol pools
+ * - Prize claiming mechanism
+ */
 contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
-    event BetPlaced(
-        address indexed _player,
-        uint256 indexed _gameYear,
-        uint256 indexed _tokenId
-    );
-    event GamePotPlaced(uint256 indexed _gameYear, uint256 _pot);
-    event GamePotIncreased(uint256 indexed _gameYear, uint256 _amount);
-    event PrizeClaimed(uint256 indexed _tokenId, uint256 _amount);
-    event PriceChanged(uint256 _newPrice);
-
+    /** STATE VARIABLES **/
+    /// @dev Counter for token IDs
     uint256 private _nextTokenId;
-    uint256 public poolNumber;
-    uint256 public price;
+    /// @dev Fixed price in USDC for minting a ticket (20 USDC)
+    uint256 public immutable price;
+    /// @dev Unique identifier for this pool
+    uint256 public poolId;
+    /// @dev Address of the factory that deployed this contract
     address public nftDeployer;
+    /// @dev Address of the pool creator
     address public creator;
+    /// @dev If true, requires PIN for minting
     bool public isPrivatePool;
+    /// @dev If true, shares go to players instead of creator
     bool public isProtocolPool;
+    /// @dev Hash of the PIN for private pools
     bytes32 private pin;
 
+    /// @dev Reference to the game factory contract
     IOnchainMadnessFactory public gameDeployer;
+    /// @dev Reference to the PerfectPool contract
     IPerfectPool private perfectPool;
-    IERC20 private USDC;
-    struct Game {
-        uint256 pot;
-        uint256 maxScore;
-        uint256 potClaimed;
-        bool claimEnabled;
-        mapping(uint256 => uint256) scoreBetQty;
-        uint256[] tokens; // Array to store all token IDs for this game
-        uint256 tokensIterationIndex; // Index to track iteration progress
-    }
+    /// @dev Reference to the USDC token contract
+    IERC20 private immutable USDC;
+    /// @dev Reference to the ticket storage contract
+    ITicketStorage public ticketStorage;
 
-    mapping(uint256 => Game) private games;
-
-    mapping(uint256 => uint256) private tokenToGameYear;
-    mapping(uint256 => uint8[63]) private nftBet;
-    mapping(bytes32 => uint256[]) private betCodeToTokenIds;
-    mapping(uint256 => uint256) private tokenClaimed;
-    mapping(address => uint256) public ppShare;
-
+    /** MODIFIERS **/
+    /**
+     * @dev Ensures caller is the factory that deployed this contract
+     */
     modifier onlyNftDeployer() {
         require(msg.sender == nftDeployer, "Caller is not nft deployer");
         _;
     }
 
-    constructor() ERC721("OnchainMadnessTicket", "OMT") {
+    /**
+     * @notice Creates a new OnchainMadnessTicket contract
+     * @dev Sets up the NFT with USDC integration and fixed price
+     * @param _token Address of the USDC token contract
+     */
+    constructor(address _token) ERC721("OnchainMadnessTicket", "OMT") {
         _nextTokenId = 1;
-        price = 10 * 10 ** USDC.decimals();
+        USDC = IERC20(_token);
+        price = 20 * (10 ** USDC.decimals());
     }
 
+    /**
+     * @notice Initializes a cloned ticket contract
+     * @dev Sets up all contract references and pool configuration
+     * @param _nftDeployer Address of the factory contract
+     * @param _gameDeployer Address of the game factory
+     * @param _creator Address of the pool creator
+     * @param _isProtocolPool If true, shares go to players instead of creator
+     * @param _isPrivatePool If true, requires PIN for minting
+     * @param _pin PIN for private pools (empty for public pools)
+     */
     function initialize(
         address _nftDeployer,
         address _gameDeployer,
-        address _token,
-        uint256 _poolNumber,
         address _creator,
         bool _isProtocolPool,
         bool _isPrivatePool,
         string calldata _pin
     ) public {
         gameDeployer = IOnchainMadnessFactory(_gameDeployer);
-        USDC = IERC20(_token);
-        poolNumber = _poolNumber;
         nftDeployer = _nftDeployer;
         creator = _creator;
         isProtocolPool = _isProtocolPool;
         isPrivatePool = _isPrivatePool;
         pin = keccak256(abi.encodePacked(_pin));
         perfectPool = IPerfectPool(gameDeployer.contracts("PERFECTPOOL"));
+        poolId = IOnchainMadnessTicketFactory(_nftDeployer).getPoolId(
+            address(this)
+        );
+        ticketStorage = ITicketStorage(
+            gameDeployer.contracts("OM_TICKET_STORAGE")
+        );
+        ticketStorage.initialize(poolId);
     }
 
     /**
-     * @dev Change the price of the ticket. Only callable by the admin.
-     * @param _newPrice The new price of the ticket.
-     */
-    function changePrice(uint256 _newPrice) external onlyNftDeployer {
-        price = _newPrice;
-        emit PriceChanged(_newPrice);
-    }
-
-    /**
-     * @dev Mint a new ticket and place a bet.
-     * @param _gameYear The ID of the game to bet on.
-     * @param bets The array of bets for the game.
+     * @notice Mints a new ticket NFT with bracket predictions
+     * @dev Handles USDC payment, PerfectPool integration, and storage updates
+     * @param _player Address to receive the NFT
+     * @param _gameYear Tournament year for the predictions
+     * @param bets Array of 63 team selections representing the bracket
+     * @param _pin PIN for private pools (ignored for public pools)
+     * @return The ID of the newly minted token
      */
     function safeMint(
         address _player,
         uint256 _gameYear,
         uint8[63] memory bets,
         string calldata _pin
-    ) external onlyNftDeployer {
+    ) external onlyNftDeployer returns (uint256) {
         require(!gameDeployer.paused(), "Game paused.");
 
         (, uint8 status) = abi.decode(
@@ -137,267 +183,292 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
             require(keccak256(abi.encodePacked(_pin)) == pin, "Invalid pin.");
         }
 
-        //pool Slice is 10% of the price
-        uint256 poolSlice = price / 10;
-        uint256 _gamePot = price - poolSlice;
-
         uint8[] memory percentages = new uint8[](1);
         percentages[0] = 100;
 
         address[] memory recipients = new address[](1);
         recipients[0] = address(this);
 
-        USDC.approve(address(perfectPool), poolSlice);
+        USDC.approve(address(perfectPool), (price / 10));
         uint256 balanceBefore = perfectPool.balanceOf(address(this));
-        perfectPool.increasePool(poolSlice, percentages, recipients);
+        perfectPool.increasePool((price / 10), percentages, recipients);
 
-        uint256 shareAmount = perfectPool.balanceOf(address(this)) -
-            balanceBefore;
-
-        ppShare[gameDeployer.contracts("TREASURY")] += (shareAmount / 2);
-        ppShare[isProtocolPool ? _player : creator] += (shareAmount -
-            (shareAmount / 2));
-
-        games[_gameYear].pot += _gamePot;
-        tokenToGameYear[_nextTokenId] = _gameYear;
-        nftBet[_nextTokenId] = bets;
-
-        // Add token to game's token array
-        games[_gameYear].tokens.push(_nextTokenId);
+        ticketStorage.batchUpdateGameDataAndShares(
+            poolId,
+            _gameYear,
+            _nextTokenId,
+            (perfectPool.balanceOf(address(this)) - balanceBefore),
+            (isProtocolPool ? _player : creator),
+            abi.encode(price, bets)
+        );
 
         _safeMint(_player, _nextTokenId);
-        emit BetPlaced(_player, _gameYear, _nextTokenId);
         _nextTokenId++;
+        return _nextTokenId - 1;
     }
 
     /**
-     * @dev Iterates through the next token in a game year, updating score statistics
-     * @param _gameYear The year of the game to iterate
-     * @return success Whether there are more tokens to iterate
-     * @return score The score of the current token
+     * @notice Processes the next token in score calculation
+     * @dev Used for batch processing of bracket validations
+     * @param _gameYear Tournament year to process
+     * @return success Whether there are more tokens to process
+     * @return score Score achieved by the current token
      */
     function iterateNextToken(
         uint256 _gameYear
     ) external onlyNftDeployer returns (bool success, uint8 score) {
-        Game storage game = games[_gameYear];
+        (uint256 currentTokenId, bool hasNext) = ticketStorage.getCurrentToken(
+            poolId,
+            _gameYear
+        );
 
-        // Check if we have finished iterating all tokens
-        if (game.tokensIterationIndex >= game.tokens.length) {
+        if (!hasNext) {
             return (false, 0);
         }
 
-        // Get the current token ID and validate its bets
-        uint256 currentTokenId = game.tokens[game.tokensIterationIndex];
         (, score) = betValidator(currentTokenId);
-
-        // Update score statistics
-        game.scoreBetQty[score]++;
-
-        // Update max score if this is higher
-        if (score > game.maxScore) {
-            game.maxScore = score;
-        }
-
+        ticketStorage.updateScore(poolId, _gameYear, score);
+        
         if (score == 64) {
             perfectPool.increaseWinnersQty(_gameYear);
-        }
-
-        // Move to next token
-        game.tokensIterationIndex++;
-
-        // Check if we have finished iterating all tokens and activates claim
-        if (game.tokensIterationIndex >= game.tokens.length) {
-            game.claimEnabled = true;
         }
 
         return (true, score);
     }
 
     /**
-     * @dev Claim the tokens won by a ticket. Only callable by the owner of the ticket.
-     * @param _tokenId The ID of the ticket to claim tokens from.
+     * @notice Claims prize for a winning bracket
+     * @dev Validates game completion and calculates prize amount
+     * @param _player Address to receive the prize
+     * @param _tokenId Token ID representing the bracket
      */
-    function claimPrize(address _player, uint256 _tokenId) external nonReentrant onlyNftDeployer {
+    function claimPrize(
+        address _player,
+        uint256 _tokenId
+    ) external nonReentrant onlyNftDeployer {
         require(!gameDeployer.paused(), "Game paused.");
-        require(tokenClaimed[_tokenId] == 0, "Tokens already claimed.");
         require(
-            games[tokenToGameYear[_tokenId]].claimEnabled,
-            "Game not finished."
+            ticketStorage.getTokenClaimed(poolId, _tokenId) == 0,
+            "Tokens already claimed."
         );
 
+        uint256 _gameYear = ticketStorage.getTokenGameYear(poolId, _tokenId);
+        (
+            uint256 pot,
+            uint8 maxScore,
+            uint256 potClaimed,
+            bool claimEnabled,
+            uint256 tokensIterationIndex
+        ) = ticketStorage.getGame(poolId, _gameYear);
+        require(claimEnabled, "Game not finished.");
+
         (, uint8 status) = abi.decode(
-            gameDeployer.getGameStatus(tokenToGameYear[_tokenId]),
+            gameDeployer.getGameStatus(_gameYear),
             (uint8, uint8)
         );
         require(status == 3, "Game not finished.");
 
-        uint256 _gameYear = tokenToGameYear[_tokenId];
         (, uint8 tokenScore) = betValidator(_tokenId);
+        require(maxScore != tokenScore, "You are not a winner");
 
-        require(
-            games[_gameYear].maxScore != tokenScore,
-            "You are not a winner"
+        uint256 amount = OnchainMadnessLib.calculatePrize(
+            pot,
+            potClaimed,
+            ticketStorage.getScoreBetQty(poolId, _gameYear, tokenScore)
         );
 
-        uint256 amount = games[_gameYear].pot /
-            games[_gameYear].scoreBetQty[tokenScore];
-        uint256 availableClaim = games[_gameYear].pot -
-            games[_gameYear].potClaimed;
+        ticketStorage.updateGame(
+            poolId,
+            _gameYear,
+            pot,
+            maxScore,
+            potClaimed + amount,
+            claimEnabled,
+            tokensIterationIndex
+        );
+        ticketStorage.setTokenClaimed(poolId, _tokenId, amount);
 
-        // This is to avoid rounding errors that could leave some tokens unclaimed
-        if (availableClaim < amount) {
-            amount = availableClaim;
-        }
-
-        games[_gameYear].potClaimed += amount;
         USDC.transfer(_player, amount);
-        tokenClaimed[_tokenId] = amount;
-
-        emit PrizeClaimed(_tokenId, amount);
     }
 
     /**
-     * @dev Claim the ppShare tokens owned by the caller. Only callable by the caller itself
+     * @notice Claims PerfectPool tokens earned from shares
+     * @dev Transfers accumulated PP tokens to the player
+     * @param _player Address to receive the tokens
      */
-    function claimPPShare(address _player) external onlyNftDeployer{
-        require(ppShare[_player] > 0, "No ppShare tokens to claim.");
-        perfectPool.transfer(_player, ppShare[_player]);
-        ppShare[_player] = 0;
+    function claimPPShare(address _player) external onlyNftDeployer {
+        uint256 amount = ticketStorage.getPpShare(poolId, _player);
+        require(amount > 0, "No ppShare tokens to claim.");
+        ticketStorage.setPpShare(poolId, _player, 0);
+        perfectPool.transfer(_player, amount);
     }
 
     /**
-     * @dev Increase the pot by a certain amount. Only callable by the admin.
-     * @param _gameYear The ID of the game to set the pot for.
-     * @param _amount The amount to increase the pot by.
+     * @notice Increases the prize pool for a specific game
+     * @dev Transfers USDC from caller to contract and updates pot
+     * @param _gameYear Tournament year to increase pot for
+     * @param _amount Amount of USDC to add to the pot
      */
-    function increaseGamePot(
-        uint256 _gameYear,
-        uint256 _amount
-    ) public {
+    function increaseGamePot(uint256 _gameYear, uint256 _amount) public {
         USDC.transferFrom(msg.sender, address(this), _amount);
-        games[_gameYear].pot += _amount;
-        emit GamePotIncreased(_gameYear, _amount);
+
+        (
+            uint256 pot,
+            uint8 maxScore,
+            uint256 potClaimed,
+            bool claimEnabled,
+            uint256 tokensIterationIndex
+        ) = ticketStorage.getGame(poolId, _gameYear);
+
+        ticketStorage.updateGame(
+            poolId,
+            _gameYear,
+            pot + _amount,
+            maxScore,
+            potClaimed,
+            claimEnabled,
+            tokensIterationIndex
+        );
     }
 
     /**
-     * @dev Get the token URI for a specific token.
-     * @param _tokenId The ID of the token.
-     * @return The token URI.
+     * @notice Returns the metadata URI for a token
+     * @dev Overrides ERC721 tokenURI function
+     * @param _tokenId Token ID to get metadata for
+     * @return URI containing the token's metadata
      */
     function tokenURI(
         uint256 _tokenId
     ) public view virtual override returns (string memory) {
-        require(ownerOf(_tokenId) != address(0), "ERC721: invalid token ID");
+        _requireOwned(_tokenId);
 
         INftMetadata nftMetadata = INftMetadata(
-            gameDeployer.contracts("MM_METADATA")
+            gameDeployer.contracts("OM_METADATA")
         );
-        return nftMetadata.buildMetadata(tokenToGameYear[_tokenId], _tokenId);
+        return
+            nftMetadata.buildMetadata(
+                poolId,
+                ticketStorage.getTokenGameYear(poolId, _tokenId),
+                _tokenId
+            );
     }
 
     /**
-     * @dev Get the bet data for a specific token.
-     * @param _tokenId The ID of the token.
-     * @return The array of bets for the token.
+     * @notice Retrieves the bracket predictions for a token
+     * @param _tokenId Token ID to get predictions for
+     * @return Array of 63 team selections
      */
     function getBetData(
         uint256 _tokenId
     ) public view returns (uint8[63] memory) {
-        return nftBet[_tokenId];
+        return ticketStorage.getNftBet(poolId, _tokenId);
     }
 
     /**
-     * @dev Get the game ID for a specific token.
-     * @param _tokenId The ID of the token.
-     * @return The ID of the game the token is betting on.
+     * @notice Gets the tournament year for a token
+     * @param _tokenId Token ID to query
+     * @return Tournament year the token is associated with
      */
     function getGameYear(uint256 _tokenId) public view returns (uint256) {
-        return tokenToGameYear[_tokenId];
+        return ticketStorage.getTokenGameYear(poolId, _tokenId);
     }
 
     /**
-     * @dev Validate the bets for a specific token.
-     * @param _tokenId The ID of the token.
-     * @return validator The array of validation results for the bets.
-     * @return points The number of points won by the player
+     * @notice Validates a bracket against tournament results
+     * @dev Compares predictions with actual results and calculates score
+     * @param _tokenId Token ID to validate
+     * @return validator Array indicating correct/incorrect predictions
+     * @return points Total score achieved
      */
     function betValidator(
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
-        uint8[63] memory bets = nftBet[_tokenId];
-        uint8[63] memory results = gameDeployer.getFinalResult(tokenToGameYear[_tokenId]);
+        uint8[63] memory bets = ticketStorage.getNftBet(poolId, _tokenId);
+        uint8[63] memory results = gameDeployer.getFinalResult(
+            ticketStorage.getTokenGameYear(poolId, _tokenId)
+        );
 
-        for (uint256 i = 0; i < 63; i++) {
-            if (results[i] == 0) {
-                validator[i] = 0;
-            } else {
-                if (bets[i] == results[i]) {
-                    points++;
-                    validator[i] = 1;
-                } else {
-                    validator[i] = 2;
-                }
-            }
-        }
-        return (validator, points);
+        return OnchainMadnessLib.validateAndScore(bets, results);
     }
 
     /**
-     * @dev Get the symbols for the tokens bet on a specific token.
-     * @param _tokenId The ID of the token.
+     * @notice Gets team symbols for a token's predictions
+     * @param _tokenId Token ID to get symbols for
+     * @return Array of 63 team symbols
      */
     function getTeamSymbols(
         uint256 _tokenId
     ) public view returns (string[63] memory) {
         return
-            gameDeployer.getTeamSymbols(tokenToGameYear[_tokenId], nftBet[_tokenId]);
+            gameDeployer.getTeamSymbols(
+                ticketStorage.getTokenGameYear(poolId, _tokenId),
+                ticketStorage.getNftBet(poolId, _tokenId)
+            );
     }
 
     /**
-     * @dev Get the amount to claim and the amount claimed for a specific token.
-     * @param _tokenId The ID of the token.
-     * @return amountToClaim The amount of tokens to claim.
-     * @return amountClaimed The amount of tokens already claimed.
+     * @notice Calculates claimable and claimed amounts for a token
+     * @param _tokenId Token ID to check
+     * @return amountToClaim Amount available to claim
+     * @return amountClaimed Amount already claimed
      */
     function amountPrizeClaimed(
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
-        uint256 _gameYear = tokenToGameYear[_tokenId];
+        uint256 _gameYear = ticketStorage.getTokenGameYear(poolId, _tokenId);
         (, uint8 score) = betValidator(_tokenId);
+        (uint256 pot, , uint256 potClaimed, , ) = ticketStorage.getGame(
+            poolId,
+            _gameYear
+        );
+
         return (
-            games[_gameYear].pot / games[_gameYear].scoreBetQty[score],
-            tokenClaimed[_tokenId]
+            OnchainMadnessLib.calculatePrize(
+                pot,
+                potClaimed,
+                ticketStorage.getScoreBetQty(poolId, _gameYear, score)
+            ),
+            ticketStorage.getTokenClaimed(poolId, _tokenId)
         );
     }
 
     /**
-     * @dev Get the potential payout for a specific game.
-     * @param gameYear The ID of the game
+     * @notice Gets total potential payout for a game
+     * @param gameYear Tournament year to check
+     * @return payout Total amount in the prize pool
      */
     function potentialPayout(
         uint256 gameYear
     ) public view returns (uint256 payout) {
-        return games[gameYear].pot;
+        (uint256 pot, , , , ) = ticketStorage.getGame(poolId, gameYear);
+        return pot;
     }
 
     /**
-     * @dev Get the quantity of players for a specific game.
-     * @param gameYear The ID of the game
+     * @notice Gets total number of players in a game
+     * @param gameYear Tournament year to check
+     * @return players Number of minted tickets for the game
      */
     function playerQuantity(
         uint256 gameYear
     ) public view returns (uint256 players) {
-        return games[gameYear].tokens.length;
+        return ticketStorage.getGameTokens(poolId, gameYear).length;
     }
 
     /**
-     * @dev Get the token IDs for a specific bet code.
-     * @param betCode The bet code to get the token IDs for.
-     * @return The array of token IDs for the bet code.
+     * @notice Validates a bracket and returns score
+     * @param _tokenId Token ID to validate
+     * @return validator Array indicating correct/incorrect predictions
+     * @return points Total score achieved
      */
-    function getBetCodeToTokenIds(
-        bytes32 betCode
-    ) public view returns (uint256[] memory) {
-        return betCodeToTokenIds[betCode];
+    function validateTicket(
+        uint256 _tokenId
+    ) public view returns (uint8[63] memory validator, uint8 points) {
+        uint8[63] memory bets = ticketStorage.getNftBet(poolId, _tokenId);
+        uint8[63] memory results = gameDeployer.getFinalResult(
+            ticketStorage.getTokenGameYear(poolId, _tokenId)
+        );
+
+        return OnchainMadnessLib.validateAndScore(bets, results);
     }
 }

@@ -1,15 +1,17 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../libraries/Base64.sol";
-import "../interfaces/IMarchMadnessFactory.sol";
+import "../interfaces/IOnchainMadnessFactory.sol";
 import "../interfaces/IGamesHub.sol";
 import "../interfaces/IOnchainMadnessTicket.sol";
 
 interface INftImage {
     function buildImage(
+        uint256 _poolId,
+        uint256 _gameYear,
         uint256 _tokenId
     ) external view returns (string memory);
 }
@@ -25,12 +27,12 @@ contract NftMetadata {
     }
 
     function gameStatus(
-        uint256 _gameId,
+        uint256 _gameYear,
         uint256 _tokenId
     ) public view returns (string memory) {
         (, uint8 status) = abi.decode(
-            IMarchMadnessFactory(gamesHub.games(keccak256("MM_DEPLOYER")))
-                .getGameStatus(_gameId),
+            IOnchainMadnessFactory(gamesHub.games(keccak256("OM_DEPLOYER")))
+                .getGameStatus(_gameYear),
             (uint256, uint8)
         );
         if (status == 1) {
@@ -41,15 +43,15 @@ contract NftMetadata {
             if (
                 keccak256(
                     abi.encodePacked(
-                        IMarchMadnessFactory(
-                            gamesHub.games(keccak256("MM_DEPLOYER"))
-                        ).getFinalResult(_gameId)
+                        IOnchainMadnessFactory(
+                            gamesHub.games(keccak256("OM_DEPLOYER"))
+                        ).getFinalResult(_gameYear)
                     )
                 ) ==
                 keccak256(
                     abi.encodePacked(
                         IOnchainMadnessTicket(
-                            gamesHub.helpers(keccak256("MM_TICKET"))
+                            gamesHub.helpers(keccak256("OM_TICKET"))
                         ).getBetData(_tokenId)
                     )
                 )
@@ -58,11 +60,12 @@ contract NftMetadata {
             } else {
                 return "Loser";
             }
-        } 
+        }
     }
 
     function buildMetadata(
-        uint256 _gameId,
+        uint256 _poolId,
+        uint256 _gameYear,
         uint256 _tokenId
     ) public view returns (string memory) {
         return
@@ -76,10 +79,10 @@ contract NftMetadata {
                                 _tokenId.toString(),
                                 '","description":"Onchain Madness NFT from PerfectPool.","image":"',
                                 INftImage(
-                                    gamesHub.helpers(keccak256("MM_IMAGE"))
-                                ).buildImage(_tokenId),
+                                    gamesHub.helpers(keccak256("OM_IMAGE"))
+                                ).buildImage(_poolId, _gameYear, _tokenId),
                                 '","attributes":[{"trait_type":"Game Status:","value":"',
-                                gameStatus(_gameId, _tokenId),
+                                gameStatus(_gameYear, _tokenId),
                                 '"},]}'
                             )
                         )

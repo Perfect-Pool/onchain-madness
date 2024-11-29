@@ -4,7 +4,7 @@ async function main() {
   const contracts = require("../../contracts.json");
   const networkName = hre.network.name;
 
-  const address = contracts[networkName]["MM_METADATA"];
+  const address = contracts[networkName]["OM_METADATA"];
   if (!address) {
     console.error("NftMetadata address not found in contracts.json");
     process.exit(1);
@@ -14,7 +14,7 @@ async function main() {
 
   await hre.run("verify:verify", {
     address: address,
-    constructorArguments: [],
+    constructorArguments: [contracts[networkName]["OM_DEPLOYER"]],
     contract: "contracts/utils/NftMetadata.sol:NftMetadata",
   });
 }

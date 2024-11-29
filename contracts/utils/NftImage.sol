@@ -1,34 +1,35 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../libraries/Base64.sol";
 import "../libraries/BuildImage.sol";
-import "../interfaces/IMarchMadnessFactory.sol";
-import "../interfaces/IGamesHub.sol";
-import "../interfaces/IOnchainMadnessTicket.sol";
+import "../interfaces/IOnchainMadnessFactory.sol";
+import "../interfaces/IOnchainMadnessTicketFactory.sol";
 
 contract NftImage {
     using Strings for uint16;
     using Strings for uint256;
 
-    IGamesHub public gamesHub;
+    IOnchainMadnessFactory public madnessFactory;
 
-    constructor(address _gamesHub) {
-        gamesHub = IGamesHub(_gamesHub);
+    constructor(address _madnessFactory) {
+        madnessFactory = IOnchainMadnessFactory(_madnessFactory);
     }
 
     modifier onlyAdmin() {
-        require(
-            gamesHub.checkRole(gamesHub.ADMIN_ROLE(), msg.sender),
-            "Caller is not admin"
-        );
+        require(madnessFactory.owner() == msg.sender, "Caller is not admin");
         _;
     }
 
     function buildImage(
+        uint256 _poolId,
+        uint256 _gameYear,
         uint256 _tokenId
     ) public view returns (string memory) {
+        (uint8[63] memory bets, ) = IOnchainMadnessTicketFactory(
+            madnessFactory.contracts("OM_TICKET_FACTORY")
+        ).betValidator(_poolId, _tokenId);
         return
             string(
                 abi.encodePacked(
@@ -37,16 +38,15 @@ contract NftImage {
                         bytes(
                             abi.encodePacked(
                                 BuildImage.fullSvgImage(
-                                    IOnchainMadnessTicket(
-                                        gamesHub.helpers(
-                                            keccak256("MM_TICKET")
-                                        )
-                                    ).betValidator(_tokenId),
-                                    IOnchainMadnessTicket(
-                                        gamesHub.helpers(
-                                            keccak256("MM_TICKET")
-                                        )
-                                    ).getTeamSymbols(_tokenId),
+                                    bets,
+                                    madnessFactory.getTeamSymbols(
+                                        _gameYear,
+                                        IOnchainMadnessTicketFactory(
+                                            madnessFactory.contracts(
+                                                "OM_TICKET_FACTORY"
+                                            )
+                                        ).getBetData(_poolId, _tokenId)
+                                    ),
                                     _tokenId
                                 )
                             )

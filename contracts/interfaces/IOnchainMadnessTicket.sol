@@ -58,8 +58,6 @@ interface IOnchainMadnessTicket {
 
     function claimPPShare(address _player) external;
 
-    function changePrice(uint256 _newPrice) external;
-
     function increaseGamePot(uint256 _gameYear, uint256 _amount) external;
 
     function initialize(

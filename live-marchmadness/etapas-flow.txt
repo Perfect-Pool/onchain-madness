@@ -1,7 +1,7 @@
 Consulta aberta: https://developer.sportradar.com/io-docs
 A ideia é fazer consultas à API de 30 em 30 min durante o andamento do MarchMadness
 
-ETAPA 1:
+ETAPA 1: (1 no mock)
 Pós Selection Sunday, antes do FirstFour (início das bets):
 
 - Consultar o ID do March Madness para 2024 (colocar o ano anterior, post-season <PST>)
@@ -25,13 +25,13 @@ http://api.sportradar.us/ncaamb/trial/v8/en/games/8f71a807-95a3-4b43-86cd-d885dc
 - Usar uma função updateFirstFour(sigla, novaSigla) para atualizar os dados de sigla das equipes vencedoras.
 
 
-ETAPA 3:
+ETAPA 3:  (2 a 4 no mock)
 Abertura do First Round (as apostas se encerram no começo da primeira partida do round 1)
 
 - Consultar o tournament schedule para encontrar qual partida começa primeiro. 
     Se ela estiver a menos de 30 min do começo, alterar o status do contrato de betsOn para onGoing
 
-ETAPA 4:
+ETAPA 4: (5 no mock)
 Rounds onGoing
 
 - A partir daqui o fluxo vai se resumir em consultar o tournament schedule e atualizar os jogos não finalizados.

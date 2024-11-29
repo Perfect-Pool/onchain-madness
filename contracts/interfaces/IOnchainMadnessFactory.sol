@@ -18,4 +18,6 @@ interface IOnchainMadnessFactory {
     function paused() external view returns (bool);
 
     function contracts(string memory _name) external view returns (address);
+
+    function owner() external view returns (address);
 }

@@ -13,27 +13,48 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  * burning, and withdrawal mechanisms with advanced permission controls.
  * Designed to support Onchain Madness prize distribution and token value management.
  * @dev Implements ERC20, Ownable, and ReentrancyGuard for enhanced security
+ * Features:
+ * - USDC deposits and withdrawals
+ * - Token minting with configurable distribution
+ * - Prize pool management for tournament winners
+ * - Controlled access for minting and game contracts
+ * - Security features including withdrawal locks and permanent mint locks
  */
 contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
+    /** STATE VARIABLES **/
+    /// @dev The USDC token contract used for deposits and withdrawals
     IERC20 public immutable USDC;
 
+    /// @dev Controls whether minting requires authorization
     bool public lockPermit;
+    /// @dev Controls whether token withdrawals are allowed
     bool public lockWithdrawal;
+    /// @dev Controls whether token minting is temporarily paused
     bool public lockMint;
+    /// @dev When true, permanently disables all token minting
     bool public definitiveLockMint;
-
-    uint256 public totalUSDCDeposited;
+    /// @dev Timestamp until which withdrawals are blocked (except for winners)
     uint256 public withdrawalBlockedTimestamp;
-
+    
+    /// @dev Addresses authorized to mint tokens when lockPermit is true
     mapping(address => bool) public authorizedMinters;
+    /// @dev Addresses of authorized Onchain Madness game contracts
     mapping(address => bool) public onchainMadnessContracts;
+    /// @dev Number of winners per tournament year
     mapping(uint256 => uint256) public yearToWinnersQty;
+    /// @dev Total prize amount per tournament year
     mapping(uint256 => uint256) public yearToPrize;
 
+    /** EVENTS **/
+    /// @dev Emitted when new USDC is deposited and tokens are minted
     event PoolIncreased(uint256 amountUSDC, uint256 tokensMinted);
+    /// @dev Emitted when tokens are voluntarily burned
     event TokensBurned(address indexed burner, uint256 amount);
+    /// @dev Emitted when USDC is withdrawn by burning tokens
     event USDCWithdrawn(address indexed user, uint256 amount);
+    /// @dev Emitted when a perfect prize is awarded to a winner
     event PerfectPrizeAwarded(address winner, uint256 amount);
+    /// @dev Emitted when the number of winners for a year increases
     event WinnersQtyIncreased(uint256 year, uint256 qty);
 
     /**
@@ -41,21 +62,25 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param _usdc Address of the USDC token contract
      * @param name Name of the ERC20 token
      * @param symbol Symbol of the ERC20 token
+     * @param _gameContract Address of the Onchain Madness game contract
      */
     constructor(
         address _usdc,
         string memory name,
-        string memory symbol
+        string memory symbol,
+        address _gameContract
     ) ERC20(name, symbol) Ownable(msg.sender) {
         require(_usdc != address(0), "Invalid USDC address");
         USDC = IERC20(_usdc);
+        onchainMadnessContracts[_gameContract] = true;
     }
 
     /**
      * @notice Increases the pool by depositing USDC and minting tokens
-     * @dev Mints tokens at a 2:1 ratio, with half going to the team and half distributed per percentages
+     * @dev Mints tokens at a 2:1 ratio with the deposited USDC amount
+     * All minted tokens are distributed among receivers according to percentages
      * @param amountUSDC Amount of USDC to deposit
-     * @param percentage Array of percentage allocations for token distribution
+     * @param percentage Array of percentage allocations for token distribution (must sum to 100)
      * @param receivers Array of addresses to receive tokens based on percentages
      */
     function increasePool(
@@ -86,23 +111,21 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             "USDC transfer failed"
         );
 
-        uint256 tokensToMint = amountUSDC * 2;
-        uint256 halfTokens = tokensToMint / 2;
-
-        _mint(owner(), halfTokens);
+        //USDC has 6 decimals and tokens have 18 decimals. Converting USDC to tokens
+        uint256 tokensToMint = amountUSDC * 2 * 10**12;
 
         for (uint256 i = 0; i < receivers.length; i++) {
-            uint256 receiverAmount = (halfTokens * percentage[i]) / 100;
+            uint256 receiverAmount = (tokensToMint * percentage[i]) / 100;
             _mint(receivers[i], receiverAmount);
         }
 
-        totalUSDCDeposited += amountUSDC;
         emit PoolIncreased(amountUSDC, tokensToMint);
     }
 
     /**
      * @notice Allows token holders to withdraw USDC by burning tokens
-     * @dev Calculates USDC withdrawal amount based on token supply and total USDC deposited
+     * @dev The withdrawal amount is proportional to the total USDC deposited and token supply
+     * Withdrawals can be locked or restricted to winners during specific periods
      * @param amount Number of tokens to burn for USDC withdrawal
      */
     function withdraw(uint256 amount) external nonReentrant {
@@ -111,22 +134,17 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         require(amount > 0, "Amount must be greater than 0");
         require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
-        uint256 usdcAmount = (amount * totalUSDCDeposited) / totalSupply();
-        require(
-            USDC.balanceOf(address(this)) >= usdcAmount,
-            "Insufficient USDC in contract"
-        );
+        uint256 usdcAmount = (amount * USDC.balanceOf(address(this))) / totalSupply();
 
         _burn(msg.sender, amount);
         require(USDC.transfer(msg.sender, usdcAmount), "USDC transfer failed");
 
-        totalUSDCDeposited -= usdcAmount;
         emit USDCWithdrawn(msg.sender, usdcAmount);
     }
 
     /**
      * @notice Allows voluntary burning of tokens to increase token value
-     * @dev Burns tokens without receiving USDC, effectively increasing value for remaining holders
+     * @dev Burns tokens without USDC withdrawal, effectively increasing value for remaining holders
      * @param amount Number of tokens to burn
      */
     function burnTokens(uint256 amount) external nonReentrant {
@@ -138,9 +156,10 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Increases the total number of winners for a specific year
-     * @dev Only callable by the game contract
-     * @param year The year of the Onchain Madness game
+     * @notice Increases the winner count for a specific tournament year
+     * @dev Only callable by authorized Onchain Madness contracts
+     * Used to track prize distribution for perfect bracket winners
+     * @param year The tournament year to increase winners for
      */
     function increaseWinnersQty(uint256 year) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
@@ -150,9 +169,10 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Reset data for a specific year, when it not time locked. To initalize a new season of games.
-     * @dev Only callable by the game contract
-     * @param year The year of the Onchain Madness game
+     * @notice Resets tournament data for a new season
+     * @dev Only callable by authorized Onchain Madness contracts when not time-locked
+     * Clears winner count and prize amount for the specified year
+     * @param year The tournament year to reset
      */
     function resetData(uint256 year) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
@@ -163,12 +183,14 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Awards the perfect prize to an Onchain Madness game contract
-     * @dev Transfers a predefined percentage of USDC to the winning contract
-     * @param year The year of the Onchain Madness game
-     * @param gameContract The address of the Onchain Madness contract
+     * @notice Awards the perfect prize to tournament winners
+     * @dev Distributes USDC equally among all winners for a specific year
+     * Prize amount is either the total USDC balance when first claimed
+     * or the remaining balance if insufficient funds
+     * @param year The tournament year for prize distribution
+     * @param _gameContract The Onchain Madness contract to receive the prize
      */
-    function perfectPrize(uint256 year, address gameContract) external nonReentrant {
+    function perfectPrize(uint256 year, address _gameContract) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
         require(yearToWinnersQty[year] > 0, "No winners");
 
@@ -184,70 +206,78 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             prizeAmount = USDC.balanceOf(address(this));
         }
         
-        require(USDC.transfer(gameContract, prizeAmount), "USDC transfer failed");
+        require(USDC.transfer(_gameContract, prizeAmount), "USDC transfer failed");
 
-        totalUSDCDeposited -= prizeAmount;
-        emit PerfectPrizeAwarded(gameContract, prizeAmount);
+        emit PerfectPrizeAwarded(_gameContract, prizeAmount);
     }
 
     /**
-     * @notice Toggles minting permission restrictions
-     * @dev Allows owner to enable/disable minting restrictions
-     * @param _lockPermit Boolean to set minting permission lock
+     * @notice Controls minting permission requirements
+     * @dev When locked, only authorized addresses can mint tokens
+     * @param _lockPermit True to require authorization, false to allow anyone
      */
     function setLockPermit(bool _lockPermit) external onlyOwner {
         lockPermit = _lockPermit;
     }
 
     /**
-     * @notice Toggles withdrawal restrictions
-     * @dev Allows owner to enable/disable token withdrawal
-     * @param _lockWithdrawal Boolean to set withdrawal lock
+     * @notice Controls token withdrawal capability
+     * @dev Allows owner to enable/disable USDC withdrawals
+     * @param _lockWithdrawal True to disable withdrawals, false to enable
      */
     function setLockWithdrawal(bool _lockWithdrawal) external onlyOwner {
         lockWithdrawal = _lockWithdrawal;
     }
 
     /**
-     * @notice Temporarily locks or unlocks token minting
-     * @dev Allows owner to pause or resume token minting
-     * @param _lockMint Boolean to set temporary minting lock
+     * @notice Controls temporary minting capability
+     * @dev Allows owner to pause/resume token minting
+     * @param _lockMint True to pause minting, false to resume
      */
     function setLockMint(bool _lockMint) external onlyOwner {
         lockMint = _lockMint;
     }
 
     /**
-     * @notice Permanently locks token minting
-     * @dev Once called, no more tokens can ever be minted
+     * @notice Permanently disables token minting
+     * @dev Once called, this action cannot be reversed
+     * Used to cap the total token supply permanently
      */
     function setDefinitiveLockMint() external onlyOwner {
         definitiveLockMint = true;
     }
 
     /**
-     * @notice Adds or removes addresses from authorized minters list
-     * @dev Allows owner to manage addresses with minting permissions
-     * @param minter Address to authorize or deauthorize
-     * @param authorized Boolean indicating minting permission status
+     * @notice Manages addresses authorized to mint tokens
+     * @dev Only relevant when lockPermit is true
+     * @param minter Address to modify permissions for
+     * @param authorized True to grant minting permission, false to revoke
      */
     function setAuthorizedMinter(
         address minter,
         bool authorized
-    ) external onlyOwner {
+    ) external {
+        require(
+            msg.sender == owner() || onchainMadnessContracts[msg.sender],
+            "Not authorized"
+        );
         authorizedMinters[minter] = authorized;
     }
 
     /**
-     * @notice Adds or removes Onchain Madness contract addresses
-     * @dev Allows owner to manage contracts authorized to trigger perfect prize
+     * @notice Manages authorized Onchain Madness contracts
+     * @dev Authorized contracts can call winner-related functions
      * @param contractAddress Address of the Onchain Madness contract
-     * @param authorized Boolean indicating contract authorization status
+     * @param authorized True to authorize the contract, false to revoke
      */
     function setOnchainMadnessContract(
         address contractAddress,
         bool authorized
-    ) external onlyOwner {
+    ) external {
+        require(
+            msg.sender == owner() || onchainMadnessContracts[msg.sender],
+            "Not authorized"
+        );
         onchainMadnessContracts[contractAddress] = authorized;
     }
 }

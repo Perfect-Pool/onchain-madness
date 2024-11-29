@@ -4,23 +4,23 @@ async function main() {
   const contracts = require("../../contracts.json");
   const networkName = hre.network.name;
 
-  const address = contracts[networkName]["OM_IMAGE"];
+  const address = contracts[networkName]["PERFECTPOOL"];
   if (!address) {
-    console.error("NftImage address not found in contracts.json");
+    console.error("PerfectPool address not found in contracts.json");
     process.exit(1);
   }
 
-  console.log("Verifying NftImage at address", address);
+  console.log("Verifying PerfectPool at address", address);
 
   await hre.run("verify:verify", {
     address: address,
     constructorArguments: [
-      contracts[networkName]["OM_DEPLOYER"]
+      contracts[networkName]["USDC"],
+      "PerfectPoolShare",
+      "PPS",
+      contracts[networkName]["OM_DEPLOYER"],
     ],
-    contract: "contracts/utils/NftImage.sol:NftImage",
-    libraries:{
-      "BuildImage": contracts[networkName].Libraries.BuildImage
-    }
+    contract: "contracts/utils/PerfectPool.sol:PerfectPool",
   });
 }
 

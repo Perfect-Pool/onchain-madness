@@ -14,8 +14,8 @@
     "@openzeppelin/contracts": "^5.1.0",
     "@truffle/contract": "^4.6.31",
     "@truffle/hdwallet-provider": "^2.1.15",
-    "axios": "^1.5.1",
-    "dotenv": "^16.3.1",
+    "axios": "^1.7.8",
+    "dotenv": "^16.4.5",
     "ethers": "^5.5.2",
     "fs-extra": "^11.1.1",
     "hardhat": "^2.20.1",
@@ -32,13 +32,13 @@
     "extract-abis": "node scripts/extractAbis.js",
     "send-tokens": "hardhat run scripts/send-tokens.js --network",
     "fund-games": "hardhat run scripts/fund-games.js --network",
-    "verify-games-hub": "hardhat run scripts/verify/verifyGamesHub.js --network",
-    "verify-token": "hardhat run scripts/verify/verifyFakeUSDCToken.js --network",
     "verify-madness": "hardhat run scripts/verify/verifyMarchMadness.js --network",
     "verify-nft": "hardhat run scripts/verify/verifyMadnessTicket.js --network",
     "verify-metadata": "hardhat run scripts/verify/verifyNftMetadata.js --network",
     "verify-image": "hardhat run scripts/verify/verifyNftImage.js --network",
+    "verify-ppshare": "hardhat run scripts/verify/verifyPerfectPool.js --network",
     "verify-libraries": "hardhat run scripts/verify/verifyLibraries.js --network",
-    "verify-all": "node scripts/verify-all.js"
+    "verify-all": "node scripts/verify-all.js",
+    "check-sports-radar": "hardhat run scripts/checkSportsRadar.js --network"
   }
 }
