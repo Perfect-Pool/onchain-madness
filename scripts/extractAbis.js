@@ -6,9 +6,10 @@ const artifactsDir = path.join(__dirname, "..", "artifacts", "contracts");
 
 // Contratos para extrair ABIs
 const contracts = [
-  { name: "MarchMadness", path: "games/MarchMadness.sol" },
-  { name: "MarchMadnessFactory", path: "games/MarchMadnessFactory.sol" },
+  { name: "OnchainMadness", path: "games/OnchainMadness.sol" },
+  { name: "OnchainMadnessFactory", path: "games/OnchainMadnessFactory.sol" },
   { name: "OnchainMadnessTicket", path: "utils/OnchainMadnessTicket.sol" },
+  { name: "PerfectPool", path: "utils/PerfectPool.sol" },
 ];
 
 // Função para extrair e salvar ABI

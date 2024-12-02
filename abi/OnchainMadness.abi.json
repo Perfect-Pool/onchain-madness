@@ -82,28 +82,18 @@
     "inputs": [
       {
         "internalType": "string",
-        "name": "teamNameHome",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "teamNameAway",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "scoreHome",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "scoreAway",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
         "name": "winner",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
       }
     ],
     "name": "determineChampion",
@@ -114,167 +104,131 @@
   {
     "inputs": [
       {
-        "internalType": "string[4]",
-        "name": "teamNames",
-        "type": "string[4]"
+        "internalType": "uint8",
+        "name": "gameIndex",
+        "type": "uint8"
       },
       {
-        "internalType": "uint256[4]",
-        "name": "scores",
-        "type": "uint256[4]"
-      },
-      {
-        "internalType": "string[2]",
+        "internalType": "string",
         "name": "winners",
-        "type": "string[2]"
-      }
-    ],
-    "name": "determineFinalFourWinners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string[8]",
-        "name": "teamNames",
-        "type": "string[8]"
-      },
-      {
-        "internalType": "uint256[8]",
-        "name": "scores",
-        "type": "uint256[8]"
-      },
-      {
-        "internalType": "string[4]",
-        "name": "winners",
-        "type": "string[4]"
-      }
-    ],
-    "name": "determineFirstFourWinners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "teamNames",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "uint256[16]",
-        "name": "scores",
-        "type": "uint256[16]"
-      },
-      {
-        "internalType": "string[8]",
-        "name": "winners",
-        "type": "string[8]"
-      }
-    ],
-    "name": "determineRound1Winners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string[8]",
-        "name": "teamNames",
-        "type": "string[8]"
-      },
-      {
-        "internalType": "uint256[8]",
-        "name": "scores",
-        "type": "uint256[8]"
-      },
-      {
-        "internalType": "string[4]",
-        "name": "winners",
-        "type": "string[4]"
-      }
-    ],
-    "name": "determineRound2Winners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string[4]",
-        "name": "teamNames",
-        "type": "string[4]"
-      },
-      {
-        "internalType": "uint256[4]",
-        "name": "scores",
-        "type": "uint256[4]"
-      },
-      {
-        "internalType": "string[2]",
-        "name": "winners",
-        "type": "string[2]"
-      }
-    ],
-    "name": "determineRound3Winners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "teamNameHome",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "teamNameAway",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "scoreHome",
+        "name": "homePoints",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "scoreAway",
+        "name": "awayPoints",
         "type": "uint256"
+      }
+    ],
+    "name": "determineFinalFourWinner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
       },
       {
         "internalType": "string",
         "name": "winner",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
       }
     ],
-    "name": "determineRound4Winners",
+    "name": "determineFinalRegionWinner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "matchCode",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_homeId",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_awayId",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_awayPoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_winner",
+        "type": "uint8"
+      }
+    ],
+    "name": "determineFirstFourWinner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "round",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "matchIndex",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
+      }
+    ],
+    "name": "determineMatchWinner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -429,34 +383,50 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_matchCode",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_home",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_away",
+        "type": "string"
+      }
+    ],
+    "name": "initFirstFourMatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "teamNames",
+        "type": "string[16]"
+      }
+    ],
+    "name": "initRegion",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "_year",
         "type": "uint256"
-      },
-      {
-        "internalType": "string[8]",
-        "name": "_firstFour",
-        "type": "string[8]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_south",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_west",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_midwest",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_east",
-        "type": "string[16]"
       },
       {
         "internalType": "address",
@@ -500,7 +470,7 @@
     "name": "status",
     "outputs": [
       {
-        "internalType": "enum MarchMadness.Status",
+        "internalType": "enum OnchainMadness.Status",
         "name": "",
         "type": "uint8"
       }

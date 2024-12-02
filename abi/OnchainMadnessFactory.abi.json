@@ -8,17 +8,55 @@
       },
       {
         "internalType": "address",
-        "name": "_gamesHub",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "_executor",
         "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
     "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "FailedDeployment",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "balance",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "needed",
+        "type": "uint256"
+      }
+    ],
+    "name": "InsufficientBalance",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableInvalidOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "OwnableUnauthorizedAccount",
+    "type": "error"
   },
   {
     "anonymous": false,
@@ -81,7 +119,26 @@
         "type": "uint256"
       }
     ],
-    "name": "MarchMadnessCreated",
+    "name": "OnchainMadnessCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
     "type": "event"
   },
   {
@@ -171,37 +228,31 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      }
+    ],
+    "name": "contracts",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "uint256",
         "name": "year",
         "type": "uint256"
-      },
-      {
-        "internalType": "string[8]",
-        "name": "_firstFour",
-        "type": "string[8]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_south",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_west",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_midwest",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "_east",
-        "type": "string[16]"
       }
     ],
-    "name": "createMarchMadness",
+    "name": "createOnchainMadness",
     "outputs": [
       {
         "internalType": "address",
@@ -221,28 +272,18 @@
       },
       {
         "internalType": "string",
-        "name": "teamNameHome",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "teamNameAway",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "scoreHome",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "scoreAway",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
         "name": "winner",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
       }
     ],
     "name": "determineChampion",
@@ -258,50 +299,27 @@
         "type": "uint256"
       },
       {
-        "internalType": "string[4]",
-        "name": "teamNames",
-        "type": "string[4]"
+        "internalType": "uint8",
+        "name": "gameIndex",
+        "type": "uint8"
       },
       {
-        "internalType": "uint256[4]",
-        "name": "scores",
-        "type": "uint256[4]"
-      },
-      {
-        "internalType": "string[2]",
+        "internalType": "string",
         "name": "winners",
-        "type": "string[2]"
-      }
-    ],
-    "name": "determineFinalFourWinners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "type": "string"
+      },
       {
         "internalType": "uint256",
-        "name": "year",
+        "name": "homePoints",
         "type": "uint256"
       },
       {
-        "internalType": "string[8]",
-        "name": "teamNames",
-        "type": "string[8]"
-      },
-      {
-        "internalType": "uint256[8]",
-        "name": "scores",
-        "type": "uint256[8]"
-      },
-      {
-        "internalType": "string[4]",
-        "name": "winners",
-        "type": "string[4]"
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
       }
     ],
-    "name": "determineFirstFourWinners",
+    "name": "determineFinalFourWinner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -317,133 +335,110 @@
         "internalType": "string",
         "name": "regionName",
         "type": "string"
-      },
-      {
-        "internalType": "string[16]",
-        "name": "teamNames",
-        "type": "string[16]"
-      },
-      {
-        "internalType": "uint256[16]",
-        "name": "scores",
-        "type": "uint256[16]"
-      },
-      {
-        "internalType": "string[8]",
-        "name": "winners",
-        "type": "string[8]"
-      }
-    ],
-    "name": "determineRound1Winners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string[8]",
-        "name": "teamNames",
-        "type": "string[8]"
-      },
-      {
-        "internalType": "uint256[8]",
-        "name": "scores",
-        "type": "uint256[8]"
-      },
-      {
-        "internalType": "string[4]",
-        "name": "winners",
-        "type": "string[4]"
-      }
-    ],
-    "name": "determineRound2Winners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string[4]",
-        "name": "teamNames",
-        "type": "string[4]"
-      },
-      {
-        "internalType": "uint256[4]",
-        "name": "scores",
-        "type": "uint256[4]"
-      },
-      {
-        "internalType": "string[2]",
-        "name": "winners",
-        "type": "string[2]"
-      }
-    ],
-    "name": "determineRound3Winners",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "year",
-        "type": "uint256"
-      },
-      {
-        "internalType": "string",
-        "name": "regionName",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "teamNameHome",
-        "type": "string"
-      },
-      {
-        "internalType": "string",
-        "name": "teamNameAway",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "scoreHome",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "scoreAway",
-        "type": "uint256"
       },
       {
         "internalType": "string",
         "name": "winner",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
       }
     ],
-    "name": "determineRound4Winners",
+    "name": "determineFinalRegionWinner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "matchCode",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_homeId",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_awayId",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_awayPoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_winner",
+        "type": "uint8"
+      }
+    ],
+    "name": "determineFirstFourWinner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
+      },
+      {
+        "internalType": "uint8",
+        "name": "round",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "matchIndex",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint256",
+        "name": "homePoints",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "awayPoints",
+        "type": "uint256"
+      }
+    ],
+    "name": "determineMatchWinner",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -454,19 +449,6 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "gamesHub",
-    "outputs": [
-      {
-        "internalType": "contract IGamesHub",
         "name": "",
         "type": "address"
       }
@@ -628,6 +610,70 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_matchCode",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_home",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_away",
+        "type": "string"
+      }
+    ],
+    "name": "initFirstFourMatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_regionName",
+        "type": "string"
+      },
+      {
+        "internalType": "string[16]",
+        "name": "teamNames",
+        "type": "string[16]"
+      }
+    ],
+    "name": "initRegion",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "bool",
         "name": "_paused",
         "type": "bool"
@@ -652,6 +698,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
@@ -660,6 +713,24 @@
       }
     ],
     "name": "resetGame",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_contract",
+        "type": "address"
+      }
+    ],
+    "name": "setContract",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -694,6 +765,19 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ]
