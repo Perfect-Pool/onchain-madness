@@ -89,19 +89,12 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         string calldata _pin
     ) external whenNotPaused nonReentrant returns (uint256) {
         // Deploy new pool using clone
-        address newPool = Clones.clone(implementation);
-        OnchainMadnessTicket(newPool).initialize(
-            address(this),
-            address(gameDeployer),
-            msg.sender,
-            _isProtocolPool,
-            _isPrivatePool,
-            _isPrivatePool ? _pin : ""
-        );
+        address newPool = Clones.clone(implementation); 
+        uint256 poolId = currentPoolId;
 
         // Store pool address and ID mappings
-        pools[currentPoolId] = newPool;
-        poolIds[newPool] = currentPoolId;
+        pools[poolId] = newPool;
+        poolIds[newPool] = poolId;
         onchainMadnessContracts[newPool] = true;
 
         IPerfectPool perfectPool = IPerfectPool(
@@ -109,9 +102,17 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         );
         perfectPool.setAuthorizedMinter(newPool, true);
         perfectPool.setOnchainMadnessContract(newPool, true);
-
-        uint256 poolId = currentPoolId;
         emit TicketPoolCreated(poolId, newPool);
+
+        OnchainMadnessTicket(newPool).initialize(
+            poolId,
+            address(this),
+            address(gameDeployer),
+            msg.sender,
+            _isProtocolPool,
+            _isPrivatePool,
+            _isPrivatePool ? _pin : ""
+        );
 
         currentPoolId++;
 

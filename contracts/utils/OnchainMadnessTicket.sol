@@ -9,14 +9,6 @@ import "../interfaces/IERC20.sol";
 import "../libraries/OnchainMadnessLib.sol";
 
 /**
- * @title IOnchainMadnessTicketFactory
- * @dev Interface for the ticket factory to manage pool IDs
- */
-interface IOnchainMadnessTicketFactory {
-    function getPoolId(address _gameContract) external view returns (uint256);
-}
-
-/**
  * @title INftMetadata
  * @dev Interface for generating NFT metadata
  */
@@ -132,6 +124,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _pin PIN for private pools (empty for public pools)
      */
     function initialize(
+        uint256 _poolId,
         address _nftDeployer,
         address _gameDeployer,
         address _creator,
@@ -146,9 +139,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         isPrivatePool = _isPrivatePool;
         pin = keccak256(abi.encodePacked(_pin));
         perfectPool = IPerfectPool(gameDeployer.contracts("PERFECTPOOL"));
-        poolId = IOnchainMadnessTicketFactory(_nftDeployer).getPoolId(
-            address(this)
-        );
+        poolId = _poolId;
         ticketStorage = ITicketStorage(
             gameDeployer.contracts("OM_TICKET_STORAGE")
         );

@@ -39,6 +39,8 @@
     "verify-ppshare": "hardhat run scripts/verify/verifyPerfectPool.js --network",
     "verify-libraries": "hardhat run scripts/verify/verifyLibraries.js --network",
     "verify-all": "node scripts/verify-all.js",
-    "check-sports-radar": "hardhat run scripts/checkSportsRadar.js --network"
+    "check-sports-radar": "hardhat run scripts/checkSportsRadar.js --network",
+    "update-first-four": "hardhat run scripts/updateFirstFour.js --network",
+    "update-first-round": "hardhat run scripts/updateFirstRound.js --network"
   }
 }

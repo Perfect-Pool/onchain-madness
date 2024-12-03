@@ -16,6 +16,8 @@ async function main() {
   // Make the GET request to SPORTSRADAR_URL
   try {
     const response = await axios.get(process.env.SPORTSRADAR_URL);
+    console.log('Response from SportsRadar:');
+    console.log(JSON.stringify(response.data.rounds, null, 2));
   } catch (error) {
     console.error('Error fetching data from SportsRadar:');
     console.error(error.response ? error.response.data : error.message);
