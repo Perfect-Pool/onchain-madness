@@ -1,3 +1,20 @@
+/**
+ * @title First Four Games Update Script
+ * @dev This script interacts with the Sports Radar API and OnchainMadnessFactory contract
+ * to manage the First Four games of the NCAA Tournament.
+ * 
+ * Functionality:
+ * - Fetches current tournament data from Sports Radar API
+ * - Checks the current state of First Four games in the contract
+ * - Initializes uninitialized games with their respective teams
+ * - Updates game results when games are completed
+ * - Displays initial and final state of all First Four games
+ * 
+ * First Four Games:
+ * - FFG1 to FFG4: Four play-in games that determine the final tournament bracket
+ * - Each game's winner advances to the First Round
+ */
+
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");

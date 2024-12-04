@@ -30,9 +30,10 @@ async function main() {
 
     networkData.OM_METADATA = nftMetadata.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-
   } else {
     console.log(`NftMetadata already deployed at ${networkData.OM_METADATA}`);
+    console.log(`Setting NftMetadata address to OnchainMadnessFactory...`);
+    await OnchainMadnessFactory.setContract(name, networkData.OM_METADATA);
   }
 }
 

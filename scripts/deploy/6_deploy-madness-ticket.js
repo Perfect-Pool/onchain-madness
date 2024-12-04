@@ -72,6 +72,8 @@ async function main() {
     console.log(
       `TicketStorage already deployed at ${networkData.OM_TICKET_STORAGE}`
     );
+    console.log(`Setting TicketStorage address to OnchainMadnessFactory...`);
+    await OnchainMadnessFactory.setContract(nameStorage, networkData.OM_TICKET_STORAGE);
   }
 
   // Deploy do OnchainMadnessTicket, se necessário
@@ -106,6 +108,13 @@ async function main() {
   } else {
     console.log(
       `OnchainMadnessTicketFactory already deployed at ${networkData.OM_TICKET_DEPLOYER}`
+    );
+    console.log(
+      `Setting OnchainMadnessTicketFactory address to OnchainMadnessFactory...`
+    );
+    await OnchainMadnessFactory.setContract(
+      name,
+      networkData.OM_TICKET_DEPLOYER
     );
   }
 }

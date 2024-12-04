@@ -81,8 +81,9 @@ contract TicketStorage {
     modifier onlyTicketContract() {
         require(
             IOnchainMadnessTicketFactory(
-                gameDeployer.contracts("OM_TICKET_FACTORY")
-            ).onchainMadnessContracts(address(this)),
+                gameDeployer.contracts("OM_TICKET_DEPLOYER")
+            ).onchainMadnessContracts(msg.sender) ||
+                msg.sender == gameDeployer.contracts("OM_TICKET_DEPLOYER"),
             "Pool not initialized"
         );
         _;
@@ -388,19 +389,23 @@ contract TicketStorage {
     function getCurrentToken(
         uint256 poolId,
         uint256 gameYear
-    ) external onlyTicketContract returns (uint256 currentTokenId, bool hasNext) {
+    )
+        external
+        onlyTicketContract
+        returns (uint256 currentTokenId, bool hasNext)
+    {
         Game storage game = pools[poolId].games[gameYear];
-        
+
         // Get current token
         if (game.tokensIterationIndex >= game.tokens.length) {
             return (0, false);
         }
         currentTokenId = game.tokens[game.tokensIterationIndex];
-        
+
         // Update iteration state
         game.tokensIterationIndex++;
         game.claimEnabled = game.tokensIterationIndex >= game.tokens.length;
-        
+
         return (currentTokenId, true);
     }
 
@@ -416,7 +421,7 @@ contract TicketStorage {
         uint8 score
     ) external onlyTicketContract {
         Game storage game = pools[poolId].games[gameYear];
-        
+
         if (score > game.maxScore) {
             game.maxScore = score;
         }

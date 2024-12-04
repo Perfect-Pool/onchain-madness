@@ -57,6 +57,13 @@ async function main() {
 
   } else {
     console.log(`NftImage already deployed at ${networkData.OM_IMAGE}`);
+    console.log(
+      `Setting NftImage address to OnchainMadnessFactory...`
+    );
+    await OnchainMadnessFactory.setContract(
+      name,
+      networkData.OM_IMAGE
+    );
   }
 }
 

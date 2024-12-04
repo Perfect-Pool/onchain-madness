@@ -41,6 +41,13 @@
     "verify-all": "node scripts/verify-all.js",
     "check-sports-radar": "hardhat run scripts/checkSportsRadar.js --network",
     "update-first-four": "hardhat run scripts/updateFirstFour.js --network",
-    "update-first-round": "hardhat run scripts/updateFirstRound.js --network"
+    "update-first-round": "hardhat run scripts/updateFirstRound.js --network",
+    "update-second-round": "hardhat run scripts/updateSecondRound.js --network",
+    "update-third-round": "hardhat run scripts/updateThirdRound.js --network",
+    "update-fourth-round": "hardhat run scripts/updateFourthRound.js --network",
+    "update-fifth-round": "hardhat run scripts/updateFifthRound.js --network",
+    "update-championship": "hardhat run scripts/updateChampionship.js --network",
+    "create-pools": "hardhat run scripts/createPools.js --network",
+    "place-bets": "hardhat run scripts/placeBets.js --network"
   }
 }

@@ -8,8 +8,16 @@ async function main() {
   const networkName = hre.network.name;
   const networkData = data[networkName];
 
-  console.log(`Executor Address: ${networkData.Executor}`);
+  const OnchainMadnessFactory = await ethers.getContractAt(
+    "OnchainMadnessFactory",
+    networkData.OM_DEPLOYER
+  );
+  console.log(
+    `OnchainMadnessFactory loaded at ${OnchainMadnessFactory.address}`
+  );
 
+  console.log(`Executor Address: ${networkData.Executor}`);
+  const name = "PERFECTPOOL";
   if (networkData.PERFECTPOOL === "") {
     console.log(`Deploying PerfectPool...`);
     const PerfectPool = await ethers.getContractFactory("PerfectPool");
@@ -23,11 +31,33 @@ async function main() {
 
     console.log(`PerfectPool deployed at ${perfectPool.address}`);
     networkData.PERFECTPOOL = perfectPool.address;
+    console.log(`Setting PerfectPool address to OnchainMadnessFactory...`);
+    await OnchainMadnessFactory.setContract(name, perfectPool.address);
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    console.log(`Setting base contracts to PerfectPool...`);
+    await perfectPool.setOnchainMadnessContract(
+      networkData.OM_TICKET_DEPLOYER,
+      true
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   } else {
     console.log(`PerfectPool already deployed at ${networkData.PERFECTPOOL}`);
+    console.log(`Setting PerfectPool address to OnchainMadnessFactory...`);
+    await OnchainMadnessFactory.setContract(name, networkData.PERFECTPOOL);
+
+    const perfectPool = await ethers.getContractAt(
+      "PerfectPool",
+      networkData.PERFECTPOOL
+    );
+    console.log(`Setting base contracts to PerfectPool...`);
+    await perfectPool.setOnchainMadnessContract(
+      networkData.OM_TICKET_DEPLOYER,
+      true
+    );
   }
 }
 

@@ -134,24 +134,27 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
 
     /**
      * @notice Mints a new NFT representing a bracket prediction
-     * @dev Wrapper function that calls safeMint in the pool contract
+     * @dev Wrapper function that calls safeMint in the pool contract. Validates prediction against actual results.
      * @param _poolId ID of the pool
-     * @param _player Address to mint the NFT to
      * @param _gameYear Tournament year
      * @param bets Array of 63 predictions for the tournament
      * @param _pin PIN for private pools
      */
     function safeMint(
         uint256 _poolId,
-        address _player,
         uint256 _gameYear,
         uint8[63] memory bets,
         string calldata _pin
     ) public whenNotPaused nonReentrant {
-        uint256 nextTokenId = OnchainMadnessTicket(getPoolAddress(_poolId))
-            .safeMint(_player, _gameYear, bets, _pin);
+        //approve USDC for the pool
+        IERC20 USDC = IERC20(gameDeployer.contracts("USDC"));
+        address poolAddress = getPoolAddress(_poolId);
+        USDC.approve(poolAddress, OnchainMadnessTicket(poolAddress).price());
+        
+        uint256 nextTokenId = OnchainMadnessTicket(poolAddress)
+            .safeMint(msg.sender, _gameYear, bets, _pin);
 
-        emit BetPlaced(_player, _gameYear, nextTokenId);
+        emit BetPlaced(msg.sender, _gameYear, nextTokenId);
     }
 
     /**

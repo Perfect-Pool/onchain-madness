@@ -1,3 +1,27 @@
+/**
+ * @title First Round Games Update Script
+ * @dev This script interacts with the Sports Radar API and OnchainMadnessFactory contract
+ * to manage the First Round games of the NCAA Tournament.
+ * 
+ * Functionality:
+ * - Fetches current tournament data from Sports Radar API
+ * - Processes games for each region (WEST, MIDWEST, SOUTH, EAST)
+ * - Initializes regions that haven't been set up with their 16 teams
+ * - Updates game results when games are completed
+ * - Advances to next round when all games are decided
+ * - Closes betting period when games are about to start
+ * - Displays comprehensive state of all regions and their games
+ * 
+ * Regions:
+ * - Each region contains 8 First Round games
+ * - Teams are ordered by seeding in initialization
+ * - Games are numbered 1-8 within each region
+ * 
+ * Mock Date:
+ * - Uses MOCK_DATE to simulate current time
+ * - Automatically closes bets if any game starts within 30 minutes
+ */
+
 const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
@@ -6,8 +30,12 @@ require("dotenv").config();
 
 const TOURNAMENT_YEAR = 2024;
 
-const MOCK_DATE = "2024-03-21T12:00:00+00:00";
-const nowDate = new Date(MOCK_DATE);
+// Mock current time for testing
+const MOCK_DATE = "2024-03-20T12:00:00+00:00";
+const currentTime = new Date(MOCK_DATE);
+
+// Time threshold in milliseconds (30 minutes)
+const THRESHOLD_MS = 30 * 60 * 1000;
 
 // Map to convert from API region names to contract region names
 const REGION_NAME_MAP = {
@@ -186,20 +214,23 @@ async function main() {
       }
     }
 
-    // Print earliest game date
+    // Print earliest game date and check if bets should be closed
     if (earliestDate) {
       console.log(`\nFirst Round starts on: ${earliestDate.toLocaleString()}`);
+      
+      // Check if earliest game is within 30 minutes of mock current time
+      const timeUntilStart = earliestDate.getTime() - currentTime.getTime();
+      
+      console.log(`Current time (mocked): ${currentTime.toLocaleString()}`);
+      console.log(`Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`);
 
-      // Check if earliest game is after nowDate
-      nowDate.setMinutes(nowDate.getMinutes() - 30);
-      console.log(`Date: ${nowDate.toLocaleString()}`);
-      if (earliestDate <= nowDate) {
-        console.log("\nFirst round is about to start. Closing bets...");
+      if (timeUntilStart <= THRESHOLD_MS) {
+        console.log("\nFirst game starts in less than 30 minutes. Closing bets...");
         const tx = await contract.closeBets(TOURNAMENT_YEAR);
         await tx.wait();
         console.log("Bets closed successfully!");
       } else {
-        console.log("\nBets are still open.");
+        console.log("\nBets remain open - first game is more than 30 minutes away");
       }
     }
 
