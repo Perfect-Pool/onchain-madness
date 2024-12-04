@@ -2,10 +2,10 @@
 pragma solidity ^0.8.20;
 
 /**
- * @title IOnchainMadnessTicketFactory
- * @dev Interface for validating ticket factory contracts
+ * @title IOnchainMadnessEntryFactory
+ * @dev Interface for validating entry factory contracts
  */
-interface IOnchainMadnessTicketFactory {
+interface IOnchainMadnessEntryFactory {
     function onchainMadnessContracts(address) external view returns (bool);
 }
 
@@ -18,10 +18,10 @@ interface IOnchainMadnessFactory {
 }
 
 /**
- * @title TicketStorage
+ * @title EntryStorage
  * @author PerfectPool Team
- * @notice Storage contract for OnchainMadnessTicket data
- * @dev Manages game data, token mappings, and prize pool information for NFT tickets
+ * @notice Storage contract for OnchainMadnessEntry data
+ * @dev Manages game data, token mappings, and prize pool information for NFT entrys
  * Features:
  * - Multiple pool support with unique identifiers
  * - Game data storage including pot amounts and scores
@@ -30,7 +30,7 @@ interface IOnchainMadnessFactory {
  * - Prize claim management
  * - Perfect Pool share distribution
  */
-contract TicketStorage {
+contract EntryStorage {
     /**
      * @dev Represents a single game's data and state
      * @param pot Total amount in the game's prize pool
@@ -76,14 +76,14 @@ contract TicketStorage {
     IOnchainMadnessFactory public gameDeployer;
 
     /**
-     * @dev Ensures caller is an authorized ticket contract
+     * @dev Ensures caller is an authorized entry contract
      */
-    modifier onlyTicketContract() {
+    modifier onlyEntryContract() {
         require(
-            IOnchainMadnessTicketFactory(
-                gameDeployer.contracts("OM_TICKET_DEPLOYER")
+            IOnchainMadnessEntryFactory(
+                gameDeployer.contracts("OM_ENTRY_DEPLOYER")
             ).onchainMadnessContracts(msg.sender) ||
-                msg.sender == gameDeployer.contracts("OM_TICKET_DEPLOYER"),
+                msg.sender == gameDeployer.contracts("OM_ENTRY_DEPLOYER"),
             "Pool not initialized"
         );
         _;
@@ -99,10 +99,10 @@ contract TicketStorage {
 
     /**
      * @notice Initializes a new pool
-     * @dev Can only be called once per pool ID by the ticket contract
+     * @dev Can only be called once per pool ID by the entry contract
      * @param poolId Unique identifier for the pool
      */
-    function initialize(uint256 poolId) external onlyTicketContract {
+    function initialize(uint256 poolId) external onlyEntryContract {
         require(!initialized[poolId], "Pool already initialized");
         initialized[poolId] = true;
     }
@@ -126,7 +126,7 @@ contract TicketStorage {
     )
         external
         view
-        onlyTicketContract
+        onlyEntryContract
         returns (
             uint256 pot,
             uint8 maxScore,
@@ -164,7 +164,7 @@ contract TicketStorage {
         uint256 potClaimed,
         bool claimEnabled,
         uint256 tokensIterationIndex
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         Game storage game = pools[poolId].games[gameYear];
         game.pot = pot;
         game.maxScore = maxScore;
@@ -190,7 +190,7 @@ contract TicketStorage {
         uint256 shareAmount,
         address recipient,
         bytes memory dataUpdate
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         // Update game data
         Game storage game = pools[poolId].games[gameYear];
 
@@ -223,7 +223,7 @@ contract TicketStorage {
         uint256 poolId,
         uint256 tokenId,
         uint256 gameYear
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         pools[poolId].tokenToGameYear[tokenId] = gameYear;
     }
 
@@ -236,7 +236,7 @@ contract TicketStorage {
     function getTokenGameYear(
         uint256 poolId,
         uint256 tokenId
-    ) external view onlyTicketContract returns (uint256) {
+    ) external view onlyEntryContract returns (uint256) {
         return pools[poolId].tokenToGameYear[tokenId];
     }
 
@@ -250,7 +250,7 @@ contract TicketStorage {
         uint256 poolId,
         uint256 tokenId,
         uint8[63] memory bets
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         pools[poolId].nftBet[tokenId] = bets;
     }
 
@@ -263,7 +263,7 @@ contract TicketStorage {
     function getNftBet(
         uint256 poolId,
         uint256 tokenId
-    ) external view onlyTicketContract returns (uint8[63] memory) {
+    ) external view onlyEntryContract returns (uint8[63] memory) {
         return pools[poolId].nftBet[tokenId];
     }
 
@@ -277,7 +277,7 @@ contract TicketStorage {
         uint256 poolId,
         uint256 tokenId,
         uint256 amount
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         pools[poolId].tokenClaimed[tokenId] = amount;
     }
 
@@ -290,7 +290,7 @@ contract TicketStorage {
     function getTokenClaimed(
         uint256 poolId,
         uint256 tokenId
-    ) external view onlyTicketContract returns (uint256) {
+    ) external view onlyEntryContract returns (uint256) {
         return pools[poolId].tokenClaimed[tokenId];
     }
 
@@ -304,7 +304,7 @@ contract TicketStorage {
         uint256 poolId,
         address user,
         uint256 amount
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         pools[poolId].ppShare[user] = amount;
     }
 
@@ -317,7 +317,7 @@ contract TicketStorage {
     function getPpShare(
         uint256 poolId,
         address user
-    ) external view onlyTicketContract returns (uint256) {
+    ) external view onlyEntryContract returns (uint256) {
         return pools[poolId].ppShare[user];
     }
 
@@ -333,7 +333,7 @@ contract TicketStorage {
         uint256 gameYear,
         uint256 score,
         uint256 qty
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         pools[poolId].games[gameYear].scoreBetQty[score] = qty;
     }
 
@@ -348,7 +348,7 @@ contract TicketStorage {
         uint256 poolId,
         uint256 gameYear,
         uint256 score
-    ) external view onlyTicketContract returns (uint256) {
+    ) external view onlyEntryContract returns (uint256) {
         return pools[poolId].games[gameYear].scoreBetQty[score];
     }
 
@@ -362,7 +362,7 @@ contract TicketStorage {
         uint256 poolId,
         uint256 gameYear,
         uint256 tokenId
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         pools[poolId].games[gameYear].tokens.push(tokenId);
     }
 
@@ -375,7 +375,7 @@ contract TicketStorage {
     function getGameTokens(
         uint256 poolId,
         uint256 gameYear
-    ) external view onlyTicketContract returns (uint256[] memory) {
+    ) external view onlyEntryContract returns (uint256[] memory) {
         return pools[poolId].games[gameYear].tokens;
     }
 
@@ -391,7 +391,7 @@ contract TicketStorage {
         uint256 gameYear
     )
         external
-        onlyTicketContract
+        onlyEntryContract
         returns (uint256 currentTokenId, bool hasNext)
     {
         Game storage game = pools[poolId].games[gameYear];
@@ -419,7 +419,7 @@ contract TicketStorage {
         uint256 poolId,
         uint256 gameYear,
         uint8 score
-    ) external onlyTicketContract {
+    ) external onlyEntryContract {
         Game storage game = pools[poolId].games[gameYear];
 
         if (score > game.maxScore) {

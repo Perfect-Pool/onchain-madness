@@ -43,12 +43,12 @@ async function main() {
   const networkData = data[networkName];
 
   console.log(`Using network: ${networkName}`);
-  console.log(`Ticket Factory address: ${networkData["OM_TICKET_DEPLOYER"]}`);
+  console.log(`Entry Factory address: ${networkData["OM_ENTRY_DEPLOYER"]}`);
   console.log(`USDC address: ${networkData["USDC"]}`);
 
   // Get contract instances
-  const TicketFactory = await ethers.getContractFactory("OnchainMadnessTicketFactory");
-  const factory = TicketFactory.attach(networkData["OM_TICKET_DEPLOYER"]);
+  const EntryFactory = await ethers.getContractFactory("OnchainMadnessEntryFactory");
+  const factory = EntryFactory.attach(networkData["OM_ENTRY_DEPLOYER"]);
   
   const [signer] = await ethers.getSigners();
   const usdc = new ethers.Contract(networkData["USDC"], USDC_ABI, signer);
@@ -120,7 +120,7 @@ async function main() {
       2,                    // poolId
       TOURNAMENT_YEAR,      // gameYear
       privateBets,         // predictions
-      "327508"              // PIN required
+      "787369"              // PIN required
     );
     const privateReceipt = await privateTx.wait();
     

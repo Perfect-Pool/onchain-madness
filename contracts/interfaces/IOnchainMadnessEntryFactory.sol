@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IOnchainMadnessTicketFactory {
+interface IOnchainMadnessEntryFactory {
     /**
      * @dev Gets the bet data for a specific token in a pool
      * @param _poolId The ID of the pool

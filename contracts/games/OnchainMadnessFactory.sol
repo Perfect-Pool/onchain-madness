@@ -6,6 +6,13 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./OnchainMadness.sol";
 
 /**
+ * Interface for OnchainMadnessFactory
+ */
+interface IOnchainMadnessEntryFactory {
+    function iterateYearTokens(uint256 _year) external;
+}
+
+/**
  * @title OnchainMadnessFactory
  * @author PerfectPool
  * @notice Factory contract for creating and managing NCAA Tournament bracket games
@@ -341,6 +348,11 @@ contract OnchainMadnessFactory is Ownable {
             homePoints,
             awayPoints
         );
+
+        IOnchainMadnessEntryFactory(
+            contracts("OM_ENTRY_DEPLOYER")
+        ).iterateYearTokens(year);
+
         emit TournamentFinished(year);
     }
 

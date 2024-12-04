@@ -23,10 +23,10 @@ async function main() {
     `OnchainMadnessFactory loaded at ${OnchainMadnessFactory.address}`
   );
 
-  if (networkData.OM_TICKET === "") {
+  if (networkData.OM_ENTRY === "") {
     // Link the library
-    const OnchainMadnessTicket = await ethers.getContractFactory(
-      "OnchainMadnessTicket",
+    const OnchainMadnessEntry = await ethers.getContractFactory(
+      "OnchainMadnessEntry",
       {
         libraries: {
           OnchainMadnessLib: libraryAddress,
@@ -34,87 +34,87 @@ async function main() {
       }
     );
 
-    const onchainMadnessTicket = await OnchainMadnessTicket.deploy(
+    const onchainMadnessEntry = await OnchainMadnessEntry.deploy(
       networkData.USDC
     );
-    await onchainMadnessTicket.deployed();
+    await onchainMadnessEntry.deployed();
     console.log(
-      `OnchainMadnessTicket deployed at ${onchainMadnessTicket.address}`
+      `OnchainMadnessEntry deployed at ${onchainMadnessEntry.address}`
     );
 
-    networkData.OM_TICKET = onchainMadnessTicket.address;
+    networkData.OM_ENTRY = onchainMadnessEntry.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
   } else {
     console.log(
-      `OnchainMadnessTicket already deployed at ${networkData.OM_TICKET}`
+      `OnchainMadnessEntry already deployed at ${networkData.OM_ENTRY}`
     );
   }
 
-  const nameStorage = "OM_TICKET_STORAGE";
+  const nameStorage = "OM_ENTRY_STORAGE";
 
-  if (networkData.OM_TICKET_STORAGE === "") {
-    const TicketStorage = await ethers.getContractFactory("TicketStorage");
-    const ticketStorage = await TicketStorage.deploy(networkData.OM_DEPLOYER);
-    await ticketStorage.deployed();
-    console.log(`TicketStorage deployed at ${ticketStorage.address}`);
+  if (networkData.OM_ENTRY_STORAGE === "") {
+    const EntryStorage = await ethers.getContractFactory("EntryStorage");
+    const entryStorage = await EntryStorage.deploy(networkData.OM_DEPLOYER);
+    await entryStorage.deployed();
+    console.log(`EntryStorage deployed at ${entryStorage.address}`);
 
-    networkData.OM_TICKET_STORAGE = ticketStorage.address;
+    networkData.OM_ENTRY_STORAGE = entryStorage.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
-    console.log(`Setting TicketStorage address to OnchainMadnessFactory...`);
-    await OnchainMadnessFactory.setContract(nameStorage, ticketStorage.address);
+    console.log(`Setting EntryStorage address to OnchainMadnessFactory...`);
+    await OnchainMadnessFactory.setContract(nameStorage, entryStorage.address);
 
-    networkData.OM_TICKET_STORAGE = ticketStorage.address;
+    networkData.OM_ENTRY_STORAGE = entryStorage.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
   } else {
     console.log(
-      `TicketStorage already deployed at ${networkData.OM_TICKET_STORAGE}`
+      `EntryStorage already deployed at ${networkData.OM_ENTRY_STORAGE}`
     );
-    console.log(`Setting TicketStorage address to OnchainMadnessFactory...`);
-    await OnchainMadnessFactory.setContract(nameStorage, networkData.OM_TICKET_STORAGE);
+    console.log(`Setting EntryStorage address to OnchainMadnessFactory...`);
+    await OnchainMadnessFactory.setContract(nameStorage, networkData.OM_ENTRY_STORAGE);
   }
 
-  // Deploy do OnchainMadnessTicket, se necessário
-  const name = "OM_TICKET_DEPLOYER";
+  // Deploy do OnchainMadnessEntry, se necessário
+  const name = "OM_ENTRY_DEPLOYER";
 
-  if (networkData.OM_TICKET_DEPLOYER === "") {
-    const OnchainMadnessTicketFactory = await ethers.getContractFactory(
-      "OnchainMadnessTicketFactory"
+  if (networkData.OM_ENTRY_DEPLOYER === "") {
+    const OnchainMadnessEntryFactory = await ethers.getContractFactory(
+      "OnchainMadnessEntryFactory"
     );
-    const onchainMadnessTicketFactory =
-      await OnchainMadnessTicketFactory.deploy(
-        networkData.OM_TICKET,
+    const onchainMadnessEntryFactory =
+      await OnchainMadnessEntryFactory.deploy(
+        networkData.OM_ENTRY,
         networkData.OM_DEPLOYER
       );
-    await onchainMadnessTicketFactory.deployed();
+    await onchainMadnessEntryFactory.deployed();
     console.log(
-      `OnchainMadnessTicketFactory deployed at ${onchainMadnessTicketFactory.address}`
+      `OnchainMadnessEntryFactory deployed at ${onchainMadnessEntryFactory.address}`
     );
 
     await new Promise((resolve) => setTimeout(resolve, 5000));
 
     console.log(
-      `Setting OnchainMadnessTicketFactory address to OnchainMadnessFactory...`
+      `Setting OnchainMadnessEntryFactory address to OnchainMadnessFactory...`
     );
     await OnchainMadnessFactory.setContract(
       name,
-      onchainMadnessTicketFactory.address
+      onchainMadnessEntryFactory.address
     );
 
-    networkData.OM_TICKET_DEPLOYER = onchainMadnessTicketFactory.address;
+    networkData.OM_ENTRY_DEPLOYER = onchainMadnessEntryFactory.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
   } else {
     console.log(
-      `OnchainMadnessTicketFactory already deployed at ${networkData.OM_TICKET_DEPLOYER}`
+      `OnchainMadnessEntryFactory already deployed at ${networkData.OM_ENTRY_DEPLOYER}`
     );
     console.log(
-      `Setting OnchainMadnessTicketFactory address to OnchainMadnessFactory...`
+      `Setting OnchainMadnessEntryFactory address to OnchainMadnessFactory...`
     );
     await OnchainMadnessFactory.setContract(
       name,
-      networkData.OM_TICKET_DEPLOYER
+      networkData.OM_ENTRY_DEPLOYER
     );
   }
 }

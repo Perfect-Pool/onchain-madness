@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface ITicketStorage {
+interface IEntryStorage {
     function initialize(uint256 poolId) external;
 
     function getGame(

@@ -4,61 +4,61 @@ async function main() {
   const contracts = require("../../contracts.json");
   const networkName = hre.network.name;
 
-  const addressTicket = contracts[networkName].OM_TICKET;
-  if (!addressTicket) {
-    console.error("OnchainMadnessTicket address not found in contracts.json");
+  const addressEntry = contracts[networkName].OM_ENTRY;
+  if (!addressEntry) {
+    console.error("OnchainMadnessEntry address not found in contracts.json");
     process.exit(1);
   }
 
-  console.log("Verifying OnchainMadnessTicket at address", addressTicket);
+  console.log("Verifying OnchainMadnessEntry at address", addressEntry);
 
   await hre.run("verify:verify", {
-    address: addressTicket,
+    address: addressEntry,
     constructorArguments: [contracts[networkName].USDC],
-    contract: "contracts/utils/OnchainMadnessTicket.sol:OnchainMadnessTicket",
+    contract: "contracts/utils/OnchainMadnessEntry.sol:OnchainMadnessEntry",
     libraries: {
       OnchainMadnessLib: contracts[networkName].Libraries.OnchainMadnessLib,
     },
   });
 
-  const addressTicketStorage = contracts[networkName].OM_TICKET_STORAGE;
-  if (!addressTicketStorage) {
+  const addressEntryStorage = contracts[networkName].OM_ENTRY_STORAGE;
+  if (!addressEntryStorage) {
     console.error(
-      "TicketStorage address not found in contracts.json"
+      "EntryStorage address not found in contracts.json"
     );
     process.exit(1);
   }
 
   console.log(
-    "Verifying TicketStorage at address",
-    addressTicketStorage
+    "Verifying EntryStorage at address",
+    addressEntryStorage
   );
 
   await hre.run("verify:verify", {
-    address: addressTicketStorage,
+    address: addressEntryStorage,
     constructorArguments: [contracts[networkName].OM_DEPLOYER],
     contract:
-      "contracts/utils/TicketStorage.sol:TicketStorage",
+      "contracts/utils/EntryStorage.sol:EntryStorage",
   });
 
-  const addressTicketFactory = contracts[networkName].OM_TICKET_DEPLOYER;
-  if (!addressTicketFactory) {
+  const addressEntryFactory = contracts[networkName].OM_ENTRY_DEPLOYER;
+  if (!addressEntryFactory) {
     console.error(
-      "OnchainMadnessTicketFactory address not found in contracts.json"
+      "OnchainMadnessEntryFactory address not found in contracts.json"
     );
     process.exit(1);
   }
 
   console.log(
-    "Verifying OnchainMadnessTicketFactory at address",
-    addressTicketFactory
+    "Verifying OnchainMadnessEntryFactory at address",
+    addressEntryFactory
   );
 
   await hre.run("verify:verify", {
-    address: addressTicketFactory,
-    constructorArguments: [contracts[networkName].OM_TICKET,contracts[networkName].OM_DEPLOYER],
+    address: addressEntryFactory,
+    constructorArguments: [contracts[networkName].OM_ENTRY,contracts[networkName].OM_DEPLOYER],
     contract:
-      "contracts/utils/OnchainMadnessTicketFactory.sol:OnchainMadnessTicketFactory",
+      "contracts/utils/OnchainMadnessEntryFactory.sol:OnchainMadnessEntryFactory",
   });
 }
 

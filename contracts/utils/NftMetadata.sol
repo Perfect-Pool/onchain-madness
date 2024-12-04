@@ -5,8 +5,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../libraries/Base64.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
-import "../interfaces/IGamesHub.sol";
-import "../interfaces/IOnchainMadnessTicket.sol";
+import "../interfaces/IOnchainMadnessEntry.sol";
 
 interface INftImage {
     function buildImage(
@@ -20,10 +19,10 @@ contract NftMetadata {
     using Strings for uint8;
     using Strings for uint256;
 
-    IGamesHub public gamesHub;
+    IOnchainMadnessFactory public madnessFactory;
 
-    constructor(address _gamesHub) {
-        gamesHub = IGamesHub(_gamesHub);
+    constructor(address _madnessFactory) {
+        madnessFactory = IOnchainMadnessFactory(_madnessFactory);
     }
 
     function gameStatus(
@@ -31,8 +30,7 @@ contract NftMetadata {
         uint256 _tokenId
     ) public view returns (string memory) {
         (, uint8 status) = abi.decode(
-            IOnchainMadnessFactory(gamesHub.games(keccak256("OM_DEPLOYER")))
-                .getGameStatus(_gameYear),
+            madnessFactory.getGameStatus(_gameYear),
             (uint256, uint8)
         );
         if (status == 1) {
@@ -43,15 +41,13 @@ contract NftMetadata {
             if (
                 keccak256(
                     abi.encodePacked(
-                        IOnchainMadnessFactory(
-                            gamesHub.games(keccak256("OM_DEPLOYER"))
-                        ).getFinalResult(_gameYear)
+                        madnessFactory.getFinalResult(_gameYear)
                     )
                 ) ==
                 keccak256(
                     abi.encodePacked(
-                        IOnchainMadnessTicket(
-                            gamesHub.helpers(keccak256("OM_TICKET"))
+                        IOnchainMadnessEntry(
+                            madnessFactory.contracts("OM_ENTRY")
                         ).getBetData(_tokenId)
                     )
                 )
@@ -75,11 +71,11 @@ contract NftMetadata {
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
-                                '{"name":"Madness Ticket #',
+                                '{"name":"Madness Entry #',
                                 _tokenId.toString(),
                                 '","description":"Onchain Madness NFT from PerfectPool.","image":"',
                                 INftImage(
-                                    gamesHub.helpers(keccak256("OM_IMAGE"))
+                                    madnessFactory.contracts("OM_IMAGE")
                                 ).buildImage(_poolId, _gameYear, _tokenId),
                                 '","attributes":[{"trait_type":"Game Status:","value":"',
                                 gameStatus(_gameYear, _tokenId),

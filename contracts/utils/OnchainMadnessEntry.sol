@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
-import "../interfaces/ITicketStorage.sol";
+import "../interfaces/IEntryStorage.sol";
 import "../interfaces/IERC20.sol";
 import "../libraries/OnchainMadnessLib.sol";
 
@@ -54,10 +54,10 @@ interface IPerfectPool {
 }
 
 /**
- * @title OnchainMadnessTicket
+ * @title OnchainMadnessEntry
  * @author PerfectPool Team
  * @notice NFT contract representing tournament bracket predictions
- * @dev Implementation contract to be cloned by OnchainMadnessTicketFactory
+ * @dev Implementation contract to be cloned by OnchainMadnessEntryFactory
  * Features:
  * - ERC721 NFT representing bracket predictions
  * - Integration with PerfectPool for prize distribution
@@ -65,11 +65,11 @@ interface IPerfectPool {
  * - Support for private and protocol pools
  * - Prize claiming mechanism
  */
-contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
+contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     /** STATE VARIABLES **/
     /// @dev Counter for token IDs
     uint256 private _nextTokenId;
-    /// @dev Fixed price in USDC for minting a ticket (20 USDC)
+    /// @dev Fixed price in USDC for minting a entry (20 USDC)
     uint256 public immutable price;
     /// @dev Unique identifier for this pool
     uint256 public poolId;
@@ -90,8 +90,8 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     IPerfectPool private perfectPool;
     /// @dev Reference to the USDC token contract
     IERC20 private immutable USDC;
-    /// @dev Reference to the ticket storage contract
-    ITicketStorage public ticketStorage;
+    /// @dev Reference to the entry storage contract
+    IEntryStorage public entryStorage;
 
     /** MODIFIERS **/
     /**
@@ -103,18 +103,18 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     }
 
     /**
-     * @notice Creates a new OnchainMadnessTicket contract
+     * @notice Creates a new OnchainMadnessEntry contract
      * @dev Sets up the NFT with USDC integration and fixed price
      * @param _token Address of the USDC token contract
      */
-    constructor(address _token) ERC721("OnchainMadnessTicket", "OMT") {
+    constructor(address _token) ERC721("OnchainMadnessEntry", "OME") {
         _nextTokenId = 1;
         USDC = IERC20(_token);
         price = 20 * (10 ** USDC.decimals());
     }
 
     /**
-     * @notice Initializes a cloned ticket contract
+     * @notice Initializes a cloned entry contract
      * @dev Sets up all contract references and pool configuration
      * @param _nftDeployer Address of the factory contract
      * @param _gameDeployer Address of the game factory
@@ -140,14 +140,14 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         pin = keccak256(abi.encodePacked(_pin));
         perfectPool = IPerfectPool(gameDeployer.contracts("PERFECTPOOL"));
         poolId = _poolId;
-        ticketStorage = ITicketStorage(
-            gameDeployer.contracts("OM_TICKET_STORAGE")
+        entryStorage = IEntryStorage(
+            gameDeployer.contracts("OM_ENTRY_STORAGE")
         );
-        ticketStorage.initialize(poolId);
+        entryStorage.initialize(poolId);
     }
 
     /**
-     * @notice Mints a new ticket NFT with bracket predictions
+     * @notice Mints a new entry NFT with bracket predictions
      * @dev Handles USDC payment, PerfectPool integration, and storage updates
      * @param _player Address to receive the NFT
      * @param _gameYear Tournament year for the predictions
@@ -168,7 +168,6 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
             (uint8, uint8)
         );
         require(status == 1, "Bets closed.");
-        USDC.transferFrom(_player, address(this), price);
 
         if (isPrivatePool) {
             require(keccak256(abi.encodePacked(_pin)) == pin, "Invalid pin.");
@@ -184,7 +183,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         uint256 balanceBefore = perfectPool.balanceOf(address(this));
         perfectPool.increasePool((price / 10), percentages, recipients);
 
-        ticketStorage.batchUpdateGameDataAndShares(
+        entryStorage.batchUpdateGameDataAndShares(
             poolId,
             _gameYear,
             _nextTokenId,
@@ -208,7 +207,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function iterateNextToken(
         uint256 _gameYear
     ) external onlyNftDeployer returns (bool success, uint8 score) {
-        (uint256 currentTokenId, bool hasNext) = ticketStorage.getCurrentToken(
+        (uint256 currentTokenId, bool hasNext) = entryStorage.getCurrentToken(
             poolId,
             _gameYear
         );
@@ -218,7 +217,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         }
 
         (, score) = betValidator(currentTokenId);
-        ticketStorage.updateScore(poolId, _gameYear, score);
+        entryStorage.updateScore(poolId, _gameYear, score);
         
         if (score == 64) {
             perfectPool.increaseWinnersQty(_gameYear);
@@ -239,18 +238,18 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     ) external nonReentrant onlyNftDeployer {
         require(!gameDeployer.paused(), "Game paused.");
         require(
-            ticketStorage.getTokenClaimed(poolId, _tokenId) == 0,
+            entryStorage.getTokenClaimed(poolId, _tokenId) == 0,
             "Tokens already claimed."
         );
 
-        uint256 _gameYear = ticketStorage.getTokenGameYear(poolId, _tokenId);
+        uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
         (
             uint256 pot,
             uint8 maxScore,
             uint256 potClaimed,
             bool claimEnabled,
             uint256 tokensIterationIndex
-        ) = ticketStorage.getGame(poolId, _gameYear);
+        ) = entryStorage.getGame(poolId, _gameYear);
         require(claimEnabled, "Game not finished.");
 
         (, uint8 status) = abi.decode(
@@ -265,10 +264,10 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         uint256 amount = OnchainMadnessLib.calculatePrize(
             pot,
             potClaimed,
-            ticketStorage.getScoreBetQty(poolId, _gameYear, tokenScore)
+            entryStorage.getScoreBetQty(poolId, _gameYear, tokenScore)
         );
 
-        ticketStorage.updateGame(
+        entryStorage.updateGame(
             poolId,
             _gameYear,
             pot,
@@ -277,7 +276,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
             claimEnabled,
             tokensIterationIndex
         );
-        ticketStorage.setTokenClaimed(poolId, _tokenId, amount);
+        entryStorage.setTokenClaimed(poolId, _tokenId, amount);
 
         USDC.transfer(_player, amount);
     }
@@ -288,9 +287,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @param _player Address to receive the tokens
      */
     function claimPPShare(address _player) external onlyNftDeployer {
-        uint256 amount = ticketStorage.getPpShare(poolId, _player);
+        uint256 amount = entryStorage.getPpShare(poolId, _player);
         require(amount > 0, "No ppShare tokens to claim.");
-        ticketStorage.setPpShare(poolId, _player, 0);
+        entryStorage.setPpShare(poolId, _player, 0);
         perfectPool.transfer(_player, amount);
     }
 
@@ -309,9 +308,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
             uint256 potClaimed,
             bool claimEnabled,
             uint256 tokensIterationIndex
-        ) = ticketStorage.getGame(poolId, _gameYear);
+        ) = entryStorage.getGame(poolId, _gameYear);
 
-        ticketStorage.updateGame(
+        entryStorage.updateGame(
             poolId,
             _gameYear,
             pot + _amount,
@@ -339,7 +338,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
         return
             nftMetadata.buildMetadata(
                 poolId,
-                ticketStorage.getTokenGameYear(poolId, _tokenId),
+                entryStorage.getTokenGameYear(poolId, _tokenId),
                 _tokenId
             );
     }
@@ -352,7 +351,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function getBetData(
         uint256 _tokenId
     ) public view returns (uint8[63] memory) {
-        return ticketStorage.getNftBet(poolId, _tokenId);
+        return entryStorage.getNftBet(poolId, _tokenId);
     }
 
     /**
@@ -361,7 +360,7 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @return Tournament year the token is associated with
      */
     function getGameYear(uint256 _tokenId) public view returns (uint256) {
-        return ticketStorage.getTokenGameYear(poolId, _tokenId);
+        return entryStorage.getTokenGameYear(poolId, _tokenId);
     }
 
     /**
@@ -374,9 +373,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function betValidator(
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
-        uint8[63] memory bets = ticketStorage.getNftBet(poolId, _tokenId);
+        uint8[63] memory bets = entryStorage.getNftBet(poolId, _tokenId);
         uint8[63] memory results = gameDeployer.getFinalResult(
-            ticketStorage.getTokenGameYear(poolId, _tokenId)
+            entryStorage.getTokenGameYear(poolId, _tokenId)
         );
 
         return OnchainMadnessLib.validateAndScore(bets, results);
@@ -392,8 +391,8 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     ) public view returns (string[63] memory) {
         return
             gameDeployer.getTeamSymbols(
-                ticketStorage.getTokenGameYear(poolId, _tokenId),
-                ticketStorage.getNftBet(poolId, _tokenId)
+                entryStorage.getTokenGameYear(poolId, _tokenId),
+                entryStorage.getNftBet(poolId, _tokenId)
             );
     }
 
@@ -406,9 +405,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function amountPrizeClaimed(
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
-        uint256 _gameYear = ticketStorage.getTokenGameYear(poolId, _tokenId);
+        uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
         (, uint8 score) = betValidator(_tokenId);
-        (uint256 pot, , uint256 potClaimed, , ) = ticketStorage.getGame(
+        (uint256 pot, , uint256 potClaimed, , ) = entryStorage.getGame(
             poolId,
             _gameYear
         );
@@ -417,9 +416,9 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
             OnchainMadnessLib.calculatePrize(
                 pot,
                 potClaimed,
-                ticketStorage.getScoreBetQty(poolId, _gameYear, score)
+                entryStorage.getScoreBetQty(poolId, _gameYear, score)
             ),
-            ticketStorage.getTokenClaimed(poolId, _tokenId)
+            entryStorage.getTokenClaimed(poolId, _tokenId)
         );
     }
 
@@ -431,19 +430,19 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
     function potentialPayout(
         uint256 gameYear
     ) public view returns (uint256 payout) {
-        (uint256 pot, , , , ) = ticketStorage.getGame(poolId, gameYear);
+        (uint256 pot, , , , ) = entryStorage.getGame(poolId, gameYear);
         return pot;
     }
 
     /**
      * @notice Gets total number of players in a game
      * @param gameYear Tournament year to check
-     * @return players Number of minted tickets for the game
+     * @return players Number of minted entrys for the game
      */
     function playerQuantity(
         uint256 gameYear
     ) public view returns (uint256 players) {
-        return ticketStorage.getGameTokens(poolId, gameYear).length;
+        return entryStorage.getGameTokens(poolId, gameYear).length;
     }
 
     /**
@@ -452,12 +451,12 @@ contract OnchainMadnessTicket is ERC721, ReentrancyGuard {
      * @return validator Array indicating correct/incorrect predictions
      * @return points Total score achieved
      */
-    function validateTicket(
+    function validateEntry(
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
-        uint8[63] memory bets = ticketStorage.getNftBet(poolId, _tokenId);
+        uint8[63] memory bets = entryStorage.getNftBet(poolId, _tokenId);
         uint8[63] memory results = gameDeployer.getFinalResult(
-            ticketStorage.getTokenGameYear(poolId, _tokenId)
+            entryStorage.getTokenGameYear(poolId, _tokenId)
         );
 
         return OnchainMadnessLib.validateAndScore(bets, results);

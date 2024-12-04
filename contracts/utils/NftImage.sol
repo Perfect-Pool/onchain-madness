@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "../libraries/Base64.sol";
 import "../libraries/BuildImage.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
-import "../interfaces/IOnchainMadnessTicketFactory.sol";
+import "../interfaces/IOnchainMadnessEntryFactory.sol";
 
 contract NftImage {
     using Strings for uint16;
@@ -27,8 +27,8 @@ contract NftImage {
         uint256 _gameYear,
         uint256 _tokenId
     ) public view returns (string memory) {
-        (uint8[63] memory bets, ) = IOnchainMadnessTicketFactory(
-            madnessFactory.contracts("OM_TICKET_FACTORY")
+        (uint8[63] memory bets, ) = IOnchainMadnessEntryFactory(
+            madnessFactory.contracts("OM_ENTRY_FACTORY")
         ).betValidator(_poolId, _tokenId);
         return
             string(
@@ -41,9 +41,9 @@ contract NftImage {
                                     bets,
                                     madnessFactory.getTeamSymbols(
                                         _gameYear,
-                                        IOnchainMadnessTicketFactory(
+                                        IOnchainMadnessEntryFactory(
                                             madnessFactory.contracts(
-                                                "OM_TICKET_FACTORY"
+                                                "OM_ENTRY_FACTORY"
                                             )
                                         ).getBetData(_poolId, _tokenId)
                                     ),

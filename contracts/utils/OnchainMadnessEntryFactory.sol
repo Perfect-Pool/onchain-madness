@@ -6,23 +6,23 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "../interfaces/IERC20.sol";
-import "./OnchainMadnessTicket.sol";
+import "./OnchainMadnessEntry.sol";
 
 /**
- * @title OnchainMadnessTicketFactory
+ * @title OnchainMadnessEntryFactory
  * @author PerfectPool Team
- * @notice Factory contract for creating and managing OnchainMadnessTicket pools
+ * @notice Factory contract for creating and managing OnchainMadnessEntry pools
  * @dev Uses the Clones pattern to deploy minimal proxy contracts for each pool
  * Features:
- * - Creates and manages ticket pools
+ * - Creates and manages entry pools
  * - Handles pool initialization and configuration
  * - Manages protocol and private pools
- * - Provides wrapper functions for ticket operations
+ * - Provides wrapper functions for entry operations
  */
-contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
+contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     /** EVENTS **/
-    /// @notice Emitted when a new ticket pool is created
-    event TicketPoolCreated(
+    /// @notice Emitted when a new entry pool is created
+    event EntryPoolCreated(
         uint256 indexed poolId,
         address indexed poolAddress
     );
@@ -60,7 +60,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
     IOnchainMadnessFactory public gameDeployer;
 
     /**
-     * @notice Constructor for the OnchainMadnessTicketFactory contract
+     * @notice Constructor for the OnchainMadnessEntryFactory contract
      * @param _implementation Address of the implementation contract
      */
     constructor(
@@ -77,7 +77,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Creates a new OnchainMadnessTicket pool
+     * @notice Creates a new OnchainMadnessEntry pool
      * @dev Deploys a new minimal proxy clone of the implementation contract
      * @param _isProtocolPool Whether this is a protocol pool
      * @param _isPrivatePool Whether this is a private pool
@@ -89,7 +89,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         string calldata _pin
     ) external whenNotPaused nonReentrant returns (uint256) {
         // Deploy new pool using clone
-        address newPool = Clones.clone(implementation); 
+        address newPool = Clones.clone(implementation);
         uint256 poolId = currentPoolId;
 
         // Store pool address and ID mappings
@@ -102,9 +102,9 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         );
         perfectPool.setAuthorizedMinter(newPool, true);
         perfectPool.setOnchainMadnessContract(newPool, true);
-        emit TicketPoolCreated(poolId, newPool);
+        emit EntryPoolCreated(poolId, newPool);
 
-        OnchainMadnessTicket(newPool).initialize(
+        OnchainMadnessEntry(newPool).initialize(
             poolId,
             address(this),
             address(gameDeployer),
@@ -129,7 +129,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _poolId,
         address _player
     ) public whenNotPaused nonReentrant {
-        OnchainMadnessTicket(getPoolAddress(_poolId)).claimPPShare(_player);
+        OnchainMadnessEntry(getPoolAddress(_poolId)).claimPPShare(_player);
     }
 
     /**
@@ -149,47 +149,62 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         //approve USDC for the pool
         IERC20 USDC = IERC20(gameDeployer.contracts("USDC"));
         address poolAddress = getPoolAddress(_poolId);
-        USDC.approve(poolAddress, OnchainMadnessTicket(poolAddress).price());
-        
-        uint256 nextTokenId = OnchainMadnessTicket(poolAddress)
-            .safeMint(msg.sender, _gameYear, bets, _pin);
+
+        USDC.transferFrom(
+            msg.sender,
+            poolAddress,
+            OnchainMadnessEntry(poolAddress).price()
+        );
+
+        uint256 nextTokenId = OnchainMadnessEntry(poolAddress).safeMint(
+            msg.sender,
+            _gameYear,
+            bets,
+            _pin
+        );
 
         emit BetPlaced(msg.sender, _gameYear, nextTokenId);
     }
 
     /**
      * @dev Iterates through NFTs across all pools for a given year
-     * @param _year The year to iterate
+     * @param _gameYear The year to iterate
      */
     function iterateYearTokens(
-        uint256 _year
+        uint256 _gameYear
     ) public whenNotPaused nonReentrant {
-        uint256 _currentPoolId = yearToPoolIdIteration[_year];
+        (, uint8 status) = abi.decode(
+            gameDeployer.getGameStatus(_gameYear),
+            (uint8, uint8)
+        );
+        require(status == 3, "Game not finished.");
+
+        uint256 _currentPoolId = yearToPoolIdIteration[_gameYear];
         require(_currentPoolId <= currentPoolId, "No more pools to iterate");
         require(pools[_currentPoolId] != address(0), "Pool does not exist");
 
         uint256 processedIterations = 0;
         bool hasMoreTokens = false;
-        OnchainMadnessTicket pool = OnchainMadnessTicket(
+        OnchainMadnessEntry pool = OnchainMadnessEntry(
             getPoolAddress(_currentPoolId)
         );
 
         while (_currentPoolId <= currentPoolId && processedIterations < 20) {
             if (pools[_currentPoolId] == address(0)) {
-                emit IterationFinished(_year);
+                emit IterationFinished(_gameYear);
                 return;
             }
 
-            (hasMoreTokens, ) = pool.iterateNextToken(_year);
+            (hasMoreTokens, ) = pool.iterateNextToken(_gameYear);
             if (!hasMoreTokens) {
                 _currentPoolId++;
-                pool = OnchainMadnessTicket(getPoolAddress(_currentPoolId));
+                pool = OnchainMadnessEntry(getPoolAddress(_currentPoolId));
             }
             processedIterations++;
         }
 
         // Update the current pool ID for this year
-        yearToPoolIdIteration[_year] = _currentPoolId;
+        yearToPoolIdIteration[_gameYear] = _currentPoolId;
 
         // Emit appropriate event based on iteration status
         if (
@@ -197,10 +212,10 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
             (_currentPoolId <= currentPoolId &&
                 pools[_currentPoolId] != address(0))
         ) {
-            emit ContinueIteration(_year);
+            emit ContinueIteration(_gameYear);
             return;
         }
-        emit IterationFinished(_year);
+        emit IterationFinished(_gameYear);
     }
 
     /**
@@ -215,7 +230,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         address _player,
         uint256 _tokenId
     ) public whenNotPaused nonReentrant {
-        OnchainMadnessTicket(getPoolAddress(_poolId)).claimPrize(
+        OnchainMadnessEntry(getPoolAddress(_poolId)).claimPrize(
             _player,
             _tokenId
         );
@@ -234,7 +249,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _gameYear,
         uint256 _amount
     ) public whenNotPaused nonReentrant {
-        OnchainMadnessTicket(getPoolAddress(_poolId)).increaseGamePot(
+        OnchainMadnessEntry(getPoolAddress(_poolId)).increaseGamePot(
             _gameYear,
             _amount
         );
@@ -253,7 +268,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _poolId,
         uint256 _tokenId
     ) public view returns (string memory) {
-        return OnchainMadnessTicket(getPoolAddress(_poolId)).tokenURI(_tokenId);
+        return OnchainMadnessEntry(getPoolAddress(_poolId)).tokenURI(_tokenId);
     }
 
     /**
@@ -287,7 +302,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).getBetData(_tokenId);
+            OnchainMadnessEntry(getPoolAddress(_poolId)).getBetData(_tokenId);
     }
 
     /**
@@ -302,7 +317,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint256) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).getGameYear(_tokenId);
+            OnchainMadnessEntry(getPoolAddress(_poolId)).getGameYear(_tokenId);
     }
 
     /**
@@ -318,7 +333,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).betValidator(
+            OnchainMadnessEntry(getPoolAddress(_poolId)).betValidator(
                 _tokenId
             );
     }
@@ -335,7 +350,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (string[63] memory) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).getTeamSymbols(
+            OnchainMadnessEntry(getPoolAddress(_poolId)).getTeamSymbols(
                 _tokenId
             );
     }
@@ -353,7 +368,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).amountPrizeClaimed(
+            OnchainMadnessEntry(getPoolAddress(_poolId)).amountPrizeClaimed(
                 _tokenId
             );
     }
@@ -370,7 +385,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 gameYear
     ) public view returns (uint256) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).potentialPayout(
+            OnchainMadnessEntry(getPoolAddress(_poolId)).potentialPayout(
                 gameYear
             );
     }
@@ -387,7 +402,7 @@ contract OnchainMadnessTicketFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 gameYear
     ) public view returns (uint256) {
         return
-            OnchainMadnessTicket(getPoolAddress(_poolId)).playerQuantity(
+            OnchainMadnessEntry(getPoolAddress(_poolId)).playerQuantity(
                 gameYear
             );
     }

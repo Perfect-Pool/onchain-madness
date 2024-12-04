@@ -5,7 +5,7 @@
  * 2. Public pool (open for anyone to join)
  * 3. Private pool (requires PIN to join)
  * 
- * Each pool is created through the OnchainMadnessTicketFactory contract
+ * Each pool is created through the OnchainMadnessEntryFactory contract
  * and returns both the Pool ID and Pool address.
  */
 
@@ -26,11 +26,11 @@ async function main() {
   const networkData = data[networkName];
 
   console.log(`Using network: ${networkName}`);
-  console.log(`Ticket Deployer address: ${networkData["OM_TICKET_DEPLOYER"]}`);
+  console.log(`Entry Deployer address: ${networkData["OM_ENTRY_DEPLOYER"]}`);
 
   // Get contract instance
-  const TicketDeployer = await ethers.getContractFactory("OnchainMadnessTicketFactory");
-  const deployer = TicketDeployer.attach(networkData["OM_TICKET_DEPLOYER"]);
+  const EntryDeployer = await ethers.getContractFactory("OnchainMadnessEntryFactory");
+  const deployer = EntryDeployer.attach(networkData["OM_ENTRY_DEPLOYER"]);
 
   console.log("\nCreating pools...");
 
@@ -45,9 +45,9 @@ async function main() {
     const protocolReceipt = await protocolTx.wait();
     
     // Get pool ID from event logs
-    const protocolEvent = protocolReceipt.events.find(e => e.event === "TicketPoolCreated");
+    const protocolEvent = protocolReceipt.events.find(e => e.event === "EntryPoolCreated");
     if (!protocolEvent) {
-      throw new Error("TicketPoolCreated event not found in transaction receipt");
+      throw new Error("EntryPoolCreated event not found in transaction receipt");
     }
     const [protocolPoolId, protocolPoolAddress] = protocolEvent.args;
     
@@ -64,9 +64,9 @@ async function main() {
     );
     const publicReceipt = await publicTx.wait();
     
-    const publicEvent = publicReceipt.events.find(e => e.event === "TicketPoolCreated");
+    const publicEvent = publicReceipt.events.find(e => e.event === "EntryPoolCreated");
     if (!publicEvent) {
-      throw new Error("TicketPoolCreated event not found in transaction receipt");
+      throw new Error("EntryPoolCreated event not found in transaction receipt");
     }
     const [publicPoolId, publicPoolAddress] = publicEvent.args;
     
@@ -84,9 +84,9 @@ async function main() {
     );
     const privateReceipt = await privateTx.wait();
     
-    const privateEvent = privateReceipt.events.find(e => e.event === "TicketPoolCreated");
+    const privateEvent = privateReceipt.events.find(e => e.event === "EntryPoolCreated");
     if (!privateEvent) {
-      throw new Error("TicketPoolCreated event not found in transaction receipt");
+      throw new Error("EntryPoolCreated event not found in transaction receipt");
     }
     const [privatePoolId, privatePoolAddress] = privateEvent.args;
     

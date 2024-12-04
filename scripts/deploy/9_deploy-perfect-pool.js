@@ -39,7 +39,7 @@ async function main() {
 
     console.log(`Setting base contracts to PerfectPool...`);
     await perfectPool.setOnchainMadnessContract(
-      networkData.OM_TICKET_DEPLOYER,
+      networkData.OM_ENTRY_DEPLOYER,
       true
     );
 
@@ -55,7 +55,7 @@ async function main() {
     );
     console.log(`Setting base contracts to PerfectPool...`);
     await perfectPool.setOnchainMadnessContract(
-      networkData.OM_TICKET_DEPLOYER,
+      networkData.OM_ENTRY_DEPLOYER,
       true
     );
   }
