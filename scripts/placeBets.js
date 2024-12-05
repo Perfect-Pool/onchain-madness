@@ -120,7 +120,7 @@ async function main() {
       2,                    // poolId
       TOURNAMENT_YEAR,      // gameYear
       privateBets,         // predictions
-      "787369"              // PIN required
+      "131329"              // PIN required
     );
     const privateReceipt = await privateTx.wait();
     

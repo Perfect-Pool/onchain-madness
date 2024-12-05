@@ -23,22 +23,16 @@ async function main() {
 
   const addressEntryStorage = contracts[networkName].OM_ENTRY_STORAGE;
   if (!addressEntryStorage) {
-    console.error(
-      "EntryStorage address not found in contracts.json"
-    );
+    console.error("EntryStorage address not found in contracts.json");
     process.exit(1);
   }
 
-  console.log(
-    "Verifying EntryStorage at address",
-    addressEntryStorage
-  );
+  console.log("Verifying EntryStorage at address", addressEntryStorage);
 
   await hre.run("verify:verify", {
     address: addressEntryStorage,
     constructorArguments: [contracts[networkName].OM_DEPLOYER],
-    contract:
-      "contracts/utils/EntryStorage.sol:EntryStorage",
+    contract: "contracts/utils/EntryStorage.sol:EntryStorage",
   });
 
   const addressEntryFactory = contracts[networkName].OM_ENTRY_DEPLOYER;
@@ -56,7 +50,11 @@ async function main() {
 
   await hre.run("verify:verify", {
     address: addressEntryFactory,
-    constructorArguments: [contracts[networkName].OM_ENTRY,contracts[networkName].OM_DEPLOYER],
+    constructorArguments: [
+      contracts[networkName].OM_ENTRY,
+      contracts[networkName].OM_DEPLOYER,
+      contracts[networkName].USDC,
+    ],
     contract:
       "contracts/utils/OnchainMadnessEntryFactory.sol:OnchainMadnessEntryFactory",
   });

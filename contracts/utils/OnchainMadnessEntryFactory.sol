@@ -24,7 +24,8 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     /// @notice Emitted when a new entry pool is created
     event EntryPoolCreated(
         uint256 indexed poolId,
-        address indexed poolAddress
+        address indexed poolAddress,
+        string poolName
     );
     /// @notice Emitted when a new iteration starts for a year
     event ContinueIteration(uint256 indexed year);
@@ -58,6 +59,8 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
 
     /// @notice Reference to the game factory contract
     IOnchainMadnessFactory public gameDeployer;
+    /// @notice Reference to the USDC token contract
+    IERC20 public USDC;
 
     /**
      * @notice Constructor for the OnchainMadnessEntryFactory contract
@@ -65,7 +68,8 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
      */
     constructor(
         address _implementation,
-        address _gameDeployer
+        address _gameDeployer,
+        address _token
     ) Ownable(msg.sender) {
         require(
             _implementation != address(0),
@@ -74,6 +78,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         implementation = _implementation;
         currentPoolId = 0;
         gameDeployer = IOnchainMadnessFactory(_gameDeployer);
+        USDC = IERC20(_token);
     }
 
     /**
@@ -86,7 +91,8 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     function createPool(
         bool _isProtocolPool,
         bool _isPrivatePool,
-        string calldata _pin
+        string calldata _pin,
+        string calldata _poolName
     ) external whenNotPaused nonReentrant returns (uint256) {
         // Deploy new pool using clone
         address newPool = Clones.clone(implementation);
@@ -102,7 +108,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         );
         perfectPool.setAuthorizedMinter(newPool, true);
         perfectPool.setOnchainMadnessContract(newPool, true);
-        emit EntryPoolCreated(poolId, newPool);
+        emit EntryPoolCreated(poolId, newPool, _poolName);
 
         OnchainMadnessEntry(newPool).initialize(
             poolId,
@@ -111,7 +117,8 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
             msg.sender,
             _isProtocolPool,
             _isPrivatePool,
-            _isPrivatePool ? _pin : ""
+            _pin,
+            _poolName
         );
 
         currentPoolId++;
@@ -147,7 +154,6 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         string calldata _pin
     ) public whenNotPaused nonReentrant {
         //approve USDC for the pool
-        IERC20 USDC = IERC20(gameDeployer.contracts("USDC"));
         address poolAddress = getPoolAddress(_poolId);
 
         USDC.transferFrom(

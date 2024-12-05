@@ -83,6 +83,8 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     bool public isProtocolPool;
     /// @dev Hash of the PIN for private pools
     bytes32 private pin;
+    /// @dev The name of the pool in bytes
+    bytes public poolName;
 
     /// @dev Reference to the game factory contract
     IOnchainMadnessFactory public gameDeployer;
@@ -108,7 +110,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @param _token Address of the USDC token contract
      */
     constructor(address _token) ERC721("OnchainMadnessEntry", "OME") {
-        _nextTokenId = 1;
         USDC = IERC20(_token);
         price = 20 * (10 ** USDC.decimals());
     }
@@ -130,7 +131,8 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         address _creator,
         bool _isProtocolPool,
         bool _isPrivatePool,
-        string calldata _pin
+        string calldata _pin,
+        string calldata _poolName
     ) public {
         gameDeployer = IOnchainMadnessFactory(_gameDeployer);
         nftDeployer = _nftDeployer;
@@ -140,10 +142,12 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         pin = keccak256(abi.encodePacked(_pin));
         perfectPool = IPerfectPool(gameDeployer.contracts("PERFECTPOOL"));
         poolId = _poolId;
+        poolName = abi.encodePacked(_poolName);
         entryStorage = IEntryStorage(
             gameDeployer.contracts("OM_ENTRY_STORAGE")
         );
         entryStorage.initialize(poolId);
+        _nextTokenId = 1;
     }
 
     /**
@@ -179,15 +183,16 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         address[] memory recipients = new address[](1);
         recipients[0] = address(this);
 
-        USDC.approve(address(perfectPool), (price / 10));
-        uint256 balanceBefore = perfectPool.balanceOf(address(this));
-        perfectPool.increasePool((price / 10), percentages, recipients);
+        uint256 shareAmount = price / 10;
+
+        USDC.approve(address(perfectPool), shareAmount);
+        perfectPool.increasePool(shareAmount, percentages, recipients);
 
         entryStorage.batchUpdateGameDataAndShares(
             poolId,
             _gameYear,
             _nextTokenId,
-            (perfectPool.balanceOf(address(this)) - balanceBefore),
+            shareAmount,
             (isProtocolPool ? _player : creator),
             abi.encode(price, bets)
         );
@@ -341,6 +346,14 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
                 entryStorage.getTokenGameYear(poolId, _tokenId),
                 _tokenId
             );
+    }
+
+    /**
+     * @notice Returns the total supply of NFTs
+     * @return The total number of NFTs
+     */
+    function totalSupply() public view returns (uint256) {
+        return _nextTokenId - 1;
     }
 
     /**

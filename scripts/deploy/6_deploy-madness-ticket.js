@@ -44,6 +44,8 @@ async function main() {
 
     networkData.OM_ENTRY = onchainMadnessEntry.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
+
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   } else {
     console.log(
       `OnchainMadnessEntry already deployed at ${networkData.OM_ENTRY}`
@@ -61,7 +63,7 @@ async function main() {
     networkData.OM_ENTRY_STORAGE = entryStorage.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     console.log(`Setting EntryStorage address to OnchainMadnessFactory...`);
     await OnchainMadnessFactory.setContract(nameStorage, entryStorage.address);
@@ -76,6 +78,8 @@ async function main() {
     await OnchainMadnessFactory.setContract(nameStorage, networkData.OM_ENTRY_STORAGE);
   }
 
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
   // Deploy do OnchainMadnessEntry, se necessário
   const name = "OM_ENTRY_DEPLOYER";
 
@@ -86,14 +90,15 @@ async function main() {
     const onchainMadnessEntryFactory =
       await OnchainMadnessEntryFactory.deploy(
         networkData.OM_ENTRY,
-        networkData.OM_DEPLOYER
+        networkData.OM_DEPLOYER,
+        networkData.USDC
       );
     await onchainMadnessEntryFactory.deployed();
     console.log(
       `OnchainMadnessEntryFactory deployed at ${onchainMadnessEntryFactory.address}`
     );
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     console.log(
       `Setting OnchainMadnessEntryFactory address to OnchainMadnessFactory...`

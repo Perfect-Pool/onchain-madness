@@ -40,7 +40,8 @@ async function main() {
     const protocolTx = await deployer.createPool(
       true,  // isProtocolPool
       false, // isPrivatePool
-      ""     // no PIN needed
+      "",    // no PIN needed
+      "Official March Madness 2024" // pool name
     );
     const protocolReceipt = await protocolTx.wait();
     
@@ -54,13 +55,15 @@ async function main() {
     console.log(`✅ Protocol Pool created:`);
     console.log(`   Pool ID: ${protocolPoolId}`);
     console.log(`   Pool Address: ${protocolPoolAddress}`);
+    console.log(`   Name: Official March Madness 2024`);
 
     // 2. Create Public pool
     console.log("\n2. Creating Public pool...");
     const publicTx = await deployer.createPool(
       false, // isProtocolPool
       false, // isPrivatePool
-      ""     // no PIN needed
+      "",    // no PIN needed
+      "Public March Madness Pool" // pool name
     );
     const publicReceipt = await publicTx.wait();
     
@@ -73,14 +76,16 @@ async function main() {
     console.log(`✅ Public Pool created:`);
     console.log(`   Pool ID: ${publicPoolId}`);
     console.log(`   Pool Address: ${publicPoolAddress}`);
+    console.log(`   Name: Public March Madness Pool`);
 
     // 3. Create Private pool with PIN
-    const pin = generatePin();
+    const pin = "131329";
     console.log(`\n3. Creating Private pool with PIN: ${pin}...`);
     const privateTx = await deployer.createPool(
       false,  // isProtocolPool
       true,   // isPrivatePool
-      pin     // 6-digit PIN
+      pin,    // 6-digit PIN
+      "Friends & Family Pool 2024" // pool name
     );
     const privateReceipt = await privateTx.wait();
     
@@ -94,20 +99,24 @@ async function main() {
     console.log(`   Pool ID: ${privatePoolId}`);
     console.log(`   Pool Address: ${privatePoolAddress}`);
     console.log(`   PIN: ${pin}`);
+    console.log(`   Name: Friends & Family Pool 2024`);
 
     // Summary
     console.log("\n=== Summary of Created Pools ===");
     console.log("\nProtocol Pool:");
     console.log(`ID: ${protocolPoolId}`);
     console.log(`Address: ${protocolPoolAddress}`);
+    console.log(`Name: Official March Madness 2024`);
     
     console.log("\nPublic Pool:");
     console.log(`ID: ${publicPoolId}`);
     console.log(`Address: ${publicPoolAddress}`);
+    console.log(`Name: Public March Madness Pool`);
     
     console.log("\nPrivate Pool:");
     console.log(`ID: ${privatePoolId}`);
     console.log(`Address: ${privatePoolAddress}`);
+    console.log(`Name: Friends & Family Pool 2024`);
     console.log(`PIN: ${pin}`);
 
   } catch (error) {
