@@ -28,7 +28,7 @@ contract NftImage {
         uint256 _tokenId
     ) public view returns (string memory) {
         (uint8[63] memory bets, ) = IOnchainMadnessEntryFactory(
-            madnessFactory.contracts("OM_ENTRY_FACTORY")
+            madnessFactory.contracts("OM_ENTRY_DEPLOYER")
         ).betValidator(_poolId, _tokenId);
         return
             string(
@@ -43,7 +43,7 @@ contract NftImage {
                                         _gameYear,
                                         IOnchainMadnessEntryFactory(
                                             madnessFactory.contracts(
-                                                "OM_ENTRY_FACTORY"
+                                                "OM_ENTRY_DEPLOYER"
                                             )
                                         ).getBetData(_poolId, _tokenId)
                                     ),

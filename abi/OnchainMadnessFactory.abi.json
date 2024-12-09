@@ -481,6 +481,30 @@
         "internalType": "uint256",
         "name": "year",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_region",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getAllTeamIds",
+    "outputs": [
+      {
+        "internalType": "uint8[16]",
+        "name": "",
+        "type": "uint8[16]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
       }
     ],
     "name": "getAllTeamsIdsNames",

@@ -254,6 +254,25 @@
         "type": "bytes32"
       }
     ],
+    "name": "getAllTeamIds",
+    "outputs": [
+      {
+        "internalType": "uint8[16]",
+        "name": "",
+        "type": "uint8[16]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_region",
+        "type": "bytes32"
+      }
+    ],
     "name": "getAllTeams",
     "outputs": [
       {

@@ -26,8 +26,7 @@ contract NftMetadata {
     }
 
     function gameStatus(
-        uint256 _gameYear,
-        uint256 _tokenId
+        uint256 _gameYear
     ) public view returns (string memory) {
         (, uint8 status) = abi.decode(
             madnessFactory.getGameStatus(_gameYear),
@@ -38,24 +37,7 @@ contract NftMetadata {
         } else if (status == 2) {
             return "On Going";
         } else {
-            if (
-                keccak256(
-                    abi.encodePacked(
-                        madnessFactory.getFinalResult(_gameYear)
-                    )
-                ) ==
-                keccak256(
-                    abi.encodePacked(
-                        IOnchainMadnessEntry(
-                            madnessFactory.contracts("OM_ENTRY")
-                        ).getBetData(_tokenId)
-                    )
-                )
-            ) {
-                return "Winner";
-            } else {
-                return "Loser";
-            }
+            return "Finished";
         }
     }
 
@@ -71,15 +53,13 @@ contract NftMetadata {
                     Base64.encode(
                         bytes(
                             abi.encodePacked(
-                                '{"name":"Madness Entry #',
+                                '{"name":"Onchain Madness Entry #',
                                 _tokenId.toString(),
                                 '","description":"Onchain Madness NFT from PerfectPool.","image":"',
                                 INftImage(
                                     madnessFactory.contracts("OM_IMAGE")
                                 ).buildImage(_poolId, _gameYear, _tokenId),
-                                '","attributes":[{"trait_type":"Game Status:","value":"',
-                                gameStatus(_gameYear, _tokenId),
-                                '"},]}'
+                                '","attributes":[]}'
                             )
                         )
                     )

@@ -82,7 +82,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     /// @dev If true, shares go to players instead of creator
     bool public isProtocolPool;
     /// @dev Hash of the PIN for private pools
-    bytes32 private pin;
+    bytes public pin;
     /// @dev The name of the pool in bytes
     bytes public poolName;
 
@@ -139,7 +139,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         creator = _creator;
         isProtocolPool = _isProtocolPool;
         isPrivatePool = _isPrivatePool;
-        pin = keccak256(abi.encodePacked(_pin));
+        pin = abi.encodePacked(_pin);
         perfectPool = IPerfectPool(gameDeployer.contracts("PERFECTPOOL"));
         poolId = _poolId;
         poolName = abi.encodePacked(_poolName);
@@ -174,7 +174,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         require(status == 1, "Bets closed.");
 
         if (isPrivatePool) {
-            require(keccak256(abi.encodePacked(_pin)) == pin, "Invalid pin.");
+            require(keccak256(abi.encodePacked(_pin)) == keccak256(abi.encodePacked(pin)), "Invalid pin.");
         }
 
         uint8[] memory percentages = new uint8[](1);

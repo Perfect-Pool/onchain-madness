@@ -15,6 +15,11 @@ interface IOnchainMadnessFactory {
         uint8[63] memory teamIds
     ) external view returns (string[63] memory);
 
+    function getAllTeamIds(
+        uint256 year,
+        bytes32 _region
+    ) external view returns (uint8[16] memory);
+
     function paused() external view returns (bool);
 
     function contracts(string memory _name) external view returns (address);

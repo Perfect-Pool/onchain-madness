@@ -655,6 +655,15 @@ contract OnchainMadness {
     }
 
     /**
+     * @dev Get all the teams in a specific region
+     * @param _region The name of the region
+     * @return The names of the teams and their corresponding IDs
+     */
+    function getAllTeamIds(bytes32 _region) external view returns (uint8[16] memory) {
+        return regions[_region].teams;
+    }
+
+    /**
      * @dev Gets the winners of all matches in the tournament
      * @return An array of 63 winner IDs representing the winners of all matches in order
      */

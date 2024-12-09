@@ -4,6 +4,37 @@ async function main() {
   const contracts = require("../../contracts.json");
   const networkName = hre.network.name;
 
+  const addressFixedData = contracts[networkName].Libraries.FixedData;
+  if (!addressFixedData) {
+    console.error("FixedData address not found in contracts.json");
+    process.exit(1);
+  }
+
+  console.log("Verifying FixedData at address", addressFixedData);
+
+  await hre.run("verify:verify", {
+    address: addressFixedData,
+    constructorArguments: [],
+    contract: "contracts/libraries/FixedData.sol:FixedData",
+    libraries:{
+      "FixedDataPart2": contracts[networkName].Libraries.FixedDataPart2
+    }
+  });
+
+  const addressFixedDataPart2 = contracts[networkName].Libraries.FixedDataPart2;
+  if (!addressFixedDataPart2) {
+    console.error("FixedDataPart2 address not found in contracts.json");
+    process.exit(1);
+  }
+
+  console.log("Verifying FixedDataPart2 at address", addressFixedDataPart2);
+
+  await hre.run("verify:verify", {
+    address: addressFixedDataPart2,
+    constructorArguments: [],
+    contract: "contracts/libraries/FixedDataPart2.sol:FixedDataPart2",
+  });
+
   const addressBuildImage = contracts[networkName].Libraries.BuildImage;
   if (!addressBuildImage) {
     console.error("BuildImage address not found in contracts.json");

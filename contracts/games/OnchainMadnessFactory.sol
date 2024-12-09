@@ -483,4 +483,16 @@ contract OnchainMadnessFactory is Ownable {
     ) public view returns (string[63] memory) {
         return OnchainMadness(tournaments[year]).getTeamSymbols(teamIds);
     }
+
+    /**
+     * @dev Get all the teams in a specific region
+     * @param _region The name of the region
+     * @return The names of the teams and their corresponding IDs
+     */
+    function getAllTeamIds(
+        uint256 year,
+        bytes32 _region
+    ) public view returns (uint8[16] memory) {
+        return OnchainMadness(tournaments[year]).getAllTeamIds(_region);
+    }
 }

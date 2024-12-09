@@ -339,9 +339,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
         return
-            OnchainMadnessEntry(getPoolAddress(_poolId)).betValidator(
-                _tokenId
-            );
+            OnchainMadnessEntry(getPoolAddress(_poolId)).betValidator(_tokenId);
     }
 
     /**
@@ -423,6 +421,37 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         uint256 poolId = poolIds[_poolAddress];
         require(pools[poolId] == _poolAddress, "Pool does not exist");
         return poolId;
+    }
+
+    /**
+     * @dev Returns the created pool data
+     * @param poolId The ID of the pool
+     * @return name The name of the pool
+     * @return isPrivate Whether the pool is private
+     * @return isProtocol Whether the pool is created by the protocol
+     * @return pin The PIN required to join the pool
+     * @return creator The address of the creator of the pool
+     */
+    function getPoolData(
+        uint256 poolId
+    )
+        public
+        view
+        returns (
+            string memory name,
+            bool isPrivate,
+            bool isProtocol,
+            bytes memory pin,
+            address creator
+        )
+    {
+        return (
+            string(OnchainMadnessEntry(getPoolAddress(poolId)).poolName()),
+            OnchainMadnessEntry(getPoolAddress(poolId)).isPrivatePool(),
+            OnchainMadnessEntry(getPoolAddress(poolId)).isProtocolPool(),
+            OnchainMadnessEntry(getPoolAddress(poolId)).pin(),
+            OnchainMadnessEntry(getPoolAddress(poolId)).creator()
+        );
     }
 
     /**
