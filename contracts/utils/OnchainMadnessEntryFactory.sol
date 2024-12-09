@@ -437,6 +437,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
      * @dev Returns the created pool data
      * @param poolId The ID of the pool
      * @return name The name of the pool
+     * @return poolAddress The address of the pool
      * @return isPrivate Whether the pool is private
      * @return isProtocol Whether the pool is created by the protocol
      * @return pin The PIN required to join the pool
@@ -449,6 +450,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         view
         returns (
             string memory name,
+            address poolAddress,
             bool isPrivate,
             bool isProtocol,
             bytes memory pin,
@@ -457,6 +459,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     {
         return (
             string(OnchainMadnessEntry(getPoolAddress(poolId)).poolName()),
+            getPoolAddress(poolId),
             OnchainMadnessEntry(getPoolAddress(poolId)).isPrivatePool(),
             OnchainMadnessEntry(getPoolAddress(poolId)).isProtocolPool(),
             OnchainMadnessEntry(getPoolAddress(poolId)).pin(),
