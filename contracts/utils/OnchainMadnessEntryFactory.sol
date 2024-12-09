@@ -41,6 +41,8 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     );
     /// @notice Emitted when the game pot is increased
     event GamePotIncreased(uint256 indexed _gameYear, uint256 _amount);
+    /// @notice Emitted when the game deployer is changed
+    event GameDeployerChanged(address _gameDeployer);
 
     /** STATE VARIABLES **/
     /// @notice Mapping of pool IDs to pool addresses
@@ -82,6 +84,15 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     }
 
     /**
+     * @notice Sets the game deployer contract
+     * @param _gameDeployer Address of the game deployer contract
+     */
+    function setGameDeployer(address _gameDeployer) external onlyOwner {
+        gameDeployer = IOnchainMadnessFactory(_gameDeployer);
+        emit GameDeployerChanged(_gameDeployer);
+    }
+
+    /**
      * @notice Creates a new OnchainMadnessEntry pool
      * @dev Deploys a new minimal proxy clone of the implementation contract
      * @param _isProtocolPool Whether this is a protocol pool
@@ -113,7 +124,6 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         OnchainMadnessEntry(newPool).initialize(
             poolId,
             address(this),
-            address(gameDeployer),
             msg.sender,
             _isProtocolPool,
             _isPrivatePool,
@@ -452,6 +462,14 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
             OnchainMadnessEntry(getPoolAddress(poolId)).pin(),
             OnchainMadnessEntry(getPoolAddress(poolId)).creator()
         );
+    }
+
+    /**
+     * @notice Returns the address of the game deployer contract
+     * @return The game deployer address
+     */
+    function getGameDeployer() external view returns (address) {
+        return address(gameDeployer);
     }
 
     /**

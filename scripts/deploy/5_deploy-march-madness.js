@@ -42,6 +42,19 @@ async function main() {
     );
     networkData.OM_DEPLOYER = onchainMadnessFactory.address;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
+
+    if (networkData.OM_ENTRY_DEPLOYER !== ""){
+      const nftDeployer = await ethers.getContractAt(
+        "OnchainMadnessEntryFactory",
+        networkData.OM_ENTRY_DEPLOYER 
+      );
+      
+      console.log(
+        `Set OnchainMadnessFactory as deployer for OnchainMadnessEntryFactory at ${nftDeployer.address}`
+      );
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      await nftDeployer.setDeployer(onchainMadnessFactory.address);
+    }
   } else {
     console.log(
       `OnchainMadnessFactory already deployed at ${networkData.OM_DEPLOYER}`

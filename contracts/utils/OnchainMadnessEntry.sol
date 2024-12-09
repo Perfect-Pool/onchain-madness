@@ -42,15 +42,16 @@ interface IPerfectPool {
 
     function increaseWinnersQty(uint256 year) external;
 
-    function setAuthorizedMinter(
-        address minter,
-        bool authorized
-    ) external;
+    function setAuthorizedMinter(address minter, bool authorized) external;
 
     function setOnchainMadnessContract(
         address contractAddress,
         bool authorized
     ) external;
+}
+
+interface IOnchainMadnessEntryFactory {
+    function getGameDeployer() external view returns (address);
 }
 
 /**
@@ -86,8 +87,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     /// @dev The name of the pool in bytes
     bytes public poolName;
 
-    /// @dev Reference to the game factory contract
-    IOnchainMadnessFactory public gameDeployer;
     /// @dev Reference to the PerfectPool contract
     IPerfectPool private perfectPool;
     /// @dev Reference to the USDC token contract
@@ -118,7 +117,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @notice Initializes a cloned entry contract
      * @dev Sets up all contract references and pool configuration
      * @param _nftDeployer Address of the factory contract
-     * @param _gameDeployer Address of the game factory
      * @param _creator Address of the pool creator
      * @param _isProtocolPool If true, shares go to players instead of creator
      * @param _isPrivatePool If true, requires PIN for minting
@@ -127,15 +125,16 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     function initialize(
         uint256 _poolId,
         address _nftDeployer,
-        address _gameDeployer,
         address _creator,
         bool _isProtocolPool,
         bool _isPrivatePool,
         string calldata _pin,
         string calldata _poolName
     ) public {
-        gameDeployer = IOnchainMadnessFactory(_gameDeployer);
         nftDeployer = _nftDeployer;
+        IOnchainMadnessFactory gameDeployer = IOnchainMadnessFactory(
+            IOnchainMadnessEntryFactory(_nftDeployer).getGameDeployer()
+        );
         creator = _creator;
         isProtocolPool = _isProtocolPool;
         isPrivatePool = _isPrivatePool;
@@ -165,16 +164,27 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint8[63] memory bets,
         string calldata _pin
     ) external onlyNftDeployer returns (uint256) {
-        require(!gameDeployer.paused(), "Game paused.");
+        require(
+            !IOnchainMadnessFactory(
+                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+            ).paused(),
+            "Game paused."
+        );
 
         (, uint8 status) = abi.decode(
-            gameDeployer.getGameStatus(_gameYear),
+            IOnchainMadnessFactory(
+                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+            ).getGameStatus(_gameYear),
             (uint8, uint8)
         );
         require(status == 1, "Bets closed.");
 
         if (isPrivatePool) {
-            require(keccak256(abi.encodePacked(_pin)) == keccak256(abi.encodePacked(pin)), "Invalid pin.");
+            require(
+                keccak256(abi.encodePacked(_pin)) ==
+                    keccak256(abi.encodePacked(pin)),
+                "Invalid pin."
+            );
         }
 
         uint8[] memory percentages = new uint8[](1);
@@ -223,7 +233,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
 
         (, score) = betValidator(currentTokenId);
         entryStorage.updateScore(poolId, _gameYear, score);
-        
+
         if (score == 64) {
             perfectPool.increaseWinnersQty(_gameYear);
         }
@@ -241,6 +251,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         address _player,
         uint256 _tokenId
     ) external nonReentrant onlyNftDeployer {
+        IOnchainMadnessFactory gameDeployer = IOnchainMadnessFactory(
+            IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+        );
         require(!gameDeployer.paused(), "Game paused.");
         require(
             entryStorage.getTokenClaimed(poolId, _tokenId) == 0,
@@ -338,7 +351,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         _requireOwned(_tokenId);
 
         INftMetadata nftMetadata = INftMetadata(
-            gameDeployer.contracts("OM_METADATA")
+            IOnchainMadnessFactory(
+                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+            ).contracts("OM_METADATA")
         );
         return
             nftMetadata.buildMetadata(
@@ -387,9 +402,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
         uint8[63] memory bets = entryStorage.getNftBet(poolId, _tokenId);
-        uint8[63] memory results = gameDeployer.getFinalResult(
-            entryStorage.getTokenGameYear(poolId, _tokenId)
-        );
+        uint8[63] memory results = IOnchainMadnessFactory(
+            IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+        ).getFinalResult(entryStorage.getTokenGameYear(poolId, _tokenId));
 
         return OnchainMadnessLib.validateAndScore(bets, results);
     }
@@ -403,10 +418,12 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (string[63] memory) {
         return
-            gameDeployer.getTeamSymbols(
-                entryStorage.getTokenGameYear(poolId, _tokenId),
-                entryStorage.getNftBet(poolId, _tokenId)
-            );
+            IOnchainMadnessFactory(
+                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+            ).getTeamSymbols(
+                    entryStorage.getTokenGameYear(poolId, _tokenId),
+                    entryStorage.getNftBet(poolId, _tokenId)
+                );
     }
 
     /**
@@ -468,9 +485,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint8[63] memory validator, uint8 points) {
         uint8[63] memory bets = entryStorage.getNftBet(poolId, _tokenId);
-        uint8[63] memory results = gameDeployer.getFinalResult(
-            entryStorage.getTokenGameYear(poolId, _tokenId)
-        );
+        uint8[63] memory results = IOnchainMadnessFactory(
+            IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+        ).getFinalResult(entryStorage.getTokenGameYear(poolId, _tokenId));
 
         return OnchainMadnessLib.validateAndScore(bets, results);
     }
