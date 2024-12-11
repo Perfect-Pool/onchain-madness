@@ -22,6 +22,10 @@ contract NftImage {
         _;
     }
 
+    function setDeployer(address _factory) public onlyAdmin {
+        madnessFactory = IOnchainMadnessFactory(_factory);
+    }
+
     function buildImage(
         uint256 _poolId,
         uint256 _gameYear,

@@ -35,6 +35,22 @@ async function main() {
     contract: "contracts/utils/EntryStorage.sol:EntryStorage",
   });
 
+  const addressBetCheck = contracts[networkName].BET_CHECK;
+  if (!addressBetCheck) {
+    console.error("BetCheck address not found in contracts.json");
+    process.exit(1);
+  }
+
+  console.log("Verifying BetCheck at address", addressBetCheck);
+
+  await hre.run("verify:verify", {
+    address: addressBetCheck,
+    constructorArguments: [
+      contracts[networkName].OM_DEPLOYER,
+    ],
+    contract: "contracts/utils/BetCheck.sol:BetCheck",
+  });
+
   const addressEntryFactory = contracts[networkName].OM_ENTRY_DEPLOYER;
   if (!addressEntryFactory) {
     console.error(

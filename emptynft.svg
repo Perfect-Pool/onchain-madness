@@ -152,7 +152,7 @@
         <!-- NORTH -->
         <!-- Temos 23 pixels para o gap total da linha de 8 -->
         <rect x="38.5" y="159.5" width="50" height="21" rx="4.5" fill="#7ED321" />
-        <text style="font-size:11px;fill:white;font-family:Arial;font-weight:900" text-anchor="middle" x="63.5" y="174">BAY</text>
+        <text style="font-size:11px;fill:white;font-family:Roboto;font-weight:900" text-anchor="middle" x="63.5" y="174">BAY</text>
 
         <rect x="38.5" y="183.5" width="50" height="20" rx="4.5" fill="#1B2236" />
         <text font-family="Arial" font-weight="900" text-anchor="middle" font-size="11px" x="63.5" y="198" fill="#7ED321">UNC</text>

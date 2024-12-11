@@ -15,6 +15,8 @@ interface IOnchainMadnessEntryFactory {
  */
 interface IOnchainMadnessFactory {
     function contracts(string memory _name) external view returns (address);
+
+    function owner() external view returns (address);
 }
 
 /**
@@ -90,6 +92,15 @@ contract EntryStorage {
     }
 
     /**
+     * @notice Checks if the caller is the contract owner
+     * @dev Only the contract owner can call this function
+     */
+    modifier onlyAdmin() {
+        require(gameDeployer.owner() == msg.sender, "Caller is not admin");
+        _;
+    }
+
+    /**
      * @dev Initializes contract with game deployer address
      * @param _gameDeployer Address of the OnchainMadness game factory
      */
@@ -105,6 +116,14 @@ contract EntryStorage {
     function initialize(uint256 poolId) external onlyEntryContract {
         require(!initialized[poolId], "Pool already initialized");
         initialized[poolId] = true;
+    }
+
+    /**
+     * @notice Sets the game factory contract address
+     * @param _factory Address of the game factory contract
+     */
+    function setDeployer(address _factory) public onlyAdmin {
+        gameDeployer = IOnchainMadnessFactory(_factory);
     }
 
     /** GAME FUNCTIONS **/

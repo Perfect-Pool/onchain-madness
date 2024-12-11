@@ -70,6 +70,8 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     /** STATE VARIABLES **/
     /// @dev Counter for token IDs
     uint256 private _nextTokenId;
+    /// @dev Current tournament year
+    uint256 public currentGameYear;
     /// @dev Fixed price in USDC for minting a entry (20 USDC)
     uint256 public immutable price;
     /// @dev Unique identifier for this pool
@@ -178,6 +180,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             (uint8, uint8)
         );
         require(status == 1, "Bets closed.");
+        currentGameYear = _gameYear;
 
         if (isPrivatePool) {
             require(
@@ -305,6 +308,14 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @param _player Address to receive the tokens
      */
     function claimPPShare(address _player) external onlyNftDeployer {
+        (, uint8 status) = abi.decode(
+            IOnchainMadnessFactory(
+                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+            ).getGameStatus(currentGameYear),
+            (uint8, uint8)
+        );
+        require(status == 3, "Game not finished.");
+        
         uint256 amount = entryStorage.getPpShare(poolId, _player);
         require(amount > 0, "No ppShare tokens to claim.");
         entryStorage.setPpShare(poolId, _player, 0);

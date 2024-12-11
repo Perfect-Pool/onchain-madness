@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
@@ -19,7 +18,7 @@ import "./OnchainMadnessEntry.sol";
  * - Manages protocol and private pools
  * - Provides wrapper functions for entry operations
  */
-contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
+contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     /** EVENTS **/
     /// @notice Emitted when a new entry pool is created
     event EntryPoolCreated(
@@ -35,9 +34,10 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     event PrizeClaimed(uint256 indexed _tokenId, uint256 _poolId);
     /// @notice Emitted when a bet is placed
     event BetPlaced(
-        address indexed _player,
-        uint256 indexed _gameYear,
-        uint256 indexed _tokenId
+        uint256 indexed gameYear,
+        uint256 indexed poolId,
+        uint256 tokenId,
+        address player
     );
     /// @notice Emitted when the game pot is increased
     event GamePotIncreased(uint256 indexed _gameYear, uint256 _amount);
@@ -65,6 +65,15 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     IERC20 public USDC;
 
     /**
+     * @notice Checks if the caller is the contract owner
+     * @dev Only the contract owner can call this function
+     */
+    modifier onlyAdmin() {
+        require(gameDeployer.owner() == msg.sender, "Caller is not admin");
+        _;
+    }
+
+    /**
      * @notice Constructor for the OnchainMadnessEntryFactory contract
      * @param _implementation Address of the implementation contract
      */
@@ -72,7 +81,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
         address _implementation,
         address _gameDeployer,
         address _token
-    ) Ownable(msg.sender) {
+    ) {
         require(
             _implementation != address(0),
             "Implementation address cannot be zero"
@@ -87,7 +96,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
      * @notice Sets the game deployer contract
      * @param _gameDeployer Address of the game deployer contract
      */
-    function setGameDeployer(address _gameDeployer) external onlyOwner {
+    function setGameDeployer(address _gameDeployer) external onlyAdmin {
         gameDeployer = IOnchainMadnessFactory(_gameDeployer);
         emit GameDeployerChanged(_gameDeployer);
     }
@@ -179,7 +188,7 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
             _pin
         );
 
-        emit BetPlaced(msg.sender, _gameYear, nextTokenId);
+        emit BetPlaced(_gameYear, _poolId, nextTokenId, msg.sender);
     }
 
     /**
@@ -478,14 +487,14 @@ contract OnchainMadnessEntryFactory is Ownable, Pausable, ReentrancyGuard {
     /**
      * @notice Pauses the contract
      */
-    function pause() external onlyOwner {
+    function pause() external onlyAdmin {
         _pause();
     }
 
     /**
      * @notice Unpauses the contract
      */
-    function unpause() external onlyOwner {
+    function unpause() external onlyAdmin {
         _unpause();
     }
 }

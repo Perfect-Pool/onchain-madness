@@ -349,9 +349,8 @@ contract OnchainMadnessFactory is Ownable {
             awayPoints
         );
 
-        IOnchainMadnessEntryFactory(
-            contracts("OM_ENTRY_DEPLOYER")
-        ).iterateYearTokens(year);
+        IOnchainMadnessEntryFactory(contracts("OM_ENTRY_DEPLOYER"))
+            .iterateYearTokens(year);
 
         emit TournamentFinished(year);
     }
@@ -494,5 +493,37 @@ contract OnchainMadnessFactory is Ownable {
         bytes32 _region
     ) public view returns (uint8[16] memory) {
         return OnchainMadness(tournaments[year]).getAllTeamIds(_region);
+    }
+
+    /**
+     * @dev Get a Region data based on its name
+     * @param _regionName The name of the region
+     * @return The data of the region as Region memory
+     */
+    function getRegion(
+        uint256 year,
+        bytes32 _regionName
+    ) external view returns (OnchainMadness.Region memory) {
+        return OnchainMadness(tournaments[year]).getRegion(_regionName);
+    }
+
+    /**
+     * @dev Get a match data based on its ID
+     * @param _matchId The ID of the match
+     * @return The data of the match as Match memory
+     */
+    function getMatch(
+        uint256 year,
+        uint8 _matchId
+    ) external view returns (OnchainMadness.Match memory) {
+        return OnchainMadness(tournaments[year]).getMatch(_matchId);
+    }
+
+    /**
+     * @dev Get the Final Four data
+     * @return The data of the Final Four as FinalFour memory
+     */
+    function getFinalFour(uint256 year) external view returns (OnchainMadness.FinalFour memory) {
+        return OnchainMadness(tournaments[year]).getFinalFour();
     }
 }

@@ -27,7 +27,7 @@ pragma solidity ^0.8.20;
  *   matchesRound1[5].winner -> matchesRound2[2].away
  *   matchesRound1[6].winner -> matchesRound2[3].home
  *   matchesRound1[7].winner -> matchesRound2[3].away
- * 
+ *
  * Same pattern applies for subsequent rounds:
  * - Round 2 to Round 3
  * - Round 3 to Round 4
@@ -128,10 +128,7 @@ contract OnchainMadness {
      * @param _year The year of the tournament
      * @param _gameContract The address of the factory contract
      */
-    function initialize(
-        uint256 _year,
-        address _gameContract
-    ) external {
+    function initialize(uint256 _year, address _gameContract) external {
         year = _year;
         gameContract = _gameContract;
 
@@ -311,13 +308,13 @@ contract OnchainMadness {
         uint8 matchIndex,
         uint256 homePoints,
         uint256 awayPoints
-    ) external onlyGameContract{
+    ) external onlyGameContract {
         require(currentRound == round, "OM-05");
         require(bytes(winner).length > 0, "OM-02");
 
         bytes32 regionHash = keccak256(bytes(regionName));
         Region storage region = regions[regionHash];
-        
+
         uint8 matchId;
         if (round == 1) {
             matchId = region.matchesRound1[matchIndex];
@@ -335,8 +332,11 @@ contract OnchainMadness {
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        require(winnerId == currentMatch.home || winnerId == currentMatch.away, "OM-08");
-        
+        require(
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            "OM-08"
+        );
+
         // Store match points
         currentMatch.home_points = homePoints;
         currentMatch.away_points = awayPoints;
@@ -346,7 +346,7 @@ contract OnchainMadness {
         if (round < 4) {
             uint8 nextRoundMatchIndex = matchIndex / 2;
             uint8 nextMatchId;
-            
+
             if (round == 1) {
                 if (region.matchesRound2[nextRoundMatchIndex] == 0) {
                     nextMatchId = matchesActualIndex++;
@@ -396,7 +396,7 @@ contract OnchainMadness {
         string memory winner,
         uint256 homePoints,
         uint256 awayPoints
-    ) external onlyGameContract{
+    ) external onlyGameContract {
         require(currentRound == 4, "OM-05");
         require(bytes(winner).length > 0, "OM-02");
 
@@ -406,7 +406,10 @@ contract OnchainMadness {
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        require(winnerId == currentMatch.home || winnerId == currentMatch.away, "OM-08");
+        require(
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            "OM-08"
+        );
 
         // Store match points
         currentMatch.home_points = homePoints;
@@ -467,15 +470,20 @@ contract OnchainMadness {
         string memory winners,
         uint256 homePoints,
         uint256 awayPoints
-    ) external onlyGameContract{
+    ) external onlyGameContract {
         require(currentRound == 5, "OM-05");
         require(gameIndex < 2, "OM-09");
 
-        Match storage currentMatch = matches[finalFour.matchesRound1[gameIndex]];
+        Match storage currentMatch = matches[
+            finalFour.matchesRound1[gameIndex]
+        ];
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winners)];
-        require(winnerId == currentMatch.home || winnerId == currentMatch.away, "OM-08");
+        require(
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            "OM-08"
+        );
 
         // Store match points
         currentMatch.home_points = homePoints;
@@ -483,11 +491,16 @@ contract OnchainMadness {
         currentMatch.winner = winnerId;
 
         // Create championship match once both Final Four matches are complete
-        if (matches[finalFour.matchesRound1[0]].winner != 0 && 
-            matches[finalFour.matchesRound1[1]].winner != 0) {
-            
-            matches[matchesActualIndex].home = matches[finalFour.matchesRound1[0]].winner;
-            matches[matchesActualIndex].away = matches[finalFour.matchesRound1[1]].winner;
+        if (
+            matches[finalFour.matchesRound1[0]].winner != 0 &&
+            matches[finalFour.matchesRound1[1]].winner != 0
+        ) {
+            matches[matchesActualIndex].home = matches[
+                finalFour.matchesRound1[0]
+            ].winner;
+            matches[matchesActualIndex].away = matches[
+                finalFour.matchesRound1[1]
+            ].winner;
             finalFour.matchFinal = matchesActualIndex;
             matchesActualIndex++;
 
@@ -505,14 +518,17 @@ contract OnchainMadness {
         string memory winner,
         uint256 homePoints,
         uint256 awayPoints
-    ) external onlyGameContract{
+    ) external onlyGameContract {
         require(currentRound == 6, "OM-05");
 
         Match storage currentMatch = matches[finalFour.matchFinal];
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        require(winnerId == currentMatch.home || winnerId == currentMatch.away, "OM-08");
+        require(
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            "OM-08"
+        );
 
         // Store match points
         currentMatch.home_points = homePoints;
@@ -659,7 +675,9 @@ contract OnchainMadness {
      * @param _region The name of the region
      * @return The names of the teams and their corresponding IDs
      */
-    function getAllTeamIds(bytes32 _region) external view returns (uint8[16] memory) {
+    function getAllTeamIds(
+        bytes32 _region
+    ) external view returns (uint8[16] memory) {
         return regions[_region].teams;
     }
 
@@ -718,5 +736,31 @@ contract OnchainMadness {
         }
 
         return symbols;
+    }
+
+    /**
+     * @dev Get a Region data based on its name
+     * @param _regionName The name of the region
+     * @return The data of the region as Region memory
+     */
+    function getRegion(bytes32 _regionName) external view returns (Region memory) {
+        return regions[_regionName];
+    }
+
+    /**
+     * @dev Get a match data based on its ID
+     * @param _matchId The ID of the match
+     * @return The data of the match as Match memory
+     */
+    function getMatch(uint8 _matchId) external view returns (Match memory) {
+        return matches[_matchId];
+    }
+
+    /**
+     * @dev Get the getFinalFour data
+     * @return The data of the Final Four as FinalFour memory
+     */
+    function getFinalFour() external view returns (FinalFour memory) {
+        return finalFour;
     }
 }

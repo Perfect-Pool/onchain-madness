@@ -2,7 +2,6 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../libraries/Base64.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
 import "../interfaces/IOnchainMadnessEntry.sol";
@@ -23,6 +22,15 @@ contract NftMetadata {
 
     constructor(address _madnessFactory) {
         madnessFactory = IOnchainMadnessFactory(_madnessFactory);
+    }
+
+    modifier onlyAdmin() {
+        require(madnessFactory.owner() == msg.sender, "Caller is not admin");
+        _;
+    }
+
+    function setDeployer(address _factory) public onlyAdmin {
+        madnessFactory = IOnchainMadnessFactory(_factory);
     }
 
     function gameStatus(
