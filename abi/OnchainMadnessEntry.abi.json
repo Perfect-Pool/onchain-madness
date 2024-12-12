@@ -324,12 +324,12 @@
   },
   {
     "inputs": [],
-    "name": "entryStorage",
+    "name": "currentGameYear",
     "outputs": [
       {
-        "internalType": "contract IEntryStorage",
+        "internalType": "uint256",
         "name": "",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -337,10 +337,10 @@
   },
   {
     "inputs": [],
-    "name": "gameDeployer",
+    "name": "entryStorage",
     "outputs": [
       {
-        "internalType": "contract IOnchainMadnessFactory",
+        "internalType": "contract IEntryStorage",
         "name": "",
         "type": "address"
       }
@@ -452,11 +452,6 @@
       {
         "internalType": "address",
         "name": "_nftDeployer",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_gameDeployer",
         "type": "address"
       },
       {

@@ -526,6 +526,42 @@
         "type": "uint256"
       }
     ],
+    "name": "getFinalFour",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8[2]",
+            "name": "matchesRound1",
+            "type": "uint8[2]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "matchFinal",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winner",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct OnchainMadness.FinalFour",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      }
+    ],
     "name": "getFinalFourData",
     "outputs": [
       {
@@ -589,6 +625,113 @@
         "internalType": "bytes",
         "name": "",
         "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_matchId",
+        "type": "uint8"
+      }
+    ],
+    "name": "getMatch",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8",
+            "name": "home",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "away",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winner",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint256",
+            "name": "home_points",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "away_points",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct OnchainMadness.Match",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_regionName",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getRegion",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint8[16]",
+            "name": "teams",
+            "type": "uint8[16]"
+          },
+          {
+            "internalType": "uint8[8]",
+            "name": "matchesRound1",
+            "type": "uint8[8]"
+          },
+          {
+            "internalType": "uint8[4]",
+            "name": "matchesRound2",
+            "type": "uint8[4]"
+          },
+          {
+            "internalType": "uint8[2]",
+            "name": "matchesRound3",
+            "type": "uint8[2]"
+          },
+          {
+            "internalType": "uint8",
+            "name": "matchRound4",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winner",
+            "type": "uint8"
+          }
+        ],
+        "internalType": "struct OnchainMadness.Region",
+        "name": "",
+        "type": "tuple"
       }
     ],
     "stateMutability": "view",
