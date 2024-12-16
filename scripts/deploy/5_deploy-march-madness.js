@@ -42,7 +42,6 @@ async function main() {
       `OnchainMadnessFactory deployed at ${onchainMadnessFactory.address}`
     );
     networkData.OM_DEPLOYER = onchainMadnessFactory.address;
-    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     if (networkData.OM_ENTRY_DEPLOYER !== "") {
       const nftDeployer = await ethers.getContractAt(
@@ -54,11 +53,11 @@ async function main() {
         `Set OnchainMadnessFactory as deployer for OnchainMadnessEntryFactory at ${nftDeployer.address}`
       );
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      await nftDeployer.setDeployer(onchainMadnessFactory.address);
+      await nftDeployer.setGameDeployer(onchainMadnessFactory.address);
     }
     if (networkData.OM_ENTRY_STORAGE !== "") {
       const entryStorage = await ethers.getContractAt(
-        "OnchainMadnessEntryStorage",
+        "EntryStorage",
         networkData.OM_ENTRY_STORAGE
       );
       console.log(
@@ -100,6 +99,8 @@ async function main() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await betCheck.setDeployer(onchainMadnessFactory.address);
     }
+
+    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
   } else {
     console.log(
       `OnchainMadnessFactory already deployed at ${networkData.OM_DEPLOYER}`

@@ -2,7 +2,7 @@
  * @title First Round Games Update Script
  * @dev This script interacts with the Sports Radar API and OnchainMadnessFactory contract
  * to manage the First Round games of the NCAA Tournament.
- * 
+ *
  * Functionality:
  * - Fetches current tournament data from Sports Radar API
  * - Processes games for each region (WEST, MIDWEST, SOUTH, EAST)
@@ -11,12 +11,12 @@
  * - Advances to next round when all games are decided
  * - Closes betting period when games are about to start
  * - Displays comprehensive state of all regions and their games
- * 
+ *
  * Regions:
  * - Each region contains 8 First Round games
  * - Teams are ordered by seeding in initialization
  * - Games are numbered 1-8 within each region
- * 
+ *
  * Mock Date:
  * - Uses MOCK_DATE to simulate current time
  * - Automatically closes bets if any game starts within 30 minutes
@@ -31,7 +31,7 @@ require("dotenv").config();
 const TOURNAMENT_YEAR = 2024;
 
 // Mock current time for testing
-const MOCK_DATE = "2024-03-20T12:00:00+00:00";
+const MOCK_DATE = "2025-03-20T12:00:00+00:00";
 const currentTime = new Date(MOCK_DATE);
 
 // Time threshold in milliseconds (30 minutes)
@@ -179,12 +179,10 @@ async function main() {
           );
 
           if (matchData.winner === "") {
-            const homePoints = parseInt(game.home.points);
-            const awayPoints = parseInt(game.away.points);
+            const homePoints = parseInt(game.home_points);
+            const awayPoints = parseInt(game.away_points);
             const winner =
-              game.home.points > game.away.points
-                ? game.home.alias
-                : game.away.alias;
+              homePoints > awayPoints ? game.home.alias : game.away.alias;
 
             console.log(
               `Updating Game ${i + 1}: ${
@@ -194,16 +192,20 @@ async function main() {
               }, Winner: ${winner}`
             );
 
-            const tx = await contract.determineMatchWinner(
-              TOURNAMENT_YEAR,
-              regionName,
-              winner,
-              1, // round 1
-              i, // match index
-              homePoints,
-              awayPoints
-            );
-            await tx.wait();
+            try{
+              const tx = await contract.determineMatchWinner(
+                TOURNAMENT_YEAR,
+                regionName,
+                winner,
+                1, // round 1
+                i, // match index
+                homePoints,
+                awayPoints
+              );
+              await tx.wait();
+            } catch (error) {
+              console.log(`Game ${i + 1} already decided. Skipping...`);
+            }
           }
         }
       }
@@ -217,20 +219,30 @@ async function main() {
     // Print earliest game date and check if bets should be closed
     if (earliestDate) {
       console.log(`\nFirst Round starts on: ${earliestDate.toLocaleString()}`);
-      
+
       // Check if earliest game is within 30 minutes of mock current time
       const timeUntilStart = earliestDate.getTime() - currentTime.getTime();
-      
+
       console.log(`Current time (mocked): ${currentTime.toLocaleString()}`);
-      console.log(`Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`);
+      console.log(
+        `Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`
+      );
 
       if (timeUntilStart <= THRESHOLD_MS) {
-        console.log("\nFirst game starts in less than 30 minutes. Closing bets...");
-        const tx = await contract.closeBets(TOURNAMENT_YEAR);
-        await tx.wait();
-        console.log("Bets closed successfully!");
+        try {
+          console.log(
+            "\nFirst game starts in less than 30 minutes. Closing bets..."
+          );
+          const tx = await contract.closeBets(TOURNAMENT_YEAR);
+          await tx.wait();
+          console.log("Bets closed successfully!");
+        } catch (error) {
+          console.log("Bets already closed.");
+        }
       } else {
-        console.log("\nBets remain open - first game is more than 30 minutes away");
+        console.log(
+          "\nBets remain open - first game is more than 30 minutes away"
+        );
       }
     }
 

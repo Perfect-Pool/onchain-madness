@@ -207,18 +207,6 @@ contract OnchainMadness {
 
             teamIds[i] = teamId;
 
-            bytes32 teamNameHash = keccak256(bytes(teamNames[i]));
-
-            if (teamNameHash == keccak256("FFG1")) {
-                firstFourWinners[0] = teamId;
-            } else if (teamNameHash == keccak256("FFG2")) {
-                firstFourWinners[1] = teamId;
-            } else if (teamNameHash == keccak256("FFG3")) {
-                firstFourWinners[2] = teamId;
-            } else if (teamNameHash == keccak256("FFG4")) {
-                firstFourWinners[3] = teamId;
-            }
-
             if (i % 2 == 1) {
                 matches[matchesActualIndex].home = teamIds[i - 1];
                 matches[matchesActualIndex].away = teamIds[i];
@@ -236,16 +224,12 @@ contract OnchainMadness {
     /**
      * @dev Records the result of a First Four match and sets the winner
      * @param matchCode The code of the First Four match (FFG1-FFG4)
-     * @param _homeId ID of the home team
-     * @param _awayId ID of the away team
      * @param _homePoints Points scored by the home team
      * @param _awayPoints Points scored by the away team
      * @param _winner Winner of the match (1 for home, 2 for away)
      */
     function determineFirstFourWinner(
         string memory matchCode,
-        uint8 _homeId,
-        uint8 _awayId,
         uint256 _homePoints,
         uint256 _awayPoints,
         uint8 _winner
@@ -257,18 +241,21 @@ contract OnchainMadness {
             return;
         }
 
-        if (currentMatch.home == _awayId && currentMatch.away == _homeId) {
-            currentMatch.home_points = _awayPoints;
-            currentMatch.away_points = _homePoints;
-        } else {
-            currentMatch.home_points = _homePoints;
-            currentMatch.away_points = _awayPoints;
+        currentMatch.home_points = _homePoints;
+        currentMatch.away_points = _awayPoints;
+        currentMatch.winner = _winner == 1
+            ? currentMatch.home
+            : currentMatch.away;
+
+        if (keccak256(bytes(matchCode)) == keccak256("FFG1")) {
+            firstFourWinners[0] = currentMatch.winner;
+        } else if (keccak256(bytes(matchCode)) == keccak256("FFG2")) {
+            firstFourWinners[1] = currentMatch.winner;
+        } else if (keccak256(bytes(matchCode)) == keccak256("FFG3")) {
+            firstFourWinners[2] = currentMatch.winner;
+        } else if (keccak256(bytes(matchCode)) == keccak256("FFG4")) {
+            firstFourWinners[3] = currentMatch.winner;
         }
-
-        currentMatch.home = _homeId;
-        currentMatch.away = _awayId;
-
-        currentMatch.winner = _winner;
     }
 
     /**
@@ -333,7 +320,8 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
+                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
             "OM-08"
         );
 
@@ -407,7 +395,8 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
+                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
             "OM-08"
         );
 
@@ -481,7 +470,8 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winners)];
         require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
+                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
             "OM-08"
         );
 
@@ -526,7 +516,8 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
+            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
+                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
             "OM-08"
         );
 
@@ -548,11 +539,11 @@ contract OnchainMadness {
         //string home, string away, uint256 home_points, uint256 away_points, string winner
         return
             abi.encode(
-                teams[matches[matchId].home],
-                teams[matches[matchId].away],
+                getTeamName(matches[matchId].home),
+                getTeamName(matches[matchId].away),
                 matches[matchId].home_points,
                 matches[matchId].away_points,
-                teams[matches[matchId].winner]
+                getTeamName(matches[matchId].winner)
             );
     }
 
@@ -585,7 +576,7 @@ contract OnchainMadness {
 
         string[16] memory _teams;
         for (uint8 i = 0; i < 16; i++) {
-            _teams[i] = string(teams[region.teams[i]]);
+            _teams[i] = getTeamName(region.teams[i]);
         }
 
         // string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
@@ -596,7 +587,7 @@ contract OnchainMadness {
                 matchesRound2,
                 matchesRound3,
                 matchRound4,
-                string(teams[region.winner])
+                getTeamName(region.winner)
             );
     }
 
@@ -630,7 +621,7 @@ contract OnchainMadness {
             abi.encode(
                 matchesRound1,
                 matchFinal,
-                string(teams[finalFour.winner])
+                getTeamName(finalFour.winner)
             );
     }
 
@@ -648,7 +639,28 @@ contract OnchainMadness {
      * @param _teamId The ID of the team
      * @return The name of the team
      */
-    function getTeamName(uint8 _teamId) external view returns (string memory) {
+    function getTeamName(uint8 _teamId) public view returns (string memory) {
+        if (
+            teamToId[bytes("FFG1")] == _teamId &&
+            matches[firstFourMatches[bytes("FFG1")]].winner != 0
+        ) {
+            return string(teams[firstFourWinners[0]]);
+        } else if (
+            teamToId[bytes("FFG2")] == _teamId &&
+            matches[firstFourMatches[bytes("FFG2")]].winner != 0
+        ) {
+            return string(teams[firstFourWinners[1]]);
+        } else if (
+            teamToId[bytes("FFG3")] == _teamId &&
+            matches[firstFourMatches[bytes("FFG3")]].winner != 0
+        ) {
+            return string(teams[firstFourWinners[2]]);
+        } else if (
+            teamToId[bytes("FFG4")] == _teamId &&
+            matches[firstFourMatches[bytes("FFG4")]].winner != 0
+        ) {
+            return string(teams[firstFourWinners[3]]);
+        }
         return string(teams[_teamId]);
     }
 
@@ -663,7 +675,7 @@ contract OnchainMadness {
 
         _teamIds = regions[_region].teams;
         for (uint8 i = 0; i < 16; i++) {
-            _teams[i] = string(teams[_teamIds[i]]);
+            _teams[i] = getTeamName(_teamIds[i]);
         }
 
         // string[16] memory, uint8[16] memory
@@ -732,7 +744,7 @@ contract OnchainMadness {
         string[63] memory symbols;
 
         for (uint8 i = 0; i < 63; i++) {
-            symbols[i] = string(teams[_teamIds[i]]);
+            symbols[i] = getTeamName(_teamIds[i]);
         }
 
         return symbols;
@@ -743,7 +755,9 @@ contract OnchainMadness {
      * @param _regionName The name of the region
      * @return The data of the region as Region memory
      */
-    function getRegion(bytes32 _regionName) external view returns (Region memory) {
+    function getRegion(
+        bytes32 _regionName
+    ) external view returns (Region memory) {
         return regions[_regionName];
     }
 

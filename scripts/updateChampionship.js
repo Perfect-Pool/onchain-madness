@@ -68,9 +68,9 @@ async function main() {
       const matchData = await decodeMatchData(decodedFinalFour.matchFinal);
       
       if (matchData.winner === "") {
-        const homePoints = parseInt(championshipGame.home.points);
-        const awayPoints = parseInt(championshipGame.away.points);
-        const winner = championshipGame.home.points > championshipGame.away.points ? 
+        const homePoints = parseInt(championshipGame.home_points);
+        const awayPoints = parseInt(championshipGame.away_points);
+        const winner = championshipGame.home_points > championshipGame.away_points ? 
           championshipGame.home.alias : championshipGame.away.alias;
 
         console.log(

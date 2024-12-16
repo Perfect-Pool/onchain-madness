@@ -7,9 +7,26 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - **BetsClosed**: Emitted when the betting period is closed for a tournament year
     - `year`: `uint256` - The year of the tournament
 
-- **FirstFourDecided**: Emitted when the First Four winners are set for a tournament year
+- **FirstFourMatchDecided**: Emitted when a First Four match is decided
     - `year`: `uint256` - The year of the tournament
-    - `winners`: `string[4]` - Array of 4 team names that won the First Four matches
+    - `matchCode`: `string` - The code of the First Four match (FFG1-FFG4)
+    - `_winner`: `uint8` - Winner of the match (1 for home, 2 for away)
+
+- **MatchDecided**: Emitted when a match is decided
+    - `year`: `uint256` - The year of the tournament
+    - `regionName`: `string` - The name of the region
+    - `matchIndex`: `uint8` - Index of the match in the current round
+    - `_winner`: `string` - Winner of the match (1 for home, 2 for away)
+
+- **FinalRegionDecided**: Emitted when the final region is decided
+    - `year`: `uint256` - The year of the tournament
+    - `regionName`: `string` - The name of the region
+    - `winner`: `string` - The winner of the final region
+
+- **FinalFourMatchDecided**: Emitted when a final four match is decided
+    - `year`: `uint256` - The year of the tournament
+    - `gameIndex`: `uint8` - Index of the game in the final four
+    - `winners`: `string` - The winners of the game (home or away)
 
 - **RoundAdvanced**: Emitted when the tournament advances to the next round
     - `year`: `uint256` - The year of the tournament
@@ -17,6 +34,7 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 
 - **TournamentFinished**: Emitted when a tournament is marked as finished
     - `year`: `uint256` - The year of the tournament
+    - `winner`: `string` - The winner of the tournament
 
 - **OnchainMadnessCreated**: Emitted when a new OnchainMadness contract is created
     - `proxy`: `address` - The address of the newly created OnchainMadness contract

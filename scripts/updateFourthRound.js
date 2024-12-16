@@ -97,23 +97,27 @@ async function main() {
         const matchData = await decodeMatchData(decodedRegions[regionIndex].matchRound4);
         
         if (matchData.winner === "") {
-          const homePoints = parseInt(game.home.points);
-          const awayPoints = parseInt(game.away.points);
-          const winner = game.home.points > game.away.points ? game.home.alias : game.away.alias;
+          const homePoints = parseInt(game.home_points);
+          const awayPoints = parseInt(game.away_points);
+          const winner = game.home_points > game.away_points ? game.home.alias : game.away.alias;
 
           console.log(
             `Updating ${regionName} Champion Game: ${game.home.alias} ${homePoints} - ${awayPoints} ${game.away.alias}, Winner: ${winner}`
           );
           
-          const tx = await contract.determineFinalRegionWinner(
-            TOURNAMENT_YEAR,
-            regionName,
-            winner,
-            homePoints,
-            awayPoints
-          );
-          await tx.wait();
-          console.log(`${winner} advances to Final Four as ${regionName} Champion!`);
+          try{
+            const tx = await contract.determineFinalRegionWinner(
+              TOURNAMENT_YEAR,
+              regionName,
+              winner,
+              homePoints,
+              awayPoints
+            );
+            await tx.wait();
+            console.log(`${winner} advances to Final Four as ${regionName} Champion!`);
+          } catch (error) {
+            console.log(`Game already decided. Skipping...`);
+          }
         }
       }
     }

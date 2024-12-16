@@ -26,11 +26,41 @@ contract OnchainMadnessFactory is Ownable {
      */
     event BetsClosed(uint256 year);
     /**
-     * @dev Emitted when the First Four winners are set for a tournament year
+     * @dev Emitted when a First Four match is decided
      * @param year The year of the tournament
-     * @param winners Array of 4 team names that won the First Four matches
+     * @param matchCode The code of the First Four match (FFG1-FFG4)
+     * @param _winner Winner of the match (1 for home, 2 for away)
      */
-    event FirstFourDecided(uint256 year, string[4] winners);
+    event FirstFourMatchDecided(uint256 year, string matchCode, uint8 _winner);
+
+    /**
+     * @dev Emitted when a match is decided
+     * @param year The year of the tournament
+     * @param regionName The name of the region
+     * @param matchIndex Index of the match in the current round
+     * @param _winner Winner of the match (1 for home, 2 for away)
+     */
+    event MatchDecided(
+        uint256 year,
+        string regionName,
+        uint8 matchIndex,
+        string _winner
+    );
+
+    /**
+     * @dev Emitted when the final region is decided
+     * @param year The year of the tournament
+     * @param regionName The name of the region
+     * @param winner The winner of the final region
+     */
+    event FinalRegionDecided(uint256 year, string regionName, string winner);
+    /**
+     * @dev Emitted when a final four match is decided
+     * @param year The year of the tournament
+     * @param gameIndex Index of the game in the final four
+     * @param winners The winners of the game (home or away)
+     */
+    event FinalFourMatchDecided(uint256 year, uint8 gameIndex, string winners);
     /**
      * @dev Emitted when the tournament advances to the next round
      * @param year The year of the tournament
@@ -40,8 +70,9 @@ contract OnchainMadnessFactory is Ownable {
     /**
      * @dev Emitted when a tournament is marked as finished
      * @param year The year of the tournament
+     * @param winner The winner of the tournament
      */
-    event TournamentFinished(uint256 year);
+    event TournamentFinished(uint256 year, string winner);
     /**
      * @dev Emitted when a new OnchainMadness contract is created
      * @param proxy The address of the newly created OnchainMadness contract
@@ -202,8 +233,6 @@ contract OnchainMadnessFactory is Ownable {
      * @dev Records the result of a First Four match and sets the winner
      * @param year The year of the tournament
      * @param matchCode The code of the First Four match (FFG1-FFG4)
-     * @param _homeId ID of the home team
-     * @param _awayId ID of the away team
      * @param _homePoints Points scored by the home team
      * @param _awayPoints Points scored by the away team
      * @param _winner Winner of the match (1 for home, 2 for away)
@@ -211,8 +240,6 @@ contract OnchainMadnessFactory is Ownable {
     function determineFirstFourWinner(
         uint256 year,
         string memory matchCode,
-        uint8 _homeId,
-        uint8 _awayId,
         uint256 _homePoints,
         uint256 _awayPoints,
         uint8 _winner
@@ -220,12 +247,11 @@ contract OnchainMadnessFactory is Ownable {
         require(!paused, "Contract is paused");
         OnchainMadness(tournaments[year]).determineFirstFourWinner(
             matchCode,
-            _homeId,
-            _awayId,
             _homePoints,
             _awayPoints,
             _winner
         );
+        emit FirstFourMatchDecided(year, matchCode, _winner);
     }
 
     /**
@@ -279,6 +305,7 @@ contract OnchainMadnessFactory is Ownable {
             homePoints,
             awayPoints
         );
+        emit MatchDecided(year, regionName, matchIndex, winner);
     }
 
     /**
@@ -303,6 +330,7 @@ contract OnchainMadnessFactory is Ownable {
             homePoints,
             awayPoints
         );
+        emit FinalRegionDecided(year, regionName, winner);
     }
 
     /**
@@ -327,6 +355,7 @@ contract OnchainMadnessFactory is Ownable {
             homePoints,
             awayPoints
         );
+        emit FinalFourMatchDecided(year, gameIndex, winners);
     }
 
     /**
@@ -352,7 +381,7 @@ contract OnchainMadnessFactory is Ownable {
         IOnchainMadnessEntryFactory(contracts("OM_ENTRY_DEPLOYER"))
             .iterateYearTokens(year);
 
-        emit TournamentFinished(year);
+        emit TournamentFinished(year, winner);
     }
 
     /**
@@ -523,7 +552,9 @@ contract OnchainMadnessFactory is Ownable {
      * @dev Get the Final Four data
      * @return The data of the Final Four as FinalFour memory
      */
-    function getFinalFour(uint256 year) external view returns (OnchainMadness.FinalFour memory) {
+    function getFinalFour(
+        uint256 year
+    ) external view returns (OnchainMadness.FinalFour memory) {
         return OnchainMadness(tournaments[year]).getFinalFour();
     }
 }

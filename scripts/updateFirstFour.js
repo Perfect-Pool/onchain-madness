@@ -118,8 +118,11 @@ async function main() {
 
       // If match is decided in API but not in contract, update it
       if (game.status === "closed" && currentMatchData.winner === "") {
-        const homePoints = parseInt(game.home.points);
-        const awayPoints = parseInt(game.away.points);
+        const homePoints = parseInt(game.home_points);
+        const awayPoints = parseInt(game.away_points);
+        if (!homePoints || !awayPoints) {
+          continue;
+        }
         const winner = homePoints > awayPoints ? 1 : 2;
 
         console.log(
@@ -128,8 +131,6 @@ async function main() {
         const tx = await contract.determineFirstFourWinner(
           TOURNAMENT_YEAR,
           matchCode,
-          1, // homeId - using placeholder as it's not critical for the game result
-          2, // awayId - using placeholder as it's not critical for the game result
           homePoints,
           awayPoints,
           winner
