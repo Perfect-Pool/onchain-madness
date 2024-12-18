@@ -28,12 +28,15 @@ contract NftImage {
 
     function buildImage(
         uint256 _poolId,
-        uint256 _gameYear,
-        uint256 _tokenId
+        uint256 _tokenId,
+        string[63] memory betTeamNames,
+        uint8[63] memory bets
     ) public view returns (string memory) {
-        (uint8[63] memory bets, ) = IOnchainMadnessEntryFactory(
-            madnessFactory.contracts("OM_ENTRY_DEPLOYER")
-        ).betValidator(_poolId, _tokenId);
+        (uint256 prize, ) = IOnchainMadnessEntryFactory(
+                madnessFactory.contracts("OM_ENTRY_DEPLOYER")
+            ).amountPrizeClaimed(
+            _poolId,_tokenId
+        );
         return
             string(
                 abi.encodePacked(
@@ -43,15 +46,9 @@ contract NftImage {
                             abi.encodePacked(
                                 BuildImage.fullSvgImage(
                                     bets,
-                                    madnessFactory.getTeamSymbols(
-                                        _gameYear,
-                                        IOnchainMadnessEntryFactory(
-                                            madnessFactory.contracts(
-                                                "OM_ENTRY_DEPLOYER"
-                                            )
-                                        ).getBetData(_poolId, _tokenId)
-                                    ),
-                                    _tokenId
+                                    betTeamNames,
+                                    _tokenId,
+                                    BuildImage.formatPrize(prize.toString())
                                 )
                             )
                         )

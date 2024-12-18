@@ -3,15 +3,31 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../libraries/Base64.sol";
+import "../libraries/BuildImage.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
-import "../interfaces/IOnchainMadnessEntry.sol";
+import "../interfaces/IOnchainMadnessEntryFactory.sol";
 
 interface INftImage {
     function buildImage(
         uint256 _poolId,
-        uint256 _gameYear,
-        uint256 _tokenId
+        uint256 _tokenId,
+        string[63] memory betTeamNames,
+        uint8[63] memory bets
     ) external view returns (string memory);
+}
+
+interface IBetCheck {
+    function getBetResults(
+        uint256 year,
+        uint8[63] memory bets
+    )
+        external
+        view
+        returns (
+            string[63] memory betTeamNames,
+            uint8[63] memory betResults,
+            uint8 points
+        );
 }
 
 contract NftMetadata {
@@ -33,9 +49,7 @@ contract NftMetadata {
         madnessFactory = IOnchainMadnessFactory(_factory);
     }
 
-    function gameStatus(
-        uint256 _gameYear
-    ) public view returns (string memory) {
+    function gameStatus(uint256 _gameYear) public view returns (string memory) {
         (, uint8 status) = abi.decode(
             madnessFactory.getGameStatus(_gameYear),
             (uint256, uint8)
@@ -54,6 +68,19 @@ contract NftMetadata {
         uint256 _gameYear,
         uint256 _tokenId
     ) public view returns (string memory) {
+        IOnchainMadnessEntryFactory entryFactory = IOnchainMadnessEntryFactory(
+            madnessFactory.contracts("OM_ENTRY_DEPLOYER")
+        );
+        IBetCheck betCheck = IBetCheck(madnessFactory.contracts("BET_CHECK"));
+
+        (
+            string[63] memory betTeamNames,
+            uint8[63] memory betResults,
+            uint8 points
+        ) = betCheck.getBetResults(
+                _gameYear,
+                entryFactory.getBetData(_poolId, _tokenId)
+            );
         return
             string(
                 abi.encodePacked(
@@ -64,10 +91,18 @@ contract NftMetadata {
                                 '{"name":"Onchain Madness Entry #',
                                 _tokenId.toString(),
                                 '","description":"Onchain Madness NFT from PerfectPool.","image":"',
-                                INftImage(
-                                    madnessFactory.contracts("OM_IMAGE")
-                                ).buildImage(_poolId, _gameYear, _tokenId),
-                                '","attributes":[]}'
+                                INftImage(madnessFactory.contracts("OM_IMAGE"))
+                                    .buildImage(
+                                        _poolId,
+                                        _tokenId,
+                                        betTeamNames,
+                                        betResults
+                                    ),
+                                '","attributes":[{"Game Year":',
+                                _gameYear.toString(),
+                                '},{"Points":',
+                                points.toString(),
+                                "}]}"
                             )
                         )
                     )

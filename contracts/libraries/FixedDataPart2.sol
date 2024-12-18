@@ -4,11 +4,88 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/utils/Strings.sol";
 
 library FixedDataPart2 {
-    function svgPart() public pure returns (string memory) {
+    function eastTop() public pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
-                    '<rect x="302.5" y="517.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="447.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="471.5" width="100" height="20" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="494.5" width="100" height="20" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="517.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="302.5" y="569.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="302.5" y="593.5" width="100" height="20" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="302.5" y="644.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="569.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="593.5" width="100" height="20" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="405.5" y="644.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="39.5" y="743.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="299.5" y="743.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="142.5" y="743.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="402.5" y="743.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="171.5" y="802.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="274.5" y="802.5" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="222.5" y="826" width="100" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="99.5" y="113.5" width="81" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="99.5" y="401.5" width="81" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="363.5" y="401.5" width="81" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="363.5" y="113.5" width="81" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><rect x="232.5" y="697.5" width="81" height="21" rx="4.5" fill="#1B2236" stroke="#1C253C"/><text font-family="Arial" font-weight="600" font-size="12"><tspan x="38" y="438" fill="#FBBF44">Round 1</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="38" y="560" fill="#FBBF44">Round 2</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="38" y="635" fill="#FBBF44">Round 3</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="38" y="150" fill="#FBBF44">Round 1</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="38" y="272" fill="#FBBF44">Round 2</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="38" y="347" fill="#FBBF44">Round 3</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="302" y="150" fill="#FBBF44">Round 1</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="302" y="272" fill="#FBBF44">Round 2</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="302" y="347" fill="#FBBF44">Round 3</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="302" y="438" fill="#FBBF44">Round 1</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="302" y="560" fill="#FBBF44">Round 2</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="302" y="635" fill="#FBBF44">Round 3</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="107" y="734" fill="#FBBF44">West x East</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="361" y="734" fill="#FBBF44">South x Midwest</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="260" y="793" fill="#FBBF44">Final</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="376" y="416" fill="#FBBF44">MIDWEST</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="123" y="416" fill="#FBBF44">EAST</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="383" y="128" fill="#FBBF44">SOUTH</tspan></text><text font-family="Arial" font-weight="600" font-size="12"><tspan x="123" y="128" fill="#FBBF44">WEST</tspan></text><text font-family="Arial" font-weight="600" font-size="11"><tspan x="240" y="712" fill="#FBBF44">FINAL FOUR</tspan></text>'
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="163">East</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="163">Round 1</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="372">Round 2</text>',
+                    '<rect x="72" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="502">Round 3</text>',
+                    '<rect x="72" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />'
+                )
+            );
+    }
+
+    function westTop() public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="163">West</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="163">Round 1</text>',
+                    '<rect x="429" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="372">Round 2</text>',
+                    '<rect x="429" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="502">Round 3</text>',
+                    '<rect x="429" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />'
+                )
+            );
+    }
+
+    function southTop() public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="673">South</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="673">Round 1</text>',
+                    '<rect x="72" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="882">Round 2</text>',
+                    '<rect x="72" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1012">Round 3</text>',
+                    '<rect x="72" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />'
+                )
+            );
+    }
+
+    function midwestTop() public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="673">Midwest</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="673">Round 1</text>',
+                    '<rect x="429" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="882">Round 2</text>',
+                    '<rect x="429" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="1012">Round 3</text>',
+                    '<rect x="429" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />'
+                )
+            );
+    }
+
+    function finalFourTop() public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="72" y="592">Final Four</text>',
+                    '<rect x="72" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="429" y="592">Final Four</text>',
+                    '<rect x="429" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />'
+                )
+            );
+    }
+
+    function finalsTop() public pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1102">Finals</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1102">Round 1</text>',
+                    '<rect x="429" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<rect x="72" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />',
+                    '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1179">Last Match</text>',
+                    '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1179">Round 2</text>',
+                    '<rect x="72" y="1184.75" width="706" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />'
                 )
             );
     }

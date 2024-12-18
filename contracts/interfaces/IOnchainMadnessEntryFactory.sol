@@ -37,4 +37,16 @@ interface IOnchainMadnessEntryFactory {
      * @return The pool ID
      */
     function getPoolId(address _poolAddress) external view returns (uint256);
+
+    /**
+     * @dev Gets the prize data for a specific token in a pool
+     * @param _poolId The ID of the pool
+     * @param _tokenId The ID of the token
+     * @return amountToClaim The amount of USDC to be claimed
+     * @return amountClaimed The amount of USDC already claimed
+     */
+    function amountPrizeClaimed(
+        uint256 _poolId,
+        uint256 _tokenId
+    ) external view returns (uint256 amountToClaim, uint256 amountClaimed);
 }

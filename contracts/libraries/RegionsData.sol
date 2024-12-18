@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "./RegionBuilder.sol";
 
 library RegionsData {
-    function regionSouth(
+    function regionEast(
         uint8[63] memory betValidator,
         string[63] memory teams
     ) external pure returns (string memory) {
@@ -14,33 +14,44 @@ library RegionsData {
                     RegionBuilder.region1(
                         betValidator,
                         teams,
-                        30,
+                        0,
                         [
-                            302,
-                            160,
-                            302,
-                            183,
-                            302,
-                            206,
-                            302,
-                            230,
-                            405,
-                            159,
-                            405,
-                            183
+                            uint16(80),
+                            180,
+                            250,
+                            180,
+                            uint16(80),
+                            219,
+                            250,
+                            219,
+                            uint16(80),
+                            259,
+                            250,
+                            259
                         ]
                     ),
                     RegionBuilder.region2(
                         betValidator,
                         teams,
-                        36,
-                        [405, 206, 405, 230, 302, 281, 302, 305, 405, 281]
+                        6,
+                        [
+                            uint16(80),
+                            298,
+                            250,
+                            298,
+                            uint16(80),
+                            389,
+                            250,
+                            389,
+                            uint16(80),
+                            428
+                        ]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         teams,
-                        41,
-                        [405, 305, 302, 356, 405, 356]
+                        11,
+                        [250, 428, uint16(80), 519, 250, 519]
                     )
                 )
             );
@@ -58,42 +69,84 @@ library RegionsData {
                         teams,
                         15,
                         [
-                            uint16(38),
-                            160,
-                            uint16(38),
-                            183,
-                            uint16(38),
-                            206,
-                            uint16(38),
-                            230,
-                            141,
-                            160,
-                            141,
-                            183
+                            437,
+                            180,
+                            607,
+                            180,
+                            437,
+                            219,
+                            607,
+                            219,
+                            437,
+                            259,
+                            607,
+                            259
                         ]
                     ),
                     RegionBuilder.region2(
                         betValidator,
                         teams,
                         21,
-                        [
-                            141,
-                            206,
-                            141,
-                            230,
-                            uint16(38),
-                            281,
-                            uint16(38),
-                            305,
-                            141,
-                            281
-                        ]
+                        [437, 298, 607, 298, 437, 389, 607, 389, 437, 428]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         teams,
                         26,
-                        [141, 305, uint16(38), 356, 141, 356]
+                        [607, 428, 437, 519, 607, 519]
+                    )
+                )
+            );
+    }
+
+    function regionSouth(
+        uint8[63] memory betValidator,
+        string[63] memory teams
+    ) external pure returns (string memory) {
+        return
+            string(
+                abi.encodePacked(
+                    RegionBuilder.region1(
+                        betValidator,
+                        teams,
+                        30,
+                        [
+                            uint16(80),
+                            690,
+                            250,
+                            690,
+                            uint16(80),
+                            729,
+                            250,
+                            729,
+                            uint16(80),
+                            769,
+                            250,
+                            769
+                        ]
+                    ),
+                    RegionBuilder.region2(
+                        betValidator,
+                        teams,
+                        36,
+                        [
+                            uint16(80),
+                            808,
+                            250,
+                            808,
+                            uint16(80),
+                            899,
+                            250,
+                            899,
+                            uint16(80),
+                            938
+                        ]
+                    ),
+                    RegionBuilder.region3(
+                        betValidator,
+                        teams,
+                        41,
+                        [250, 938, uint16(80), 1029, 250, 1029]
                     )
                 )
             );
@@ -111,80 +164,31 @@ library RegionsData {
                         teams,
                         45,
                         [
-                            302,
-                            447,
-                            302,
-                            471,
-                            302,
-                            494,
-                            302,
-                            517,
-                            405,
-                            447,
-                            405,
-                            471
+                            437,
+                            690,
+                            607,
+                            690,
+                            437,
+                            729,
+                            607,
+                            729,
+                            437,
+                            769,
+                            607,
+                            769
                         ]
                     ),
                     RegionBuilder.region2(
                         betValidator,
                         teams,
                         51,
-                        [405, 494, 405, 517, 302, 570, 302, 593, 405, 570]
+                        [437, 808, 607, 808, 437, 899, 607, 899, 437, 938]
                     ),
                     RegionBuilder.region3(
                         betValidator,
                         teams,
                         56,
-                        [
-                            405,
-                            593,
-                            302,
-                            644,
-                            405,
-                            644
-                        ]
-                    )
-                )
-            );
-    }
-
-    function regionEast(
-        uint8[63] memory betValidator,
-        string[63] memory teams
-    ) external pure returns (string memory) {
-        return
-            string(
-                abi.encodePacked(
-                    RegionBuilder.region1(
-                        betValidator,
-                        teams,
-                        0,
-                        [
-                            uint16(38),
-                            447,
-                            uint16(38),
-                            471,
-                            uint16(38),
-                            494,
-                            uint16(38),
-                            517,
-                            141,
-                            447,
-                            141,
-                            471
-                        ]
-                    ),
-                    RegionBuilder.region2(
-                        betValidator,
-                        teams,
-                        6,
-                        [141, 494, 141, 517, uint16(38), 570, uint16(38), 593, 141, 570]
-                    ),
-                    RegionBuilder.region3(
-                        betValidator,
-                        teams,
-                        11,
-                        [141, 593, uint16(38), 644, 141, 644]
+                        [607, 938, 437, 1029, 607, 1029]
                     )
                 )
             );
@@ -200,13 +204,13 @@ library RegionsData {
                     RegionBuilder.finalFour1(
                         betValidator,
                         teams,
-                        [uint16(38), 744, 142, 744, 302, 744, 406, 744]
+                        [uint16(80), 519, 250, 519, 437, 609, 607, 609]
                     ),
-                    RegionBuilder.region3(
+                    RegionBuilder.finalFour2(
                         betValidator,
                         teams,
                         60,
-                        [172, 802, 274, 802, 222, 826]
+                        [uint16(80), 1119, 437, 1119, uint16(80), 1192]
                     )
                 )
             );
