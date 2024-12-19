@@ -153,7 +153,7 @@ async function main() {
     console.log("\nPrivate Pool (ID: 2):");
     console.log(`Token ID: ${privateTokenId}`);
     console.log(`Bettor: ${privateBettor}`);
-    console.log(`PIN Used: 801599`);
+    console.log(`PIN Used: 131329`);
 
   } catch (error) {
     console.error("Error placing bets:");

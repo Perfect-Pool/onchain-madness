@@ -98,11 +98,11 @@ contract NftMetadata {
                                         betTeamNames,
                                         betResults
                                     ),
-                                '","attributes":[{"Game Year":',
+                                '","attributes":[{"trait_type":"Game Year","value":"',
                                 _gameYear.toString(),
-                                '},{"Points":',
+                                '"},{"trait_type":"Points","value":"',
                                 points.toString(),
-                                "}]}"
+                                '"},]}'
                             )
                         )
                     )

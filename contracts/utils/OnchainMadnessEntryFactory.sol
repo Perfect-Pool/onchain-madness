@@ -211,10 +211,10 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         uint256 processedIterations = 0;
         bool hasMoreTokens = false;
         OnchainMadnessEntry pool = OnchainMadnessEntry(
-            getPoolAddress(_currentPoolId)
+            pools[_currentPoolId]
         );
 
-        while (_currentPoolId <= currentPoolId && processedIterations < 20) {
+        while (processedIterations < 20) {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
                 return;
@@ -223,7 +223,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             (hasMoreTokens, ) = pool.iterateNextToken(_gameYear);
             if (!hasMoreTokens) {
                 _currentPoolId++;
-                pool = OnchainMadnessEntry(getPoolAddress(_currentPoolId));
+                pool = OnchainMadnessEntry(pools[_currentPoolId]);
             }
             processedIterations++;
         }
@@ -234,7 +234,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         // Emit appropriate event based on iteration status
         if (
             hasMoreTokens ||
-            (_currentPoolId <= currentPoolId &&
+            (_currentPoolId > currentPoolId &&
                 pools[_currentPoolId] != address(0))
         ) {
             emit ContinueIteration(_gameYear);

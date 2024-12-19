@@ -95,12 +95,99 @@
       },
       {
         "indexed": false,
-        "internalType": "string[4]",
+        "internalType": "uint8",
+        "name": "gameIndex",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
         "name": "winners",
-        "type": "string[4]"
+        "type": "string"
       }
     ],
-    "name": "FirstFourDecided",
+    "name": "FinalFourMatchDecided",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
+      }
+    ],
+    "name": "FinalRegionDecided",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "matchCode",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "_winner",
+        "type": "uint8"
+      }
+    ],
+    "name": "FirstFourMatchDecided",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "regionName",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "matchIndex",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "_winner",
+        "type": "string"
+      }
+    ],
+    "name": "MatchDecided",
     "type": "event"
   },
   {
@@ -181,6 +268,12 @@
         "internalType": "uint256",
         "name": "year",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
       }
     ],
     "name": "TournamentFinished",
@@ -368,16 +461,6 @@
         "internalType": "string",
         "name": "matchCode",
         "type": "string"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_homeId",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_awayId",
-        "type": "uint8"
       },
       {
         "internalType": "uint256",
@@ -732,6 +815,30 @@
         "internalType": "struct OnchainMadness.Region",
         "name": "",
         "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "year",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint8",
+        "name": "_teamId",
+        "type": "uint8"
+      }
+    ],
+    "name": "getTeamName",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",

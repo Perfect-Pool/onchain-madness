@@ -31,7 +31,7 @@ require("dotenv").config();
 const TOURNAMENT_YEAR = 2024;
 
 // Mock current time for testing
-const MOCK_DATE = "2024-03-20T12:00:00+00:00";
+const MOCK_DATE = "2025-03-20T12:00:00+00:00";
 const currentTime = new Date(MOCK_DATE);
 
 // Time threshold in milliseconds (30 minutes)

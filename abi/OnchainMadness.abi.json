@@ -165,16 +165,6 @@
         "type": "string"
       },
       {
-        "internalType": "uint8",
-        "name": "_homeId",
-        "type": "uint8"
-      },
-      {
-        "internalType": "uint8",
-        "name": "_awayId",
-        "type": "uint8"
-      },
-      {
         "internalType": "uint256",
         "name": "_homePoints",
         "type": "uint256"

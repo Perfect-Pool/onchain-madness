@@ -129,6 +129,7 @@ async function main() {
     await onchainMadnessFactory.setContract("BET_CHECK", networkData.BET_CHECK);
   } else {
     console.log(`BetCheck already deployed at ${networkData.BET_CHECK}`);
+    await onchainMadnessFactory.setContract("BET_CHECK", networkData.BET_CHECK);
   }
 }
 

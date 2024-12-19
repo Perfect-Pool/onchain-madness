@@ -557,4 +557,17 @@ contract OnchainMadnessFactory is Ownable {
     ) external view returns (OnchainMadness.FinalFour memory) {
         return OnchainMadness(tournaments[year]).getFinalFour();
     }
+
+    /**
+     * @dev Get the name of a team based on its ID
+     * @param year The year of the tournament
+     * @param _teamId The ID of the team
+     * @return The name of the team
+     */
+    function getTeamName(
+        uint256 year,
+        uint8 _teamId
+    ) external view returns (string memory) {
+        return OnchainMadness(tournaments[year]).getTeamName(_teamId);
+    }
 }

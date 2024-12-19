@@ -415,7 +415,7 @@ contract OnchainMadness {
             } else {
                 roundMatchId = finalFour.matchesRound1[0];
             }
-            matches[roundMatchId].home = winnerId;
+            matches[roundMatchId].away = winnerId;
         } else if (regionHash == EAST) {
             if (finalFour.matchesRound1[0] == 0) {
                 finalFour.matchesRound1[0] = matchesActualIndex;
@@ -424,7 +424,7 @@ contract OnchainMadness {
             } else {
                 roundMatchId = finalFour.matchesRound1[0];
             }
-            matches[roundMatchId].away = winnerId;
+            matches[roundMatchId].home = winnerId;
         } else if (regionHash == SOUTH) {
             if (finalFour.matchesRound1[1] == 0) {
                 finalFour.matchesRound1[1] = matchesActualIndex;
@@ -493,8 +493,6 @@ contract OnchainMadness {
             ].winner;
             finalFour.matchFinal = matchesActualIndex;
             matchesActualIndex++;
-
-            currentRound++;
         }
     }
 
