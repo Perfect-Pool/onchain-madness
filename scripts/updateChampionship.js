@@ -66,6 +66,11 @@ async function main() {
 
     if (championshipGame.status === "closed") {
       const matchData = await decodeMatchData(decodedFinalFour.matchFinal);
+
+      if (matchData.home === "" || matchData.away === "") {
+        console.log("\nChampionship game not decided yet. Waiting for more results...");
+        process.exit(1);
+      }
       
       if (matchData.winner === "") {
         const homePoints = parseInt(championshipGame.home_points);

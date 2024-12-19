@@ -210,9 +210,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         uint256 processedIterations = 0;
         bool hasMoreTokens = false;
-        OnchainMadnessEntry pool = OnchainMadnessEntry(
-            pools[_currentPoolId]
-        );
+        OnchainMadnessEntry pool = OnchainMadnessEntry(pools[_currentPoolId]);
 
         while (processedIterations < 20) {
             if (pools[_currentPoolId] == address(0)) {
@@ -247,19 +245,36 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @notice Claims prize for a winning bracket
      * @dev Wrapper function that calls claimPrize in the pool contract. Validates game completion and transfers prize.
      * @param _poolId ID of the pool
-     * @param _player Address to receive the prize
      * @param _tokenId Token ID representing the bracket
      */
     function claimPrize(
         uint256 _poolId,
-        address _player,
         uint256 _tokenId
     ) public whenNotPaused nonReentrant {
         OnchainMadnessEntry(getPoolAddress(_poolId)).claimPrize(
-            _player,
+            msg.sender,
             _tokenId
         );
         emit PrizeClaimed(_tokenId, _poolId);
+    }
+
+    /**
+     * @notice Claims prize for multiple tokenIds at the same pool
+     * @dev Iterates through the tokenIds and calls claimPrize for each one using claimPrize()
+     * @param _poolId ID of the pool
+     * @param _tokenIds Token IDs representing the brackets
+     */
+    function claimAll(
+        uint256 _poolId,
+        uint256[] memory _tokenIds
+    ) public whenNotPaused nonReentrant {
+        for (uint256 i = 0; i < _tokenIds.length; i++) {
+            OnchainMadnessEntry(getPoolAddress(_poolId)).claimPrize(
+                msg.sender,
+                _tokenIds[i]
+            );
+            emit PrizeClaimed(_tokenIds[i], _poolId);
+        }
     }
 
     /**

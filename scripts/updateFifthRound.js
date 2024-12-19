@@ -59,6 +59,10 @@ async function main() {
   console.log("\n=== FINAL FOUR SEMIFINALS ===");
   for (let i = 0; i < 2; i++) {
     const matchData = await decodeMatchData(decodedFinalFour.matchesRound1[i]);
+    if(matchData.home==="" || matchData.away==="") {
+      console.log(`\nGame ${i + 1} not decided yet. Waiting for more results...`);
+      process.exit(1);
+    }
     console.log(`\nGame ${i + 1}:`);
     console.log(`${matchData.home} vs ${matchData.away}${matchData.winner ? ` - Winner: ${matchData.winner}` : ""}`);
   }

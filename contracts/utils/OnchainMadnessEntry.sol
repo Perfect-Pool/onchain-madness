@@ -254,6 +254,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         address _player,
         uint256 _tokenId
     ) external nonReentrant onlyNftDeployer {
+        require(ownerOf(_tokenId) == _player, "Not owner of token");
         IOnchainMadnessFactory gameDeployer = IOnchainMadnessFactory(
             IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
         );

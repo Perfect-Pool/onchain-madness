@@ -41,7 +41,7 @@ async function main() {
       true,  // isProtocolPool
       false, // isPrivatePool
       "",    // no PIN needed
-      "Official March Madness 2024" // pool name
+      "Perfect Pool March Madness" // pool name
     );
     const protocolReceipt = await protocolTx.wait();
     
@@ -55,7 +55,7 @@ async function main() {
     console.log(`✅ Protocol Pool created:`);
     console.log(`   Pool ID: ${protocolPoolId}`);
     console.log(`   Pool Address: ${protocolPoolAddress}`);
-    console.log(`   Name: Official March Madness 2024`);
+    console.log(`   Name: Perfect Pool March Madness`);
 
     // 2. Create Public pool
     console.log("\n2. Creating Public pool...");

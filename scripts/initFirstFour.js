@@ -75,8 +75,8 @@ async function main() {
       return aNum - bNum;
     });
 
-    // Then update results for completed games
-    console.log("\nChecking games that need result updates...");
+    // First, initialize all games that need initialization
+    console.log("\nChecking games that need initialization...");
     for (const game of firstFourGames) {
       const matchCode = `FFG${game.title.split("Game ")[1]}`;
       const homeTeam = game.home.alias;
@@ -88,31 +88,16 @@ async function main() {
         initialFirstFourData[matchIndex]
       );
 
-      if (
-        currentMatchData.home === "" || currentMatchData.away === ""
-      ) {
-        console.log(`Match ${matchCode} not initialized yet`);
-        process.exit(1);
-      }
-
-      // If match is decided in API but not in contract, update it
-      if (game.status === "closed" && currentMatchData.winner === "") {
-        const homePoints = parseInt(game.home_points);
-        const awayPoints = parseInt(game.away_points);
-        if (!homePoints || !awayPoints) {
-          continue;
-        }
-        const winner = homePoints > awayPoints ? 1 : 2;
-
+      // If match not initiated, initialize it
+      if (currentMatchData.home === "" && currentMatchData.away === "") {
         console.log(
-          `Updating ${matchCode} result: ${homeTeam} ${homePoints} - ${awayPoints} ${awayTeam}`
+          `Initializing ${matchCode} with ${homeTeam} vs ${awayTeam}`
         );
-        const tx = await contract.determineFirstFourWinner(
+        const tx = await contract.initFirstFourMatch(
           TOURNAMENT_YEAR,
           matchCode,
-          homePoints,
-          awayPoints,
-          winner
+          homeTeam,
+          awayTeam
         );
         await tx.wait(); // Wait for transaction to be mined
       }

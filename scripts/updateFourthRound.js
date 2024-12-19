@@ -69,6 +69,14 @@ async function main() {
   const decodedRegions = await Promise.all(
     initialRegionsData.map(async (regionData, index) => {
       const decoded = await decodeRegionData(regionData);
+
+      const needsInit = decoded.teams.every((team) => team === "");
+
+      if (needsInit) {
+        console.log("Needs to be initialized first");
+        process.exit(1);
+      }
+
       const regionName = Object.values(REGION_NAME_MAP)[index];
       console.log(`\n=== ${regionName} REGION ===`);
       console.log(`Teams: ${decoded.teams.join(", ")}`);

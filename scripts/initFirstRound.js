@@ -26,13 +26,12 @@ const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
-const { exit } = require("process");
 require("dotenv").config();
 
 const TOURNAMENT_YEAR = 2024;
 
 // Mock current time for testing
-const MOCK_DATE = "2025-03-20T12:00:00+00:00"; // fecha as bets
+const MOCK_DATE = "2024-03-20T12:00:00+00:00"; // não fecha as bets
 const currentTime = new Date(MOCK_DATE);
 
 // Time threshold in milliseconds (30 minutes)
@@ -138,57 +137,33 @@ async function main() {
       const needsInit = currentRegionData.teams.every((team) => team === "");
 
       if (needsInit) {
-        console.log("Needs to be initialized first");
-        exit(1);
-      }
+        // Prepare teams array for initialization
+        const teams = [];
+        for (let i = 0; i < games.length; i++) {
+          const game = games[i];
+          // Check if home team is a First Four winner
+          const homeTeam = game.home.name.includes("First Four - Game")
+            ? `FFG${game.home.name.split("Game ")[1].split(" ")[0]}`
+            : game.home.alias;
+          // Check if away team is a First Four winner
+          const awayTeam = game.away.name.includes("First Four - Game")
+            ? `FFG${game.away.name.split("Game ")[1].split(" ")[0]}`
+            : game.away.alias;
 
-      // Update match results
-      console.log(`\nChecking ${regionName} games for updates...`);
-      let decidedGames = 0;
-
-      for (let i = 0; i < games.length; i++) {
-        const game = games[i];
-        if (game.status === "closed") {
-          decidedGames++;
-          const matchData = await decodeMatchData(
-            currentRegionData.matchesRound1[i]
-          );
-
-          if (matchData.winner === "") {
-            const homePoints = parseInt(game.home_points);
-            const awayPoints = parseInt(game.away_points);
-            const winner =
-              homePoints > awayPoints ? game.home.alias : game.away.alias;
-
-            console.log(
-              `Updating Game ${i + 1}: ${
-                game.home.alias
-              } ${homePoints} - ${awayPoints} ${
-                game.away.alias
-              }, Winner: ${winner}`
-            );
-
-            try{
-              const tx = await contract.determineMatchWinner(
-                TOURNAMENT_YEAR,
-                regionName,
-                winner,
-                1, // round 1
-                i, // match index
-                homePoints,
-                awayPoints
-              );
-              await tx.wait();
-            } catch (error) {
-              console.log(`Game ${i + 1} already decided. Skipping...`);
-            }
-          }
+          teams.push(homeTeam);
+          teams.push(awayTeam);
         }
-      }
 
-      // If all games in the region are decided, check if we need to advance the round
-      if (decidedGames === games.length) {
-        console.log(`\nAll games in ${regionName} are decided`);
+        console.log(
+          `\nInitializing ${regionName} with teams:`,
+          teams.join(", ")
+        );
+        const tx = await contract.initRegion(
+          TOURNAMENT_YEAR,
+          regionName,
+          teams
+        );
+        await tx.wait();
       }
     }
 
@@ -204,51 +179,8 @@ async function main() {
         `Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`
       );
 
-      if (timeUntilStart <= THRESHOLD_MS) {
-        try {
-          console.log(
-            "\nFirst game starts in less than 30 minutes. Closing bets..."
-          );
-          const tx = await contract.closeBets(TOURNAMENT_YEAR);
-          await tx.wait();
-          console.log("Bets closed successfully!");
-        } catch (error) {
-          console.log("Bets already closed.");
-        }
-      } else {
-        console.log(
-          "\nBets remain open - first game is more than 30 minutes away"
-        );
-      }
-    }
-
-    // Check if all regions have all games decided
-    const updatedRegionsData = await contract.getAllRegionsData(
-      TOURNAMENT_YEAR
-    );
-    const allRegionsDecided = await Promise.all(
-      updatedRegionsData.map(async (regionData) => {
-        const decoded = await decodeRegionData(regionData);
-        // Check if all matches in round 1 have winners
-        const matchResults = await Promise.all(
-          decoded.matchesRound1.map(async (match) => {
-            const matchData = await decodeMatchData(match);
-            return matchData.winner !== "";
-          })
-        );
-        return matchResults.every((hasWinner) => hasWinner);
-      })
-    );
-
-    if (allRegionsDecided.every((regionDecided) => regionDecided)) {
       console.log(
-        "\nAll first round games are decided. Advancing to next round..."
-      );
-      const tx = await contract.advanceRound(TOURNAMENT_YEAR);
-      await tx.wait();
-    } else {
-      console.log(
-        "\nNot all games are decided yet. Waiting for more results..."
+        "\nBets remain open"
       );
     }
 
