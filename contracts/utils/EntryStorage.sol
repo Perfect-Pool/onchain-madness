@@ -368,7 +368,8 @@ contract EntryStorage {
         uint256 gameYear,
         uint256 score
     ) external view onlyEntryContract returns (uint256) {
-        return pools[poolId].games[gameYear].scoreBetQty[score];
+        Game storage game = pools[poolId].games[gameYear];
+        return game.maxScore != score ? 0 : game.scoreBetQty[score];
     }
 
     /**

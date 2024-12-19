@@ -88,13 +88,6 @@ async function main() {
         initialFirstFourData[matchIndex]
       );
 
-      if (
-        currentMatchData.home === "" || currentMatchData.away === ""
-      ) {
-        console.log(`Match ${matchCode} not initialized yet`);
-        process.exit(1);
-      }
-
       // If match is decided in API but not in contract, update it
       if (game.status === "closed" && currentMatchData.winner === "") {
         const homePoints = parseInt(game.home_points);

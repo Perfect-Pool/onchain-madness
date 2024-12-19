@@ -59,10 +59,6 @@ async function main() {
   console.log("\n=== FINAL FOUR SEMIFINALS ===");
   for (let i = 0; i < 2; i++) {
     const matchData = await decodeMatchData(decodedFinalFour.matchesRound1[i]);
-    if(matchData.home==="" || matchData.away==="") {
-      console.log(`\nGame ${i + 1} not decided yet. Waiting for more results...`);
-      process.exit(1);
-    }
     console.log(`\nGame ${i + 1}:`);
     console.log(`${matchData.home} vs ${matchData.away}${matchData.winner ? ` - Winner: ${matchData.winner}` : ""}`);
   }
@@ -76,8 +72,8 @@ async function main() {
     for (let i = 0; i < finalFourGames.length; i++) {
       const game = finalFourGames[i];
       
-      if (game.title.includes("Final Four - Semifinals")) {
-        const gameIndex = game.title.includes("Game 1") ? 0 : 1;
+      if (game.name.includes("Final Four - Semifinals")) {
+        const gameIndex = game.name.includes("Game 1") ? 0 : 1;
         console.log(`\nChecking Final Four Semifinal Game ${gameIndex + 1}...`);
         
         if (game.status === "closed") {

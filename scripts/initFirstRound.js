@@ -30,13 +30,6 @@ require("dotenv").config();
 
 const TOURNAMENT_YEAR = 2024;
 
-// Mock current time for testing
-const MOCK_DATE = "2024-03-20T12:00:00+00:00"; // não fecha as bets
-const currentTime = new Date(MOCK_DATE);
-
-// Time threshold in milliseconds (30 minutes)
-const THRESHOLD_MS = 30 * 60 * 1000;
-
 // Map to convert from API region names to contract region names
 const REGION_NAME_MAP = {
   "West Regional": "WEST",
@@ -165,23 +158,6 @@ async function main() {
         );
         await tx.wait();
       }
-    }
-
-    // Print earliest game date and check if bets should be closed
-    if (earliestDate) {
-      console.log(`\nFirst Round starts on: ${earliestDate.toLocaleString()}`);
-
-      // Check if earliest game is within 30 minutes of mock current time
-      const timeUntilStart = earliestDate.getTime() - currentTime.getTime();
-
-      console.log(`Current time (mocked): ${currentTime.toLocaleString()}`);
-      console.log(
-        `Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`
-      );
-
-      console.log(
-        "\nBets remain open"
-      );
     }
 
     // Print final state

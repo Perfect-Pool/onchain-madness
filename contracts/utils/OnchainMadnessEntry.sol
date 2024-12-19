@@ -237,7 +237,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         (, score) = betValidator(currentTokenId);
         entryStorage.updateScore(poolId, _gameYear, score);
 
-        if (score == 64) {
+        if (score == 63) {
             perfectPool.increaseWinnersQty(_gameYear);
         }
 
@@ -300,7 +300,12 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         );
         entryStorage.setTokenClaimed(poolId, _tokenId, amount);
 
-        USDC.transfer(_player, amount);
+        uint256 usdcBalance = USDC.balanceOf(address(this));
+        if (usdcBalance < amount) {
+            USDC.transfer(_player, usdcBalance);
+        } else {
+            USDC.transfer(_player, amount);
+        }
     }
 
     /**

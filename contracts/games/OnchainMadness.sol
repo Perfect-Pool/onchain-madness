@@ -638,6 +638,10 @@ contract OnchainMadness {
      * @return The name of the team
      */
     function getTeamName(uint8 _teamId) public view returns (string memory) {
+        if(_teamId == 0) {
+            return "";
+        }
+        
         if (
             teamToId[bytes("FFG1")] == _teamId &&
             matches[firstFourMatches[bytes("FFG1")]].winner != 0
