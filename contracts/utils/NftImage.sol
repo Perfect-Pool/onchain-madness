@@ -33,10 +33,13 @@ contract NftImage {
         uint8[63] memory bets
     ) public view returns (string memory) {
         (uint256 prize, ) = IOnchainMadnessEntryFactory(
-                madnessFactory.contracts("OM_ENTRY_DEPLOYER")
-            ).amountPrizeClaimed(
-            _poolId,_tokenId
-        );
+            madnessFactory.contracts("OM_ENTRY_DEPLOYER")
+        ).amountPrizeClaimed(_poolId, _tokenId);
+
+        (string memory poolName, , , , , ) = IOnchainMadnessEntryFactory(
+            madnessFactory.contracts("OM_ENTRY_DEPLOYER")
+        ).getPoolData(_poolId);
+
         return
             string(
                 abi.encodePacked(
@@ -48,6 +51,8 @@ contract NftImage {
                                     bets,
                                     betTeamNames,
                                     _tokenId,
+                                    _poolId,
+                                    poolName,
                                     BuildImage.formatPrize(prize.toString())
                                 )
                             )

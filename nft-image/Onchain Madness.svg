@@ -89,7 +89,9 @@
     <!-- prize -->
     <text style="font-size:25px;fill:white;font-family:Arial" x="545" y="69" >Prize</text>
     <text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">$1000.00</text>
-    <text style="font-weight:800;font-size:25px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1298">NFT ID: 23</text>
+    <text style="font-weight:800;font-size:20px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1298">NFT ID: 23 - My Public Pool</text>
+    <text style="font-weight:600;font-size:18px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="27" y="660" transform="rotate(270, 27, 660)">perfectpool.io</text>
+    <text style="font-weight:600;font-size:18px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="823" y="660" transform="rotate(90, 823, 660)">Pool ID: 2</text>
     <!-- BEGIN EAST -->
     <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="163">East</text>
     <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="163">Round 1</text>

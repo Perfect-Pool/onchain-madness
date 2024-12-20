@@ -86,7 +86,7 @@ contract EntryStorage {
                 gameDeployer.contracts("OM_ENTRY_DEPLOYER")
             ).onchainMadnessContracts(msg.sender) ||
                 msg.sender == gameDeployer.contracts("OM_ENTRY_DEPLOYER"),
-            "Pool not initialized"
+            "You are not an authorized entry contract"
         );
         _;
     }
@@ -145,7 +145,6 @@ contract EntryStorage {
     )
         external
         view
-        onlyEntryContract
         returns (
             uint256 pot,
             uint8 maxScore,
@@ -255,7 +254,7 @@ contract EntryStorage {
     function getTokenGameYear(
         uint256 poolId,
         uint256 tokenId
-    ) external view onlyEntryContract returns (uint256) {
+    ) external view returns (uint256) {
         return pools[poolId].tokenToGameYear[tokenId];
     }
 
@@ -282,7 +281,7 @@ contract EntryStorage {
     function getNftBet(
         uint256 poolId,
         uint256 tokenId
-    ) external view onlyEntryContract returns (uint8[63] memory) {
+    ) external view returns (uint8[63] memory) {
         return pools[poolId].nftBet[tokenId];
     }
 
@@ -309,7 +308,7 @@ contract EntryStorage {
     function getTokenClaimed(
         uint256 poolId,
         uint256 tokenId
-    ) external view onlyEntryContract returns (uint256) {
+    ) external view returns (uint256) {
         return pools[poolId].tokenClaimed[tokenId];
     }
 
@@ -336,7 +335,7 @@ contract EntryStorage {
     function getPpShare(
         uint256 poolId,
         address user
-    ) external view onlyEntryContract returns (uint256) {
+    ) external view returns (uint256) {
         return pools[poolId].ppShare[user];
     }
 
@@ -367,7 +366,7 @@ contract EntryStorage {
         uint256 poolId,
         uint256 gameYear,
         uint256 score
-    ) external view onlyEntryContract returns (uint256) {
+    ) external view returns (uint256) {
         Game storage game = pools[poolId].games[gameYear];
         return game.maxScore != score ? 0 : game.scoreBetQty[score];
     }
@@ -395,7 +394,7 @@ contract EntryStorage {
     function getGameTokens(
         uint256 poolId,
         uint256 gameYear
-    ) external view onlyEntryContract returns (uint256[] memory) {
+    ) external view returns (uint256[] memory) {
         return pools[poolId].games[gameYear].tokens;
     }
 

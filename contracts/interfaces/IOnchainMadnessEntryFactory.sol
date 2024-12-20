@@ -49,4 +49,28 @@ interface IOnchainMadnessEntryFactory {
         uint256 _poolId,
         uint256 _tokenId
     ) external view returns (uint256 amountToClaim, uint256 amountClaimed);
+
+    /**
+     * @dev Returns the created pool data
+     * @param poolId The ID of the pool
+     * @return name The name of the pool
+     * @return poolAddress The address of the pool
+     * @return isPrivate Whether the pool is private
+     * @return isProtocol Whether the pool is created by the protocol
+     * @return pin The PIN required to join the pool
+     * @return creator The address of the creator of the pool
+     */
+    function getPoolData(
+        uint256 poolId
+    )
+        external
+        view
+        returns (
+            string memory name,
+            address poolAddress,
+            bool isPrivate,
+            bool isProtocol,
+            bytes memory pin,
+            address creator
+        );
 }

@@ -19,24 +19,6 @@ library OnchainMadnessLib {
         return (validation, points);
     }
 
-    function calculatePrize(
-        uint256 totalPot,
-        uint256 potClaimed,
-        uint256 sameScoredPlayers
-    ) external pure returns (uint256) {
-        if (sameScoredPlayers == 0) return 0;
-        
-        uint256 amount = totalPot / sameScoredPlayers;
-        uint256 availableClaim = totalPot - potClaimed;
-
-        // This is to avoid rounding errors that could leave some tokens unclaimed
-        if (availableClaim < amount) {
-            amount = availableClaim;
-        }
-
-        return amount;
-    }
-
     /**
      * @dev Calculate shares for treasury and recipient
      * @param shareAmount The total share amount to split

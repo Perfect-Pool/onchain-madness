@@ -291,4 +291,173 @@ contract BetCheck {
             else betResult = 2;
         }
     }
+
+    /** POINTS CHECK **/
+    function getBetPoints(
+        uint256 year,
+        uint8[63] memory bets
+    )
+        public
+        view
+        returns (
+            uint8[63] memory betResults,
+            uint8 points
+        )
+    {
+        points = 0;
+        uint8[63] memory _betResults;
+
+        points = regionPointsCheck(
+            factory.getRegion(year, EAST),
+            bets,
+            0,
+            points,
+            year,
+            _betResults
+        );
+        points = regionPointsCheck(
+            factory.getRegion(year, WEST),
+            bets,
+            15,
+            points,
+            year,
+            _betResults
+        );
+        points = regionPointsCheck(
+            factory.getRegion(year, SOUTH),
+            bets,
+            30,
+            points,
+            year,
+            _betResults
+        );
+        points = regionPointsCheck(
+            factory.getRegion(year, MIDWEST),
+            bets,
+            45,
+            points,
+            year,
+            _betResults
+        );
+
+        (_betResults, points) = finalFourPointsCheck(
+            factory.getFinalFour(year),
+            bets,
+            _betResults,
+            points,
+            year
+        );
+
+        betResults = _betResults;
+    }
+
+    function regionPointsCheck(
+        IOnchainMadnessFactory.Region memory region,
+        uint8[63] memory bets,
+        uint8 start,
+        uint8 points,
+        uint256 year,
+        uint8[63] memory betResults
+    ) internal view returns (uint8) {
+        uint8[8] memory round2Teams;
+        uint8[4] memory round3Teams;
+        uint8[2] memory championshipTeams;
+
+        // Process Round 1 (8 matches)
+        for (uint8 i = 0; i < 8; i++) {
+            betResults[start + i] = betResultCalculatePoints(
+                factory.getMatch(year, region.matchesRound1[i]),
+                bets[start + i]
+            );
+            if (betResults[start + i] == 1) points += 1;
+            round2Teams[i] = bets[start + i] == 0
+                ? region.teams[i * 2]
+                : region.teams[i * 2 + 1];
+        }
+
+        // Process Round 2 (4 matches)
+        for (uint8 i = 0; i < 4; i++) {
+            betResults[start + 8 + i] = betResultCalculatePoints(
+                factory.getMatch(year, region.matchesRound2[i]),
+                bets[start + 8 + i]
+            );
+            if (betResults[start + 8 + i] == 1) points += 1;
+            round3Teams[i] = bets[start + 8 + i] == 0
+                ? round2Teams[i * 2]
+                : round2Teams[i * 2 + 1];
+        }
+
+        // Process Round 3 (2 matches)
+        for (uint8 i = 0; i < 2; i++) {
+            betResults[start + 12 + i] = betResultCalculatePoints(
+                factory.getMatch(year, region.matchesRound3[i]),
+                bets[start + 12 + i]
+            );
+            if (betResults[start + 12 + i] == 1) points += 1;
+            championshipTeams[i] = bets[start + 12 + i] == 0
+                ? round3Teams[i * 2]
+                : round3Teams[i * 2 + 1];
+        }
+
+        // Process Championship game
+        betResults[start + 14] = betResultCalculatePoints(
+            factory.getMatch(year, region.matchRound4),
+            bets[start + 14]
+        );
+        if (betResults[start + 14] == 1) points += 1;
+
+        return points;
+    }
+
+    function finalFourPointsCheck(
+        IOnchainMadnessFactory.FinalFour memory finalFour,
+        uint8[63] memory bets,
+        uint8[63] memory betResults,
+        uint8 points,
+        uint256 year
+    ) internal view returns (uint8[63] memory, uint8) {
+        IOnchainMadnessFactory.Match memory gameMatch;
+
+        // Process Final Four semifinals (2 matches)
+        for (uint8 i = 0; i < 2; i++) {
+            gameMatch = factory.getMatch(year, finalFour.matchesRound1[i]);
+
+            betResults[60 + i] = gameMatch.winner == 0
+                ? 0
+                : (bets[60 + i] == 0 && gameMatch.winner == gameMatch.home) ||
+                    (bets[60 + i] == 1 && gameMatch.winner == gameMatch.away)
+                ? 1
+                : 2;
+
+            if (betResults[60 + i] == 1) points += 1;
+        }
+
+        // Process Championship game
+        gameMatch = factory.getMatch(year, finalFour.matchFinal);
+        betResults[62] = gameMatch.winner == 0
+            ? 0
+            : (bets[62] == 0 && gameMatch.winner == gameMatch.home) ||
+                (bets[62] == 1 && gameMatch.winner == gameMatch.away)
+            ? 1
+            : 2;
+
+        if (betResults[62] == 1) points += 1;
+
+        return (betResults, points);
+    }
+
+    function betResultCalculatePoints(
+        IOnchainMadnessFactory.Match memory gameMatch,
+        uint8 bet
+    ) internal pure returns (uint8 betResult) {
+        if (bet == 0) {
+            if (gameMatch.winner == 0) betResult = 0;
+            else if (gameMatch.winner == gameMatch.home) betResult = 1;
+            else betResult = 2;
+        } else {
+            if (gameMatch.winner == 0) betResult = 0;
+            else if (gameMatch.winner == gameMatch.away) betResult = 1;
+            else betResult = 2;
+        }
+    }
 }

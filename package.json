@@ -51,6 +51,7 @@
     "update-championship": "hardhat run scripts/updateChampionship.js --network",
     "create-pools": "hardhat run scripts/createPools.js --network",
     "create-game": "hardhat run scripts/createGame.js --network",
-    "place-bets": "hardhat run scripts/placeBets.js --network"
+    "place-bets": "hardhat run scripts/placeBets.js --network",
+    "check-pool": "hardhat run scripts/checkPoolData.js --network"
   }
 }

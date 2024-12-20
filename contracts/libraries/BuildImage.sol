@@ -9,6 +9,8 @@ library BuildImage {
         uint8[63] memory betValidator,
         string[63] memory tokens,
         uint256 tokenId,
+        uint256 poolId,
+        string memory poolName,
         string memory prize
     ) public pure returns (string memory) {
         return
@@ -21,7 +23,7 @@ library BuildImage {
                     RegionsData.regionWest(betValidator, tokens),
                     RegionsData.regionMidWest(betValidator, tokens),
                     RegionsData.finalFour(betValidator, tokens),
-                    DinamicData.nftIdSquare(tokenId, prize),
+                    DinamicData.nftIdSquare(tokenId, poolId, poolName, prize),
                     FixedData.svgPartDown()
                 )
             );
