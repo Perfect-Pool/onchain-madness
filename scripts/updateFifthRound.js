@@ -72,8 +72,8 @@ async function main() {
     for (let i = 0; i < finalFourGames.length; i++) {
       const game = finalFourGames[i];
       
-      if (game.name.includes("Final Four - Semifinals")) {
-        const gameIndex = game.name.includes("Game 1") ? 0 : 1;
+      if (game.title.includes("Final Four - Semifinals")) {
+        const gameIndex = game.title.includes("Game 1") ? 0 : 1;
         console.log(`\nChecking Final Four Semifinal Game ${gameIndex + 1}...`);
         
         if (game.status === "closed") {

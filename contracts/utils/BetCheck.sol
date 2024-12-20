@@ -18,7 +18,7 @@ interface IOnchainMadnessFactory {
         uint8 matchRound4;
         uint8 winner;
     }
-    
+
     /**
      * @dev Represents the Final Four round
      * @param matchesRound1 Array of Final Four gameMatch IDs
@@ -31,10 +31,25 @@ interface IOnchainMadnessFactory {
         uint8 winner;
     }
 
-    function getRegion(uint256 year, bytes32 _regionName) external view returns (Region memory);
-    function getMatch(uint256 year, uint8 _matchId) external view returns (Match memory);
-    function getTeamName(uint256 year, uint8 _teamId) external view returns (string memory);
-    function getFinalFour(uint256 year) external view returns (FinalFour memory);
+    function getRegion(
+        uint256 year,
+        bytes32 _regionName
+    ) external view returns (Region memory);
+
+    function getMatch(
+        uint256 year,
+        uint8 _matchId
+    ) external view returns (Match memory);
+
+    function getTeamName(
+        uint256 year,
+        uint8 _teamId
+    ) external view returns (string memory);
+
+    function getFinalFour(
+        uint256 year
+    ) external view returns (FinalFour memory);
+
     function owner() external view returns (address);
 }
 
@@ -71,221 +86,209 @@ contract BetCheck {
         )
     {
         points = 0;
-        uint8 matchId;
-        IOnchainMadnessFactory.Match memory gameMatch;
+        string[63] memory _betTeamNames;
+        uint8[63] memory _betResults;
 
+        points = regionCheck(
+            factory.getRegion(year, EAST),
+            bets,
+            0,
+            points,
+            year,
+            _betTeamNames,
+            _betResults
+        );
+        points = regionCheck(
+            factory.getRegion(year, WEST),
+            bets,
+            15,
+            points,
+            year,
+            _betTeamNames,
+            _betResults
+        );
+        points = regionCheck(
+            factory.getRegion(year, SOUTH),
+            bets,
+            30,
+            points,
+            year,
+            _betTeamNames,
+            _betResults
+        );
+        points = regionCheck(
+            factory.getRegion(year, MIDWEST),
+            bets,
+            45,
+            points,
+            year,
+            _betTeamNames,
+            _betResults
+        );
+
+        (_betTeamNames, _betResults, points) = finalFourCheck(
+            factory.getFinalFour(year),
+            [
+                _betTeamNames[14],
+                _betTeamNames[29],
+                _betTeamNames[44],
+                _betTeamNames[59]
+            ],
+            bets,
+            _betTeamNames,
+            _betResults,
+            points,
+            year
+        );
+
+        betTeamNames = _betTeamNames;
+        betResults = _betResults;
+    }
+
+    function regionCheck(
+        IOnchainMadnessFactory.Region memory region,
+        uint8[63] memory bets,
+        uint8 start,
+        uint8 points,
+        uint256 year,
+        string[63] memory betTeamNames,
+        uint8[63] memory betResults
+    ) internal view returns (uint8) {
+        uint8[8] memory round2Teams;
+        uint8[4] memory round3Teams;
+        uint8[2] memory championshipTeams;
+
+        // Process Round 1 (8 matches)
         for (uint8 i = 0; i < 8; i++) {
-            IOnchainMadnessFactory.Region memory eastRegion = factory.getRegion(year, EAST);
-            IOnchainMadnessFactory.Region memory southRegion = factory.getRegion(year, SOUTH);
-            IOnchainMadnessFactory.Region memory westRegion = factory.getRegion(year, WEST);
-            IOnchainMadnessFactory.Region memory midwestRegion = factory.getRegion(year, MIDWEST);
-
-            matchId = eastRegion.matchesRound1[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i] = factory.getTeamName(year, bets[i] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i] == 2)) {
-                betResults[i] = 1;
-                points++;
-            } else betResults[i] = 2;
-
-            matchId = southRegion.matchesRound1[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 8] = factory.getTeamName(year, bets[i + 8] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 8] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 8] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 8] == 2)) {
-                betResults[i + 8] = 1;
-                points++;
-            } else betResults[i + 8] = 2;
-
-            matchId = westRegion.matchesRound1[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 16] = factory.getTeamName(year, bets[i + 16] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 16] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 16] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 16] == 2)) {
-                betResults[i + 16] = 1;
-                points++;
-            } else betResults[i + 16] = 2;
-
-            matchId = midwestRegion.matchesRound1[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 24] = factory.getTeamName(year, bets[i + 24] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 24] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 24] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 24] == 2)) {
-                betResults[i + 24] = 1;
-                points++;
-            } else betResults[i + 24] = 2;
+            (
+                betTeamNames[start + i],
+                betResults[start + i]
+            ) = betResultCalculate(
+                factory.getMatch(year, region.matchesRound1[i]),
+                bets[start + i],
+                region.teams[i * 2],
+                region.teams[i * 2 + 1],
+                year
+            );
+            if (betResults[start + i] == 1) points += 1;
+            round2Teams[i] = bets[start + i] == 0
+                ? region.teams[i * 2]
+                : region.teams[i * 2 + 1];
         }
 
+        // Process Round 2 (4 matches)
         for (uint8 i = 0; i < 4; i++) {
-            IOnchainMadnessFactory.Region memory eastRegion = factory.getRegion(year, EAST);
-            IOnchainMadnessFactory.Region memory southRegion = factory.getRegion(year, SOUTH);
-            IOnchainMadnessFactory.Region memory westRegion = factory.getRegion(year, WEST);
-            IOnchainMadnessFactory.Region memory midwestRegion = factory.getRegion(year, MIDWEST);
-
-            matchId = eastRegion.matchesRound2[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 32] = factory.getTeamName(year, bets[i + 32] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 32] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 32] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 32] == 2)) {
-                betResults[i + 32] = 1;
-                points++;
-            } else betResults[i + 32] = 2;
-
-            matchId = southRegion.matchesRound2[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 36] = factory.getTeamName(year, bets[i + 36] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 36] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 36] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 36] == 2)) {
-                betResults[i + 36] = 1;
-                points++;
-            } else betResults[i + 36] = 2;
-
-            matchId = westRegion.matchesRound2[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 40] = factory.getTeamName(year, bets[i + 40] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 40] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 40] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 40] == 2)) {
-                betResults[i + 40] = 1;
-                points++;
-            } else betResults[i + 40] = 2;
-
-            matchId = midwestRegion.matchesRound2[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 44] = factory.getTeamName(year, bets[i + 44] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 44] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 44] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 44] == 2)) {
-                betResults[i + 44] = 1;
-                points++;
-            } else betResults[i + 44] = 2;
+            (
+                betTeamNames[start + 8 + i],
+                betResults[start + 8 + i]
+            ) = betResultCalculate(
+                factory.getMatch(year, region.matchesRound2[i]),
+                bets[start + 8 + i],
+                round2Teams[i * 2],
+                round2Teams[i * 2 + 1],
+                year
+            );
+            if (betResults[start + 8 + i] == 1) points += 1;
+            round3Teams[i] = bets[start + 8 + i] == 0
+                ? round2Teams[i * 2]
+                : round2Teams[i * 2 + 1];
         }
 
+        // Process Round 3 (2 matches)
         for (uint8 i = 0; i < 2; i++) {
-            IOnchainMadnessFactory.Region memory eastRegion = factory.getRegion(year, EAST);
-            IOnchainMadnessFactory.Region memory southRegion = factory.getRegion(year, SOUTH);
-            IOnchainMadnessFactory.Region memory westRegion = factory.getRegion(year, WEST);
-            IOnchainMadnessFactory.Region memory midwestRegion = factory.getRegion(year, MIDWEST);
-
-            matchId = eastRegion.matchesRound3[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 48] = factory.getTeamName(year, bets[i + 48] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 48] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 48] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 48] == 2)) {
-                betResults[i + 48] = 1;
-                points++;
-            } else betResults[i + 48] = 2;
-
-            matchId = southRegion.matchesRound3[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 50] = factory.getTeamName(year, bets[i + 50] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 50] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 50] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 50] == 2)) {
-                betResults[i + 50] = 1;
-                points++;
-            } else betResults[i + 50] = 2;
-
-            matchId = westRegion.matchesRound3[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 52] = factory.getTeamName(year, bets[i + 52] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 52] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 52] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 52] == 2)) {
-                betResults[i + 52] = 1;
-                points++;
-            } else betResults[i + 52] = 2;
-
-            matchId = midwestRegion.matchesRound3[i];
-            gameMatch = factory.getMatch(year, matchId);
-            betTeamNames[i + 54] = factory.getTeamName(year, bets[i + 54] == 1 ? gameMatch.home : gameMatch.away);
-            if (gameMatch.winner == 0) betResults[i + 54] = 0;
-            else if ((gameMatch.winner == gameMatch.home && bets[i + 54] == 1) || 
-                    (gameMatch.winner == gameMatch.away && bets[i + 54] == 2)) {
-                betResults[i + 54] = 1;
-                points++;
-            } else betResults[i + 54] = 2;
+            (
+                betTeamNames[start + 12 + i],
+                betResults[start + 12 + i]
+            ) = betResultCalculate(
+                factory.getMatch(year, region.matchesRound3[i]),
+                bets[start + 12 + i],
+                round3Teams[i * 2],
+                round3Teams[i * 2 + 1],
+                year
+            );
+            if (betResults[start + 12 + i] == 1) points += 1;
+            championshipTeams[i] = bets[start + 12 + i] == 0
+                ? round3Teams[i * 2]
+                : round3Teams[i * 2 + 1];
         }
 
-        // Round 4
-        IOnchainMadnessFactory.Region memory region = factory.getRegion(year, EAST);
-        matchId = region.matchRound4;
-        gameMatch = factory.getMatch(year, matchId);
-        betTeamNames[56] = factory.getTeamName(year, bets[56] == 1 ? gameMatch.home : gameMatch.away);
-        if (gameMatch.winner == 0) betResults[56] = 0;
-        else if ((gameMatch.winner == gameMatch.home && bets[56] == 1) || 
-                (gameMatch.winner == gameMatch.away && bets[56] == 2)) {
-            betResults[56] = 1;
-            points++;
-        } else betResults[56] = 2;
+        // Process Championship game
+        (betTeamNames[start + 14], betResults[start + 14]) = betResultCalculate(
+            factory.getMatch(year, region.matchRound4),
+            bets[start + 14],
+            championshipTeams[0],
+            championshipTeams[1],
+            year
+        );
+        if (betResults[start + 14] == 1) points += 1;
 
-        region = factory.getRegion(year, SOUTH);
-        matchId = region.matchRound4;
-        gameMatch = factory.getMatch(year, matchId);
-        betTeamNames[57] = factory.getTeamName(year, bets[57] == 1 ? gameMatch.home : gameMatch.away);
-        if (gameMatch.winner == 0) betResults[57] = 0;
-        else if ((gameMatch.winner == gameMatch.home && bets[57] == 1) || 
-                (gameMatch.winner == gameMatch.away && bets[57] == 2)) {
-            betResults[57] = 1;
-            points++;
-        } else betResults[57] = 2;
+        return points;
+    }
 
-        region = factory.getRegion(year, WEST);
-        matchId = region.matchRound4;
-        gameMatch = factory.getMatch(year, matchId);
-        betTeamNames[58] = factory.getTeamName(year, bets[58] == 1 ? gameMatch.home : gameMatch.away);
-        if (gameMatch.winner == 0) betResults[58] = 0;
-        else if ((gameMatch.winner == gameMatch.home && bets[58] == 1) || 
-                (gameMatch.winner == gameMatch.away && bets[58] == 2)) {
-            betResults[58] = 1;
-            points++;
-        } else betResults[58] = 2;
+    function finalFourCheck(
+        IOnchainMadnessFactory.FinalFour memory finalFour,
+        string[4] memory regionWinners,
+        uint8[63] memory bets,
+        string[63] memory betTeamNames,
+        uint8[63] memory betResults,
+        uint8 points,
+        uint256 year
+    ) internal view returns (string[63] memory, uint8[63] memory, uint8) {
+        IOnchainMadnessFactory.Match memory gameMatch;
+        string[2] memory finalTeams;
 
-        region = factory.getRegion(year, MIDWEST);
-        matchId = region.matchRound4;
-        gameMatch = factory.getMatch(year, matchId);
-        betTeamNames[59] = factory.getTeamName(year, bets[59] == 1 ? gameMatch.home : gameMatch.away);
-        if (gameMatch.winner == 0) betResults[59] = 0;
-        else if ((gameMatch.winner == gameMatch.home && bets[59] == 1) || 
-                (gameMatch.winner == gameMatch.away && bets[59] == 2)) {
-            betResults[59] = 1;
-            points++;
-        } else betResults[59] = 2;
+        // Process Final Four semifinals (2 matches)
+        for (uint8 i = 0; i < 2; i++) {
+            gameMatch = factory.getMatch(year, finalFour.matchesRound1[i]);
+            betTeamNames[60 + i] = bets[60 + i] == 0
+                ? regionWinners[i * 2] // East/South
+                : regionWinners[i * 2 + 1]; // West/Midwest
 
-        // Final Four
-        IOnchainMadnessFactory.Match memory finalMatch = factory.getMatch(year, factory.getFinalFour(year).matchesRound1[0]);
-        betTeamNames[60] = factory.getTeamName(year, bets[60] == 1 ? finalMatch.home : finalMatch.away);
-        if (finalMatch.winner == 0) betResults[60] = 0;
-        else if ((finalMatch.winner == finalMatch.home && bets[60] == 1) || 
-                (finalMatch.winner == finalMatch.away && bets[60] == 2)) {
-            betResults[60] = 1;
-            points++;
-        } else betResults[60] = 2;
+            betResults[60 + i] = gameMatch.winner == 0
+                ? 0
+                : (bets[60 + i] == 0 && gameMatch.winner == gameMatch.home) ||
+                    (bets[60 + i] == 1 && gameMatch.winner == gameMatch.away)
+                ? 1
+                : 2;
 
-        finalMatch = factory.getMatch(year, factory.getFinalFour(year).matchesRound1[1]);
-        betTeamNames[61] = factory.getTeamName(year, bets[61] == 1 ? finalMatch.home : finalMatch.away);
-        if (finalMatch.winner == 0) betResults[61] = 0;
-        else if ((finalMatch.winner == finalMatch.home && bets[61] == 1) || 
-                (finalMatch.winner == finalMatch.away && bets[61] == 2)) {
-            betResults[61] = 1;
-            points++;
-        } else betResults[61] = 2;
+            if (betResults[60 + i] == 1) points += 1;
+            finalTeams[i] = bets[60 + i] == 0
+                ? regionWinners[i * 2]
+                : regionWinners[i * 2 + 1];
+        }
 
-        finalMatch = factory.getMatch(year, factory.getFinalFour(year).matchFinal);
-        betTeamNames[62] = factory.getTeamName(year, bets[62] == 1 ? finalMatch.home : finalMatch.away);
-        if (finalMatch.winner == 0) betResults[62] = 0;
-        else if ((finalMatch.winner == finalMatch.home && bets[62] == 1) || 
-                (finalMatch.winner == finalMatch.away && bets[62] == 2)) {
-            betResults[62] = 1;
-            points++;
-        } else betResults[62] = 2;
+        // Process Championship game
+        gameMatch = factory.getMatch(year, finalFour.matchFinal);
+        betTeamNames[62] = bets[62] == 0 ? finalTeams[0] : finalTeams[1];
+        betResults[62] = gameMatch.winner == 0
+            ? 0
+            : (bets[62] == 0 && gameMatch.winner == gameMatch.home) ||
+                (bets[62] == 1 && gameMatch.winner == gameMatch.away)
+            ? 1
+            : 2;
+
+        if (betResults[62] == 1) points += 1;
+
+        return (betTeamNames, betResults, points);
+    }
+
+    function betResultCalculate(
+        IOnchainMadnessFactory.Match memory gameMatch,
+        uint8 bet, // from uint8[63] bets as 0 or 1 values
+        uint8 player1,
+        uint8 player2,
+        uint256 year
+    ) internal view returns (string memory betTeamName, uint8 betResult) {
+        if (bet == 0) {
+            betTeamName = factory.getTeamName(year, player1);
+            if (gameMatch.winner == 0) betResult = 0;
+            else if (gameMatch.winner == gameMatch.home) betResult = 1;
+            else betResult = 2;
+        } else {
+            betTeamName = factory.getTeamName(year, player2);
+            if (gameMatch.winner == 0) betResult = 0;
+            else if (gameMatch.winner == gameMatch.away) betResult = 1;
+            else betResult = 2;
+        }
     }
 }

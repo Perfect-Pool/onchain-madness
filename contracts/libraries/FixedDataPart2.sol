@@ -10,6 +10,7 @@ library FixedDataPart2 {
                 abi.encodePacked(
                     '<text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="163">East</text>',
                     '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="163">Round 1</text>',
+                    '<rect x="72" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />',
                     '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="372">Round 2</text>',
                     '<rect x="72" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />',
                     '<text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="502">Round 3</text>',

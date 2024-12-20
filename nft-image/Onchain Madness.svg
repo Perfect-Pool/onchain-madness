@@ -1,10 +1,12 @@
 <svg width="850" height="1329" viewBox="0 0 850 1329" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="850" height="1329" rx="32" fill="#030712" /><!-- fundo -->
-    <path d="m 40,65 h 770 v 1215 c 0,8.84 -7.163,16 -16,16 H 56 c -8.8366,0 -16,-7.16 -16,-16 z" fill="#111827" />
+    <rect width="850" height="1329" rx="32" fill="#030712" />
+    <!-- fundo -->
+    <path d="m 40,29 h 770 v 1215 c 0,8.84 -7.163,16 -16,16 H 56 c -8.8366,0 -16,-7.16 -16,-16 z" fill="#111827" />
     <!-- topo -->
     <path d="M0 32C0 14.3269 14.3269 0 32 0H818C835.673 0 850 14.3269 850 32V121H0V32Z"
         fill="url(#paint0_linear_3468_11744)" />
-    <path d="M0 32C0 14.3269 14.3269 0 32 0H818C835.673 0 850 14.3269 850 32V121H0V32Z" fill="black" fill-opacity="0.2" />
+    <path d="M0 32C0 14.3269 14.3269 0 32 0H818C835.673 0 850 14.3269 850 32V121H0V32Z" fill="black"
+        fill-opacity="0.2" />
     <rect x="525" y="32" width="293" height="57" rx="16" fill="white" fill-opacity="0.2" />
 
     <!-- logo -->
@@ -23,7 +25,7 @@
     <path
         d="M182.732 58.4865H179.498L178.606 55.6585H173.275L172.405 58.4865H169.171L174.256 43.4959C174.48 42.9748 174.725 42.6146 174.993 42.4153C175.275 42.2161 175.617 42.1164 176.019 42.1164C176.42 42.1164 176.74 42.2084 176.978 42.3923C177.23 42.5763 177.454 42.9441 177.647 43.4959L182.732 58.4865ZM177.892 52.9685L176.019 46.4848L174.056 52.9685H177.892Z"
         fill="white" />
-    <path d="M188.012 58.4865H184.912V42.1164H188.012V58.4865Z" fill="white" id="path9" />
+    <path d="M188.012 58.4865H184.912V42.1164H188.012V58.4865Z" fill="white" />
     <path
         d="M204.087 42.1164V56.8311C204.087 57.3369 203.938 57.7738 203.641 58.1416C203.343 58.4942 202.994 58.6704 202.592 58.6704C201.566 58.6704 200.726 58.0573 200.072 56.8311L194.585 47.9793V58.4865H191.485V42.1164H194.473L200.986 52.8306V42.1164H204.087Z"
         fill="white" />
@@ -65,40 +67,37 @@
         fill="white" />
     <path
         d="M89.6307 59.4744C89.5384 56.7914 89.0904 54.1968 88.326 51.7516C85.7232 51.6565 83.2192 50.4067 80.3397 48.9668C75.5426 46.5623 69.7637 43.6756 61.3754 45.5978C58.0807 49.286 55.9919 54.1289 55.7547 59.4811L89.6241 59.4812L89.6307 59.4744Z"
-        fill="white" id="path23" />
+        fill="white" />
     <path
         d="M88.3261 69.2418C89.0904 66.7898 89.5385 64.202 89.6242 61.519H55.7547C55.9919 66.8645 58.0808 71.7142 61.3755 75.4024C69.7638 77.3246 75.5426 74.4311 80.3397 72.0334C83.2193 70.5935 85.7232 69.3437 88.3261 69.2486V69.2418Z"
-        fill="white" id="path24" />
+        fill="white" />
     <path
         d="M90.3358 51.5208C91.087 54.0475 91.5219 56.7169 91.6141 59.4745L98.4012 59.4745C98.2101 55.1818 96.8263 51.2152 94.5859 47.9074C93.5514 49.6326 92.1742 50.991 90.3424 51.5208H90.3358Z"
-        fill="white" id="path25" />
+        fill="white" />
     <path
         d="M81.2095 47.1329C83.5553 48.308 85.6244 49.3404 87.5748 49.6325C85.8813 45.3805 83.2192 41.638 79.8784 38.697C78.9625 38.5747 78.0268 38.5 77.0713 38.5C72.1754 38.5 67.6749 40.2048 64.0705 43.0576C71.411 42.2357 76.7155 44.8847 81.2029 47.1397L81.2095 47.1329Z"
-        fill="white" id="path26" />
+        fill="white" />
     <path
         d="M87.5748 71.3607C85.6244 71.6528 83.5553 72.6852 81.2095 73.8603C76.7221 76.1085 71.4176 78.7575 64.0771 77.9424C67.6749 80.7952 72.182 82.5 77.0779 82.5C78.0268 82.5 78.9625 82.4321 79.885 82.303C83.2258 79.3552 85.8813 75.6195 87.5814 71.3675L87.5748 71.3607Z"
-        fill="white" id="path27" />
+        fill="white" />
     <path
         d="M93.268 74.8182C92.2994 72.9164 91.1001 71.7753 89.6834 71.4085C88.2996 75.1578 86.2174 78.5607 83.608 81.4406C87.4035 80.184 90.7311 77.8611 93.268 74.8182Z"
-        fill="white" id="path28" />
+        fill="white" />
     <path
         d="M93.268 46.1686C90.7311 43.1256 87.4035 40.8027 83.608 39.5461C86.2174 42.4328 88.2996 45.8289 89.6834 49.5783C91.1001 49.2115 92.2994 48.0704 93.268 46.1686Z"
-        fill="white" id="path29" />
+        fill="white" />
     <!-- prize -->
-    <text style="font-size:25px;fill:white;font-family:Arial" x="545" y="69" id="text29">Prize</text>
-    <text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74"
-        id="text30">$1000.00</text>
-    <text style="font-weight:800;font-size:25px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1270"
-        id="text31">NFT ID: 23</text>
+    <text style="font-size:25px;fill:white;font-family:Arial" x="545" y="69" >Prize</text>
+    <text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">$1000.00</text>
+    <text style="font-weight:800;font-size:25px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1298">NFT ID: 23</text>
     <!-- BEGIN EAST -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="163"
-        id="text32">East</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="163" id="text33">Round 1</text>
-    <rect x="72" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" id="rect33" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="372" id="text34">Round 2</text>
-    <rect x="72" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" id="rect34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="502" id="text35">Round 3</text>
-    <rect x="72" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect35" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="163">East</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="163">Round 1</text>
+    <rect x="72" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="372">Round 2</text>
+    <rect x="72" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="502">Round 3</text>
+    <rect x="72" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
     <rect x="80" y="180" width="162.5" height="31.5" rx="8" fill="url(#col1_red)" fill-opacity="0.8" id="rect36" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="200"
@@ -154,14 +153,13 @@
         id="text51">PLYR</text>
     <!-- END EAST -->
     <!-- BEGIN WEST -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="163"
-        id="text52">West</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="163" id="text53">Round 1</text>
-    <rect x="429" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" id="rect53" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="372" id="text54">Round 2</text>
-    <rect x="429" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" id="rect54" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="502" id="text55">Round 3</text>
-    <rect x="429" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect55" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="163">West</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="163">Round 1</text>
+    <rect x="429" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="372">Round 2</text>
+    <rect x="429" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="502">Round 3</text>
+    <rect x="429" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
     <rect x="437" y="180" width="162.5" height="31.5" rx="8" fill="url(#col3_red)" fill-opacity="0.8" id="rect56" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="200"
@@ -217,14 +215,13 @@
         id="text71">PLYR</text>
     <!-- END WEST -->
     <!-- BEGIN SOUTH -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="673"
-        id="text72">South</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="673" id="text73">Round 1</text>
-    <rect x="72" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" id="rect73" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="882" id="text74">Round 2</text>
-    <rect x="72" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" id="rect74" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1012" id="text75">Round 3</text>
-    <rect x="72" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect75" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="673">South</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="673">Round 1</text>
+    <rect x="72" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="882">Round 2</text>
+    <rect x="72" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1012">Round 3</text>
+    <rect x="72" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
     <rect x="80" y="690" width="162.5" height="31.5" rx="8" fill="url(#col1_red)" fill-opacity="0.8" id="rect76" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="710"
@@ -273,15 +270,13 @@
         id="text89">PLYR</text>
     <!-- END SOUTH -->
     <!-- BEGIN MIDWEST -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="673"
-        id="text90">Midwest</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="673" id="text91">Round 1</text>
-    <rect x="429" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" id="rect91" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="882" id="text92">Round 2</text>
-    <rect x="429" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" id="rect92" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="1012" id="text93">Round
-        3</text>
-    <rect x="429" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect93" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="673">Midwest</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="673">Round 1</text>
+    <rect x="429" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="882">Round 2</text>
+    <rect x="429" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="1012">Round3</text>
+    <rect x="429" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
     <rect x="437" y="690" width="162.5" height="31.5" rx="8" fill="url(#col3_red)" fill-opacity="0.8" id="rect94" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="710"
@@ -330,12 +325,10 @@
         id="text107">PLYR</text>
     <!-- END MIDWEST -->
     <!-- FINAL FOUR -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="72" y="592" id="text108">Final
-        Four</text>
-    <rect x="72" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect108" />
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="429" y="592" id="text109">Final
-        Four</text>
-    <rect x="429" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect109" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="72" y="592">Final Four</text>
+    <rect x="72" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="429" y="592">Final Four</text>
+    <rect x="429" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- <rect x="80" y="1119.5" width="333" height="31.5" rx="8" fill="#334155" /> -->
     <rect x="80" y="1119.5" width="333" height="31.5" rx="8" fill="url(#col1mid_red)" fill-opacity="0.8" id="rect110" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="246.5"
@@ -346,81 +339,77 @@
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="603.5"
         y="1142.25" id="text111">PLYR</text>
     <!-- END FINAL FOUR -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1102"
-        id="text112">Finals</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1102" id="text113">Round
-        1</text>
-    <rect x="429" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect113" />
-    <rect x="72" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect114" />
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1179"
-        id="text114">Last Match</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1179" id="text115">Round
-        2</text>
-    <rect x="72" y="1184.75" width="706" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" id="rect115" />
-    <rect x="80" y="1192.75" width="690" height="31.5" rx="8" fill="url(#colbig_red)" fill-opacity="0.8" id="rect116" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1102">Finals</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1102">Round 1</text>
+    <rect x="429" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <rect x="72" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1179">Last Match</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1179">Round 2</text>
+    <rect x="72" y="1184.75" width="706" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <rect x="80" y="1192.75" width="690" height="31.5" rx="8" fill="url(#colbig_red)" fill-opacity="0.8" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="425" y="1214"
         id="text116">PLYR</text>
-    <defs id="defs145">
+    <defs>
         <linearGradient id="paint0_linear_3468_11744" x1="0" y1="0" x2="784.769" y2="294.705"
             gradientUnits="userSpaceOnUse">
-            <stop offset="0.0266" stop-color="#0062FF" id="stop116" />
-            <stop offset="0.9899" stop-color="#1DB954" id="stop117" />
+            <stop offset="0.0266" stop-color="#0062FF" />
+            <stop offset="0.9899" stop-color="#1DB954" />
         </linearGradient>
         <linearGradient id="col1_green" x1="80" y1="195.75" x2="242.5" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop118" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop119" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col1_red" x1="242.5" y1="195.75" x2="80" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop120" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop121" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col2_green" x1="250.5" y1="195.75" x2="413" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop122" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop123" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col2_red" x1="413" y1="195.75" x2="250.5" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop124" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop125" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col3_green" x1="437" y1="195.75" x2="599.5" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop126" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop127" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col3_red" x1="599.5" y1="195.75" x2="437" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop128" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop129" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col4_green" x1="607.5" y1="195.75" x2="770" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop130" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop131" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col4_red" x1="770" y1="195.75" x2="607.5" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop132" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop133" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col1mid_red" x1="340" y1="195.75" x2="70" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop134" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop135" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col1mid_green" x1="80" y1="195.75" x2="450" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop136" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop137" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col2mid_red" x1="700" y1="195.75" x2="420" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop138" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop139" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="col2mid_green" x1="420" y1="195.75" x2="780" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop140" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop141" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="colbig_red" x1="600" y1="195.75" x2="30" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#F87171" stop-opacity="0.75" id="stop142" />
-            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" id="stop143" />
+            <stop stop-color="#F87171" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1b2236" stop-opacity="0.55" />
         </linearGradient>
         <linearGradient id="colbig_green" x1="200" y1="195.75" x2="800" y2="195.75" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4ADE80" stop-opacity="0.75" id="stop144" />
-            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" id="stop145" />
+            <stop stop-color="#4ADE80" stop-opacity="0.75" />
+            <stop offset="1" stop-color="#1c2337" stop-opacity="0.55" />
         </linearGradient>
     </defs>
 </svg>

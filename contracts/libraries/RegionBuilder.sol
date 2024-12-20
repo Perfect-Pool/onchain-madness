@@ -8,7 +8,8 @@ library RegionBuilder {
         uint8[63] memory betValidator,
         string[63] memory teams,
         uint16 start,
-        uint16[12] memory coords
+        bool alignLeft,
+        uint16[10] memory coords
     ) external pure returns (string memory) {
         return
             string(
@@ -16,44 +17,37 @@ library RegionBuilder {
                     DinamicData.buildBetSquareSmall(
                         coords[0],
                         coords[1],
-                        1,
+                        alignLeft ? 1 : 3,
                         teams[start],
                         betValidator[start]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[2],
                         coords[3],
-                        2,
+                        alignLeft ? 2 : 4,
                         teams[start + 1],
                         betValidator[start + 1]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[4],
                         coords[5],
-                        1,
+                        alignLeft ? 1 : 3,
                         teams[start + 2],
                         betValidator[start + 2]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[6],
                         coords[7],
-                        2,
+                        alignLeft ? 2 : 4,
                         teams[start + 3],
                         betValidator[start + 3]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[8],
                         coords[9],
-                        1,
+                        alignLeft ? 1 : 3,
                         teams[start + 4],
                         betValidator[start + 4]
-                    ),
-                    DinamicData.buildBetSquareSmall(
-                        coords[10],
-                        coords[11],
-                        2,
-                        teams[start + 5],
-                        betValidator[start + 5]
                     )
                 )
             );
@@ -63,6 +57,7 @@ library RegionBuilder {
         uint8[63] memory betValidator,
         string[63] memory teams,
         uint16 start,
+        bool alignLeft,
         uint16[10] memory coords
     ) external pure returns (string memory) {
         return
@@ -71,35 +66,35 @@ library RegionBuilder {
                     DinamicData.buildBetSquareSmall(
                         coords[0],
                         coords[1],
-                        1,
+                        alignLeft ? 2 : 4,
                         teams[start],
                         betValidator[start]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[2],
                         coords[3],
-                        2,
+                        alignLeft ? 1 : 3,
                         teams[start + 1],
                         betValidator[start + 1]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[4],
                         coords[5],
-                        1,
+                        alignLeft ? 2 : 4,
                         teams[start + 2],
                         betValidator[start + 2]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[6],
                         coords[7],
-                        2,
+                        alignLeft ? 1 : 3,
                         teams[start + 3],
                         betValidator[start + 3]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[8],
                         coords[9],
-                        1,
+                        alignLeft ? 2 : 4,
                         teams[start + 4],
                         betValidator[start + 4]
                     )
@@ -111,7 +106,8 @@ library RegionBuilder {
         uint8[63] memory betValidator,
         string[63] memory teams,
         uint16 start,
-        uint16[6] memory coords
+        bool alignLeft,
+        uint16[8] memory coords
     ) external pure returns (string memory) {
         return
             string(
@@ -119,23 +115,30 @@ library RegionBuilder {
                     DinamicData.buildBetSquareSmall(
                         coords[0],
                         coords[1],
-                        2,
+                        alignLeft ? 1 : 3,
                         teams[start],
                         betValidator[start]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[2],
                         coords[3],
-                        1,
+                        alignLeft ? 2 : 4,
                         teams[start + 1],
                         betValidator[start + 1]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[4],
                         coords[5],
-                        2,
+                        alignLeft ? 1 : 3,
                         teams[start + 2],
                         betValidator[start + 2]
+                    ),
+                    DinamicData.buildBetSquareSmall(
+                        coords[6],
+                        coords[7],
+                        alignLeft ? 2 : 4,
+                        teams[start + 3],
+                        betValidator[start + 3]
                     )
                 )
             );
@@ -166,14 +169,14 @@ library RegionBuilder {
                     DinamicData.buildBetSquareSmall(
                         coords[4],
                         coords[5],
-                        1,
+                        3,
                         teams[44],
                         betValidator[44]
                     ),
                     DinamicData.buildBetSquareSmall(
                         coords[6],
                         coords[7],
-                        2,
+                        4,
                         teams[59],
                         betValidator[59]
                     )

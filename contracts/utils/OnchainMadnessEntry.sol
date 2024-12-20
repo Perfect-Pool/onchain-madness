@@ -281,7 +281,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         require(status == 3, "Game not finished.");
 
         (, uint8 tokenScore) = betValidator(_tokenId);
-        require(maxScore != tokenScore, "You are not a winner");
+        require(maxScore == tokenScore, "You are not a winner");
 
         uint256 amount = OnchainMadnessLib.calculatePrize(
             pot,
