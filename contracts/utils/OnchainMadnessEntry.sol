@@ -463,12 +463,27 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
         (, uint8 score) = betValidator(_tokenId);
-        (uint256 pot, , , , ) = entryStorage.getGame(poolId, _gameYear);
+        (uint256 pot, uint8 maxScore, , , ) = entryStorage.getGame(
+            poolId,
+            _gameYear
+        );
+
+        if (maxScore == 0) {
+            return (0, 0);
+        }
+        
+        if (score != maxScore) {
+            return (0, 0);
+        }
+
+        uint256 scoreQty = entryStorage.getScoreBetQty(
+            poolId,
+            _gameYear,
+            score
+        );
 
         amountClaimed = entryStorage.getTokenClaimed(poolId, _tokenId);
-        amountToClaim =
-            pot /
-            entryStorage.getScoreBetQty(poolId, _gameYear, score);
+        amountToClaim = pot / (scoreQty == 0 ? 1 : scoreQty);
 
         return (amountToClaim - amountClaimed, amountClaimed);
     }
