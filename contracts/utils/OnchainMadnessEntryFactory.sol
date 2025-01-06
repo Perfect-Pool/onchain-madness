@@ -205,14 +205,17 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         require(status == 3, "Game not finished.");
 
         uint256 _currentPoolId = yearToPoolIdIteration[_gameYear];
-        require(_currentPoolId <= currentPoolId, "No more pools to iterate");
-        require(pools[_currentPoolId] != address(0), "Pool does not exist");
+
+        if (pools[_currentPoolId] == address(0)) {
+            emit IterationFinished(_gameYear);
+            return;
+        }
 
         uint256 processedIterations = 0;
         bool hasMoreTokens = false;
         OnchainMadnessEntry pool = OnchainMadnessEntry(pools[_currentPoolId]);
 
-        while (processedIterations < 20) {
+        while (processedIterations < 10) {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
                 return;

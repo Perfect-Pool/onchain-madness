@@ -32,7 +32,7 @@ contract NftImage {
         string[63] memory betTeamNames,
         uint8[63] memory bets
     ) public view returns (string memory) {
-        (uint256 prize, ) = IOnchainMadnessEntryFactory(
+        (uint256 prize, uint256 amountClaimed) = IOnchainMadnessEntryFactory(
             madnessFactory.contracts("OM_ENTRY_DEPLOYER")
         ).amountPrizeClaimed(_poolId, _tokenId);
 
@@ -53,7 +53,8 @@ contract NftImage {
                                     _tokenId,
                                     _poolId,
                                     poolName,
-                                    BuildImage.formatPrize(prize.toString())
+                                    BuildImage.formatPrize(prize.toString()),
+                                    amountClaimed > 0
                                 )
                             )
                         )

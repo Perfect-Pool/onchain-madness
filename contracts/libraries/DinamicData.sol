@@ -145,13 +145,20 @@ library DinamicData {
         uint256 nftId,
         uint256 poolId,
         string memory poolName,
-        string memory prize
+        string memory prize,
+        bool claimed
     ) external pure returns (string memory) {
         return
             string(
                 abi.encodePacked(
-                    '<text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">$',
-                    prize,
+                    claimed
+                        ? abi.encodePacked(
+                            '<text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">Claimed'
+                        )
+                        : abi.encodePacked(
+                            '<text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">$',
+                            prize
+                        ),
                     '</text><text style="font-weight:800;font-size:20px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1298">NFT ID: ',
                     nftId.toString(),
                     " - ",
