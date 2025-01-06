@@ -42,6 +42,7 @@
     "check-sports-radar": "hardhat run scripts/checkSportsRadar.js --network",
     "init-first-four": "hardhat run scripts/initFirstFour.js --network",
     "init-first-round": "hardhat run scripts/initFirstRound.js --network",
+    "close-bets": "hardhat run scripts/closeBets.js --network",
     "update-first-four": "hardhat run scripts/updateFirstFour.js --network",
     "update-first-round": "hardhat run scripts/updateFirstRound.js --network",
     "update-second-round": "hardhat run scripts/updateSecondRound.js --network",
