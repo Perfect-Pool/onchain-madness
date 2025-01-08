@@ -245,6 +245,24 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
+     * @dev Checks if there are any tokens left to iterate for a given year.
+     * @param _gameYear The year to check
+     * @return True if there are more tokens, false otherwise
+     */
+    function hasMoreIterations(uint256 _gameYear) public view returns (bool) {
+        uint256 currentId = yearToPoolIdIteration[_gameYear];
+        if (pools[currentId] == address(0)) {
+            return false;
+        }
+        
+        // Check if current pool has more tokens to iterate
+        bool hasMoreTokens = OnchainMadnessEntry(pools[currentId]).hasTokensToIterate(_gameYear);
+        
+        // Continue if current pool has more tokens or if there are more pools to check
+        return hasMoreTokens || (currentId < currentPoolId && pools[currentId + 1] != address(0));
+    }
+
+    /**
      * @notice Claims prize for a winning bracket
      * @dev Wrapper function that calls claimPrize in the pool contract. Validates game completion and transfers prize.
      * @param _poolId ID of the pool

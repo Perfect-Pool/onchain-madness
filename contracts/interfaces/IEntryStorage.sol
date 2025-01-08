@@ -117,4 +117,9 @@ interface IEntryStorage {
         uint256 gameYear,
         uint8 score
     ) external returns (uint256 currentTokenId, bool hasNext);
+
+    function hasMoreTokens(
+        uint256 poolId,
+        uint256 gameYear
+    ) external view returns (bool hasNext);
 }

@@ -103,6 +103,7 @@ contract OnchainMadness {
     mapping(uint8 => bytes) private teams;
     mapping(bytes => uint8) private teamToId;
     mapping(bytes => uint8) private firstFourMatches;
+    mapping(bytes => uint8) private firstFourWinnersIds;
     uint8[4] private firstFourWinners;
 
     uint256 public year;
@@ -141,6 +142,11 @@ contract OnchainMadness {
             bytes("FFG3"),
             bytes("FFG4")
         ];
+
+        firstFourWinnersIds[bytes("FFG1")] = 0;
+        firstFourWinnersIds[bytes("FFG2")] = 1;
+        firstFourWinnersIds[bytes("FFG3")] = 2;
+        firstFourWinnersIds[bytes("FFG4")] = 3;
 
         status = Status.BetsOn;
     }
@@ -247,15 +253,7 @@ contract OnchainMadness {
             ? currentMatch.home
             : currentMatch.away;
 
-        if (keccak256(bytes(matchCode)) == keccak256("FFG1")) {
-            firstFourWinners[0] = currentMatch.winner;
-        } else if (keccak256(bytes(matchCode)) == keccak256("FFG2")) {
-            firstFourWinners[1] = currentMatch.winner;
-        } else if (keccak256(bytes(matchCode)) == keccak256("FFG3")) {
-            firstFourWinners[2] = currentMatch.winner;
-        } else if (keccak256(bytes(matchCode)) == keccak256("FFG4")) {
-            firstFourWinners[3] = currentMatch.winner;
-        }
+        firstFourWinners[firstFourWinnersIds[bytes(matchCode)]] = currentMatch.winner;
     }
 
     /**

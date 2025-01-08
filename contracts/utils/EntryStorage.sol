@@ -429,6 +429,21 @@ contract EntryStorage {
     }
 
     /**
+     * @notice Checks if there are more tokens to process for a game year
+     * @dev View function that checks the current token iteration state without modifying it
+     * @param poolId The pool identifier
+     * @param gameYear The game year
+     * @return hasNext Whether there are more tokens to process
+     */
+    function hasMoreTokens(
+        uint256 poolId,
+        uint256 gameYear
+    ) external view returns (bool hasNext) {
+        Game storage game = pools[poolId].games[gameYear];
+        return game.tokensIterationIndex < game.tokens.length;
+    }
+
+    /**
      * @notice Updates score data after validation
      * @param poolId The pool identifier
      * @param gameYear The game year
