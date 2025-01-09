@@ -53,6 +53,7 @@
     "create-pools": "hardhat run scripts/createPools.js --network",
     "create-game": "hardhat run scripts/createGame.js --network",
     "place-bets": "hardhat run scripts/placeBets.js --network",
-    "check-pool": "hardhat run scripts/checkPoolData.js --network"
+    "check-pool": "hardhat run scripts/checkPoolData.js --network",
+    "iterate-tokens": "hardhat run scripts/iterateTokens.js --network"
   }
 }

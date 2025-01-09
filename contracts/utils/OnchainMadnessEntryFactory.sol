@@ -254,12 +254,15 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         if (pools[currentId] == address(0)) {
             return false;
         }
-        
+
         // Check if current pool has more tokens to iterate
-        bool hasMoreTokens = OnchainMadnessEntry(pools[currentId]).hasTokensToIterate(_gameYear);
-        
+        bool hasMoreTokens = OnchainMadnessEntry(pools[currentId])
+            .hasTokensToIterate(_gameYear);
+
         // Continue if current pool has more tokens or if there are more pools to check
-        return hasMoreTokens || (currentId < currentPoolId && pools[currentId + 1] != address(0));
+        return
+            hasMoreTokens ||
+            (currentId < currentPoolId && pools[currentId + 1] != address(0));
     }
 
     /**
@@ -426,6 +429,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         uint256 _poolId,
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
+        if (hasMoreIterations(getGameYear(_poolId, _tokenId))) {
+            return (0, 0);
+        }
         return
             OnchainMadnessEntry(getPoolAddress(_poolId)).amountPrizeClaimed(
                 _tokenId

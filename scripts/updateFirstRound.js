@@ -126,33 +126,33 @@ async function main() {
       });
 
       // Print earliest game date and check if bets should be closed
-      // if (earliestDate) {
-      //   console.log(`\nFirst Round starts on: ${earliestDate.toLocaleString()}`);
+      if (earliestDate) {
+        console.log(`\nFirst Round starts on: ${earliestDate.toLocaleString()}`);
 
-      //   // Check if earliest game is within 30 minutes of mock current time
-      //   const timeUntilStart = earliestDate.getTime() - currentTime.getTime();
+        // Check if earliest game is within 30 minutes of mock current time
+        const timeUntilStart = earliestDate.getTime() - currentTime.getTime();
 
-      //   console.log(`Current time (mocked): ${currentTime.toLocaleString()}`);
-      //   console.log(
-      //     `Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`
-      //   );
+        console.log(`Current time (mocked): ${currentTime.toLocaleString()}`);
+        console.log(
+          `Time until first game: ${Math.floor(timeUntilStart / 60000)} minutes`
+        );
 
-      //   if (timeUntilStart <= THRESHOLD_MS) {
-      //     try {
-      //       console.log(
-      //         "\nFirst game starts in less than 30 minutes. Closing bets..."
-      //       );
-      //       const tx = await contract.closeBets(TOURNAMENT_YEAR);
-      //       await tx.wait();
-      //       console.log("Bets closed successfully!");
-      //     } catch (error) {
-      //       console.log("Bets already closed.");
-      //     }
-      //   }
-      // }else{
-      //   console.log("\nFirst Round not yet scheduled.");
-      //   exit();
-      // }
+        if (timeUntilStart <= THRESHOLD_MS) {
+          try {
+            console.log(
+              "\nFirst game starts in less than 30 minutes. Closing bets..."
+            );
+            const tx = await contract.closeBets(TOURNAMENT_YEAR);
+            await tx.wait();
+            console.log("Bets closed successfully!");
+          } catch (error) {
+            console.log("Bets already closed.");
+          }
+        }
+      }else{
+        console.log("\nFirst Round not yet scheduled.");
+        exit();
+      }
 
       // Sort games by their game number
       games.sort((a, b) => {
