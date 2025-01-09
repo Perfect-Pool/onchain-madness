@@ -65,7 +65,7 @@ async function main() {
       throw new Error(`Insufficient USDC balance. Need ${ethers.utils.formatUnits(requiredAmount, 6)} USDC`);
     }
 
-    // Approve USDC spending
+    // // Approve USDC spending
     console.log("\nApproving USDC spending...");
     const approveTx = await usdc.approve(factory.address, balance);
     await approveTx.wait();
@@ -92,7 +92,7 @@ async function main() {
     console.log(`   Token ID: ${protocolTokenId}`);
     console.log(`   Bettor: ${bettor}`);
 
-    // // 2. Place bet on Public Pool (ID: 1)
+    // 2. Place bet on Public Pool (ID: 1)
     console.log("\n2. Placing bet on Public Pool (ID: 1)...");
     const publicBets = generateRandomPredictions();
     const publicTx = await factory.safeMint(
