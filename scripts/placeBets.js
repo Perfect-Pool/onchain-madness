@@ -92,68 +92,68 @@ async function main() {
     console.log(`   Token ID: ${protocolTokenId}`);
     console.log(`   Bettor: ${bettor}`);
 
-    // 2. Place bet on Public Pool (ID: 1)
-    console.log("\n2. Placing bet on Public Pool (ID: 1)...");
-    const publicBets = generateRandomPredictions();
-    const publicTx = await factory.safeMint(
-      1,                    // poolId
-      TOURNAMENT_YEAR,      // gameYear
-      publicBets,          // predictions
-      ""                    // no PIN needed
-    );
-    const publicReceipt = await publicTx.wait();
+    // // 2. Place bet on Public Pool (ID: 1)
+    // console.log("\n2. Placing bet on Public Pool (ID: 1)...");
+    // const publicBets = generateRandomPredictions();
+    // const publicTx = await factory.safeMint(
+    //   1,                    // poolId
+    //   TOURNAMENT_YEAR,      // gameYear
+    //   publicBets,          // predictions
+    //   ""                    // no PIN needed
+    // );
+    // const publicReceipt = await publicTx.wait();
     
-    const publicEvent = publicReceipt.events.find(e => e.event === "BetPlaced");
-    if (!publicEvent) {
-      throw new Error("BetPlaced event not found in transaction receipt");
-    }
-    const [publicBettor, publicGameYear, publicTokenId] = publicEvent.args;
+    // const publicEvent = publicReceipt.events.find(e => e.event === "BetPlaced");
+    // if (!publicEvent) {
+    //   throw new Error("BetPlaced event not found in transaction receipt");
+    // }
+    // const [publicBettor, publicGameYear, publicTokenId] = publicEvent.args;
     
-    console.log(`✅ Bet placed on Public Pool:`);
-    console.log(`   Token ID: ${publicTokenId}`);
-    console.log(`   Bettor: ${publicBettor}`);
+    // console.log(`✅ Bet placed on Public Pool:`);
+    // console.log(`   Token ID: ${publicTokenId}`);
+    // console.log(`   Bettor: ${publicBettor}`);
 
-    // 3. Place bet on Private Pool (ID: 2)
-    console.log("\n3. Placing bet on Private Pool (ID: 2)...");
-    const privateBets = generateRandomPredictions();
-    const privateTx = await factory.safeMint(
-      2,                    // poolId
-      TOURNAMENT_YEAR,      // gameYear
-      privateBets,         // predictions
-      "131329"              // PIN required
-    );
-    const privateReceipt = await privateTx.wait();
+    // // 3. Place bet on Private Pool (ID: 2)
+    // console.log("\n3. Placing bet on Private Pool (ID: 2)...");
+    // const privateBets = generateRandomPredictions();
+    // const privateTx = await factory.safeMint(
+    //   2,                    // poolId
+    //   TOURNAMENT_YEAR,      // gameYear
+    //   privateBets,         // predictions
+    //   "131329"              // PIN required
+    // );
+    // const privateReceipt = await privateTx.wait();
     
-    const privateEvent = privateReceipt.events.find(e => e.event === "BetPlaced");
-    if (!privateEvent) {
-      throw new Error("BetPlaced event not found in transaction receipt");
-    }
-    const [privateBettor, privateGameYear, privateTokenId] = privateEvent.args;
+    // const privateEvent = privateReceipt.events.find(e => e.event === "BetPlaced");
+    // if (!privateEvent) {
+    //   throw new Error("BetPlaced event not found in transaction receipt");
+    // }
+    // const [privateBettor, privateGameYear, privateTokenId] = privateEvent.args;
     
-    console.log(`✅ Bet placed on Private Pool:`);
-    console.log(`   Token ID: ${privateTokenId}`);
-    console.log(`   Bettor: ${privateBettor}`);
+    // console.log(`✅ Bet placed on Private Pool:`);
+    // console.log(`   Token ID: ${privateTokenId}`);
+    // console.log(`   Bettor: ${privateBettor}`);
 
-    // Final USDC balance
-    const finalBalance = await usdc.balanceOf(signer.address);
-    console.log(`\nFinal USDC Balance: ${ethers.utils.formatUnits(finalBalance, 6)} USDC`);
+    // // Final USDC balance
+    // const finalBalance = await usdc.balanceOf(signer.address);
+    // console.log(`\nFinal USDC Balance: ${ethers.utils.formatUnits(finalBalance, 6)} USDC`);
 
-    // Summary
-    console.log("\n=== Summary of Placed Bets ===");
-    console.log(`Total USDC Spent: ${ethers.utils.formatUnits(BET_AMOUNT.mul(3), 6)} USDC`);
+    // // Summary
+    // console.log("\n=== Summary of Placed Bets ===");
+    // console.log(`Total USDC Spent: ${ethers.utils.formatUnits(BET_AMOUNT.mul(3), 6)} USDC`);
     
-    console.log("\nProtocol Pool (ID: 0):");
-    console.log(`Token ID: ${protocolTokenId}`);
-    console.log(`Bettor: ${bettor}`);
+    // console.log("\nProtocol Pool (ID: 0):");
+    // console.log(`Token ID: ${protocolTokenId}`);
+    // console.log(`Bettor: ${bettor}`);
     
-    console.log("\nPublic Pool (ID: 1):");
-    console.log(`Token ID: ${publicTokenId}`);
-    console.log(`Bettor: ${publicBettor}`);
+    // console.log("\nPublic Pool (ID: 1):");
+    // console.log(`Token ID: ${publicTokenId}`);
+    // console.log(`Bettor: ${publicBettor}`);
     
-    console.log("\nPrivate Pool (ID: 2):");
-    console.log(`Token ID: ${privateTokenId}`);
-    console.log(`Bettor: ${privateBettor}`);
-    console.log(`PIN Used: 131329`);
+    // console.log("\nPrivate Pool (ID: 2):");
+    // console.log(`Token ID: ${privateTokenId}`);
+    // console.log(`Bettor: ${privateBettor}`);
+    // console.log(`PIN Used: 131329`);
 
   } catch (error) {
     console.error("Error placing bets:");
