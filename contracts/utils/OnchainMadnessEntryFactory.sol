@@ -159,6 +159,20 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
+     * @notice Verifies the shares for a player
+     * @dev Checks the amount of PP tokens available for the player to claim
+     * @param _poolId ID of the pool
+     * @param _player Address of the player
+     * @return Amount of PP tokens available for the player
+     */
+    function verifyShares(
+        uint256 _poolId,
+        address _player
+    ) public view returns (uint256) {
+        return OnchainMadnessEntry(getPoolAddress(_poolId)).getPPShare(_player);
+    }
+
+    /**
      * @notice Mints a new NFT representing a bracket prediction
      * @dev Wrapper function that calls safeMint in the pool contract. Validates prediction against actual results.
      * @param _poolId ID of the pool

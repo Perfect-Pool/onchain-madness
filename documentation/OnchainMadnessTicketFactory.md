@@ -201,6 +201,15 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
     - `_poolAddress`: `address` - The pool address
 - Returns: `uint256` - The pool ID
 
+
+### verifyShares
+
+- Description: Verifies the shares for a player
+- Arguments:
+    - `_poolId`: `uint256` - ID of the pool
+    - `_player`: `address` - Address of the player
+- Returns: `uint256` - Amount of PP tokens available for the player
+
 ### pause
 
 - Description: Pauses the contract

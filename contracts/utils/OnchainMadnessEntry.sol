@@ -336,6 +336,16 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     }
 
     /**
+     * @notice Verifies the shares for a player
+     * @dev Checks the amount of PP tokens available for the player to claim
+     * @param _player Address to check
+     * @return Amount of PP tokens available for the player
+     */
+    function getPPShare(address _player) public view returns (uint256) {
+        return entryStorage.getPpShare(poolId, _player);
+    }
+
+    /**
      * @notice Increases the prize pool for a specific game
      * @dev Transfers USDC from caller to contract and updates pot
      * @param _gameYear Tournament year to increase pot for
