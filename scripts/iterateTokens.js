@@ -9,7 +9,7 @@
  * - Elite Eight: 4 games
  * - Final Four: 2 games
  * - Championship: 1 game
- * 
+ *
  * Each bet costs 20 USDC and requires approval before minting
  */
 
@@ -30,20 +30,28 @@ async function main() {
   console.log(`Entry Factory address: ${networkData["OM_ENTRY_DEPLOYER"]}`);
 
   // Get contract instances
-  const EntryFactory = await ethers.getContractFactory("OnchainMadnessEntryFactory");
+  const EntryFactory = await ethers.getContractFactory(
+    "OnchainMadnessEntryFactory"
+  );
   const factory = EntryFactory.attach(networkData["OM_ENTRY_DEPLOYER"]);
 
   try {
     console.log("\nIterating tokens...");
-    let n = 1;
+    let n = 0;
     while (true) {
       console.log(`\nIteration ${n}`);
       const tx = await factory.iterateYearTokens(TOURNAMENT_YEAR);
       const receipt = await tx.wait();
 
-      const eventFinished = receipt.events.find(e => e.event === "IterationFinished");
+      const eventFinished = receipt.events.find(
+        (e) => e.event === "IterationFinished"
+      );
       if (eventFinished) {
-        console.log("\nEvent 'IterationFinished' found. No more tokens to iterate.");
+        console.log(
+          "\nEvent 'IterationFinished' found. No more tokens to iterate."
+        );
+        const tx = await factory.iterateYearTokens(TOURNAMENT_YEAR);
+        await tx.wait();
         break;
       }
       n++;
