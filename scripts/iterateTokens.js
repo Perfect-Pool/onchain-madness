@@ -40,6 +40,8 @@ async function main() {
     let n = 0;
     while (true) {
       console.log(`\nIteration ${n}`);
+      const hasMoreIterations = await factory.hasMoreIterations(TOURNAMENT_YEAR);
+      console.log(`Has more iterations: ${hasMoreIterations}`);
       const tx = await factory.iterateYearTokens(TOURNAMENT_YEAR);
       const receipt = await tx.wait();
 

@@ -280,8 +280,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             uint256 pot,
             uint8 maxScore,
             uint256 potClaimed,
-            bool claimEnabled,
-            uint256 tokensIterationIndex
+            bool claimEnabled
         ) = entryStorage.getGame(poolId, _gameYear);
         require(claimEnabled, "Game not finished.");
 
@@ -302,8 +301,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             pot,
             maxScore,
             potClaimed + amount,
-            claimEnabled,
-            tokensIterationIndex
+            claimEnabled
         );
         entryStorage.setTokenClaimed(poolId, _tokenId, amount);
 
@@ -358,8 +356,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             uint256 pot,
             uint8 maxScore,
             uint256 potClaimed,
-            bool claimEnabled,
-            uint256 tokensIterationIndex
+            bool claimEnabled
         ) = entryStorage.getGame(poolId, _gameYear);
 
         entryStorage.updateGame(
@@ -368,8 +365,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             pot + _amount,
             maxScore,
             potClaimed,
-            claimEnabled,
-            tokensIterationIndex
+            claimEnabled
         );
     }
 
@@ -473,7 +469,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
         (, uint8 score) = betValidator(_tokenId);
-        (uint256 pot, uint8 maxScore, , , ) = entryStorage.getGame(
+        (uint256 pot, uint8 maxScore, , ) = entryStorage.getGame(
             poolId,
             _gameYear
         );
@@ -481,7 +477,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         if (maxScore == 0) {
             return (0, 0);
         }
-        
+
         if (score != maxScore) {
             return (0, 0);
         }
@@ -506,7 +502,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     function potentialPayout(
         uint256 gameYear
     ) public view returns (uint256 payout) {
-        (uint256 pot, , , , ) = entryStorage.getGame(poolId, gameYear);
+        (uint256 pot, , , ) = entryStorage.getGame(poolId, gameYear);
         return pot;
     }
 
@@ -544,7 +540,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @param _gameYear Tournament year to check
      * @return True if there are more tokens to process, false otherwise
      */
-    function hasTokensToIterate(uint256 _gameYear) external view returns (bool) {
+    function hasTokensToIterate(
+        uint256 _gameYear
+    ) external view returns (bool) {
         return entryStorage.hasMoreTokens(poolId, _gameYear);
     }
 }

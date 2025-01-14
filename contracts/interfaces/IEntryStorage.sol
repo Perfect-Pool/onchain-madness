@@ -14,8 +14,7 @@ interface IEntryStorage {
             uint256 pot,
             uint8 maxScore,
             uint256 potClaimed,
-            bool claimEnabled,
-            uint256 tokensIterationIndex
+            bool claimEnabled
         );
 
     function updateGame(
@@ -24,8 +23,7 @@ interface IEntryStorage {
         uint256 pot,
         uint8 maxScore,
         uint256 potClaimed,
-        bool claimEnabled,
-        uint256 tokensIterationIndex
+        bool claimEnabled
     ) external;
 
     function setTokenGameYear(

@@ -137,7 +137,6 @@ contract EntryStorage {
      * @return maxScore Highest score achieved
      * @return potClaimed Amount claimed from pot
      * @return claimEnabled Whether claiming is enabled
-     * @return tokensIterationIndex Current token processing index
      */
     function getGame(
         uint256 poolId,
@@ -149,8 +148,7 @@ contract EntryStorage {
             uint256 pot,
             uint8 maxScore,
             uint256 potClaimed,
-            bool claimEnabled,
-            uint256 tokensIterationIndex
+            bool claimEnabled
         )
     {
         Game storage game = pools[poolId].games[gameYear];
@@ -158,8 +156,7 @@ contract EntryStorage {
             game.pot,
             game.maxScore,
             game.potClaimed,
-            game.claimEnabled,
-            game.tokensIterationIndex
+            game.claimEnabled
         );
     }
 
@@ -172,7 +169,6 @@ contract EntryStorage {
      * @param maxScore New maximum score
      * @param potClaimed New claimed amount
      * @param claimEnabled New claim status
-     * @param tokensIterationIndex New token iteration index
      */
     function updateGame(
         uint256 poolId,
@@ -180,15 +176,13 @@ contract EntryStorage {
         uint256 pot,
         uint8 maxScore,
         uint256 potClaimed,
-        bool claimEnabled,
-        uint256 tokensIterationIndex
+        bool claimEnabled
     ) external onlyEntryContract {
         Game storage game = pools[poolId].games[gameYear];
         game.pot = pot;
         game.maxScore = maxScore;
         game.potClaimed = potClaimed;
         game.claimEnabled = claimEnabled;
-        game.tokensIterationIndex = tokensIterationIndex;
     }
 
     /**
@@ -414,18 +408,12 @@ contract EntryStorage {
         returns (uint256 currentTokenId, bool hasNext)
     {
         Game storage game = pools[poolId].games[gameYear];
-
-        // Get current token
-        if (game.tokensIterationIndex >= game.tokens.length) {
-            return (0, false);
-        }
         currentTokenId = game.tokens[game.tokensIterationIndex];
 
         // Update iteration state
         game.tokensIterationIndex++;
         game.claimEnabled = game.tokensIterationIndex >= game.tokens.length;
-
-        return (currentTokenId, true);
+        hasNext = true;
     }
 
     /**

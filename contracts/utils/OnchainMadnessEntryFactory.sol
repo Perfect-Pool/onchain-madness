@@ -220,7 +220,8 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         uint256 _currentPoolId = yearToPoolIdIteration[_gameYear];
 
-        if (pools[_currentPoolId] == address(0)) {
+        bool iterationsEnabled = hasMoreIterations(_gameYear);
+        if (!iterationsEnabled) {
             emit IterationFinished(_gameYear);
             return;
         }
@@ -230,28 +231,25 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         OnchainMadnessEntry pool = OnchainMadnessEntry(pools[_currentPoolId]);
 
         while (processedIterations < 10) {
-            if (pools[_currentPoolId] == address(0)) {
-                emit IterationFinished(_gameYear);
-                return;
-            }
-
             (hasMoreTokens, ) = pool.iterateNextToken(_gameYear);
             if (!hasMoreTokens) {
                 _currentPoolId++;
                 pool = OnchainMadnessEntry(pools[_currentPoolId]);
             }
             processedIterations++;
+
+            iterationsEnabled = hasMoreIterations(_gameYear);
+            if (!iterationsEnabled) {
+                emit IterationFinished(_gameYear);
+                return;
+            }
         }
 
         // Update the current pool ID for this year
         yearToPoolIdIteration[_gameYear] = _currentPoolId;
 
         // Emit appropriate event based on iteration status
-        if (
-            hasMoreTokens ||
-            (_currentPoolId > currentPoolId &&
-                pools[_currentPoolId] != address(0))
-        ) {
+        if (iterationsEnabled) {
             emit ContinueIteration(_gameYear);
             return;
         }

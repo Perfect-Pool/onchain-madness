@@ -17,7 +17,8 @@ const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 
-const POOL = 0;
+const POOL = 6;
+const YEAR = 2024;
 
 async function main() {
   // Get contract data
@@ -47,6 +48,8 @@ async function main() {
         break;
       }
       console.log(`\nToken ID #${n}`);
+      const [, points] = await factory.betValidator(POOL, n);
+      console.log(`Points: ${points}`);
       const [toClaim, claimed] = await factory.amountPrizeClaimed(POOL, n);
       console.log(`To Claim: ${toClaim}`);
       console.log(`Claimed: ${claimed}`);
