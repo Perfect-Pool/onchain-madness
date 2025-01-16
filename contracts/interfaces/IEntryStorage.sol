@@ -21,7 +21,6 @@ interface IEntryStorage {
         uint256 poolId,
         uint256 gameYear,
         uint256 pot,
-        uint8 maxScore,
         uint256 potClaimed,
         bool claimEnabled
     ) external;

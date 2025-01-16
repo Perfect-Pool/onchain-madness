@@ -6,6 +6,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "../interfaces/IERC20.sol";
 import "./OnchainMadnessEntry.sol";
+import "../interfaces/IEntryStorage.sol";
+import "../interfaces/IOnchainMadnessFactory.sol";
 
 /**
  * @title OnchainMadnessEntryFactory
@@ -271,9 +273,19 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             return false;
         }
 
+        // Get EntryStorage contract from game deployer
+        IEntryStorage entryStorage = IEntryStorage(
+            gameDeployer.contracts("OM_ENTRY_STORAGE")
+        );
+
         // Check if current pool has more tokens to iterate
-        bool hasMoreTokens = OnchainMadnessEntry(pools[currentId])
-            .hasTokensToIterate(_gameYear);
+        bool hasMoreTokens = entryStorage.hasMoreTokens(currentId, _gameYear);
+
+        // Check if the game is marked as finished
+        (, , , bool claimEnabled) = entryStorage.getGame(currentId, _gameYear);
+        if (claimEnabled) {
+            return false;
+        }
 
         // Continue if current pool has more tokens or if there are more pools to check
         return

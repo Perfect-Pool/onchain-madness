@@ -166,7 +166,6 @@ contract EntryStorage {
      * @param poolId The pool identifier
      * @param gameYear The year of the game
      * @param pot New total pot amount
-     * @param maxScore New maximum score
      * @param potClaimed New claimed amount
      * @param claimEnabled New claim status
      */
@@ -174,13 +173,11 @@ contract EntryStorage {
         uint256 poolId,
         uint256 gameYear,
         uint256 pot,
-        uint8 maxScore,
         uint256 potClaimed,
         bool claimEnabled
     ) external onlyEntryContract {
         Game storage game = pools[poolId].games[gameYear];
         game.pot = pot;
-        game.maxScore = maxScore;
         game.potClaimed = potClaimed;
         game.claimEnabled = claimEnabled;
     }
