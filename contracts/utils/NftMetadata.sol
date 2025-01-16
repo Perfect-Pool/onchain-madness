@@ -3,7 +3,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "../libraries/Base64.sol";
-import "../libraries/BuildImage.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
 import "../interfaces/IOnchainMadnessEntryFactory.sol";
 
