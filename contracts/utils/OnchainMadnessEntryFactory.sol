@@ -234,6 +234,10 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             (hasMoreTokens, ) = pool.iterateNextToken(_gameYear);
             if (!hasMoreTokens) {
                 _currentPoolId++;
+                if (pools[_currentPoolId] == address(0)) {
+                    emit IterationFinished(_gameYear);
+                    return;
+                }
                 pool = OnchainMadnessEntry(pools[_currentPoolId]);
             }
             processedIterations++;
