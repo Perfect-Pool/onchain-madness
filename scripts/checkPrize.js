@@ -17,7 +17,7 @@ const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 
-const POOL = 5;
+const POOL = 0;
 const YEAR = 2024;
 
 async function main() {

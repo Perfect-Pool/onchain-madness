@@ -351,11 +351,8 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     function increaseGamePot(uint256 _gameYear, uint256 _amount) public {
         USDC.transferFrom(msg.sender, address(this), _amount);
 
-        (
-            uint256 pot,,
-            uint256 potClaimed,
-            bool claimEnabled
-        ) = entryStorage.getGame(poolId, _gameYear);
+        (uint256 pot, , uint256 potClaimed, bool claimEnabled) = entryStorage
+            .getGame(poolId, _gameYear);
 
         entryStorage.updateGame(
             poolId,
@@ -466,18 +463,10 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
         (, uint8 score) = betValidator(_tokenId);
-        (uint256 pot, uint8 maxScore, , ) = entryStorage.getGame(
-            poolId,
-            _gameYear
-        );
+        (uint256 pot, uint8 maxScore, , bool claimEnabled) = entryStorage
+            .getGame(poolId, _gameYear);
 
-        //if maxScore is 0, there are no winners
-        if (maxScore == 0) {
-            return (0, 0);
-        }
-
-        //if score is not maxScore, the bet is not valid
-        if (score != maxScore) {
+        if (maxScore == 0 || claimEnabled == false || score != maxScore) {
             return (0, 0);
         }
 

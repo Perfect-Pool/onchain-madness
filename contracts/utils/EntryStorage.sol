@@ -405,14 +405,18 @@ contract EntryStorage {
         returns (uint256 currentTokenId, bool hasNext)
     {
         Game storage game = pools[poolId].games[gameYear];
+
+        // Get current token
         if (game.tokensIterationIndex >= game.tokens.length) {
             return (0, false);
         }
-        
         currentTokenId = game.tokens[game.tokensIterationIndex];
+
+        // Update iteration state
         game.tokensIterationIndex++;
         game.claimEnabled = game.tokensIterationIndex >= game.tokens.length;
-        hasNext = true;
+
+        return (currentTokenId, true);
     }
 
     /**

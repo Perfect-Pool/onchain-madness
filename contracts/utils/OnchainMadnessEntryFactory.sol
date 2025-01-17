@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "../interfaces/IERC20.sol";
 import "./OnchainMadnessEntry.sol";
-import "../interfaces/IEntryStorage.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
 
 /**
@@ -222,8 +221,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         uint256 _currentPoolId = yearToPoolIdIteration[_gameYear];
 
-        bool iterationsEnabled = hasMoreIterations(_gameYear);
-        if (!iterationsEnabled) {
+        if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
             return;
         }
@@ -233,64 +231,32 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         OnchainMadnessEntry pool = OnchainMadnessEntry(pools[_currentPoolId]);
 
         while (processedIterations < 10) {
-            (hasMoreTokens, ) = pool.iterateNextToken(_gameYear);
-            if (!hasMoreTokens) {
-                _currentPoolId++;
-                if (pools[_currentPoolId] == address(0)) {
-                    emit IterationFinished(_gameYear);
-                    return;
-                }
-                pool = OnchainMadnessEntry(pools[_currentPoolId]);
-            }
-            processedIterations++;
-
-            iterationsEnabled = hasMoreIterations(_gameYear);
-            if (!iterationsEnabled) {
+            if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
                 return;
             }
+
+            (hasMoreTokens, ) = pool.iterateNextToken(_gameYear);
+            if (!hasMoreTokens) {
+                _currentPoolId++;
+                pool = OnchainMadnessEntry(pools[_currentPoolId]);
+            }
+            processedIterations++;
         }
 
         // Update the current pool ID for this year
         yearToPoolIdIteration[_gameYear] = _currentPoolId;
 
         // Emit appropriate event based on iteration status
-        if (iterationsEnabled) {
+        if (
+            hasMoreTokens ||
+            (_currentPoolId > currentPoolId &&
+                pools[_currentPoolId] != address(0))
+        ) {
             emit ContinueIteration(_gameYear);
             return;
         }
         emit IterationFinished(_gameYear);
-    }
-
-    /**
-     * @dev Checks if there are any tokens left to iterate for a given year.
-     * @param _gameYear The year to check
-     * @return True if there are more tokens, false otherwise
-     */
-    function hasMoreIterations(uint256 _gameYear) public view returns (bool) {
-        uint256 currentId = yearToPoolIdIteration[_gameYear];
-        if (pools[currentId] == address(0)) {
-            return false;
-        }
-
-        // Get EntryStorage contract from game deployer
-        IEntryStorage entryStorage = IEntryStorage(
-            gameDeployer.contracts("OM_ENTRY_STORAGE")
-        );
-
-        // Check if current pool has more tokens to iterate
-        bool hasMoreTokens = entryStorage.hasMoreTokens(currentId, _gameYear);
-
-        // Check if the game is marked as finished
-        (, , , bool claimEnabled) = entryStorage.getGame(currentId, _gameYear);
-        if (claimEnabled) {
-            return false;
-        }
-
-        // Continue if current pool has more tokens or if there are more pools to check
-        return
-            hasMoreTokens ||
-            (currentId < currentPoolId && pools[currentId + 1] != address(0));
     }
 
     /**
@@ -457,9 +423,6 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         uint256 _poolId,
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
-        if (hasMoreIterations(getGameYear(_poolId, _tokenId))) {
-            return (0, 0);
-        }
         return
             OnchainMadnessEntry(getPoolAddress(_poolId)).amountPrizeClaimed(
                 _tokenId

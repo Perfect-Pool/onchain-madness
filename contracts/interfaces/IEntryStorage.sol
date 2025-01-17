@@ -109,12 +109,6 @@ interface IEntryStorage {
         uint8 score
     ) external;
 
-    function updateIterationData(
-        uint256 poolId,
-        uint256 gameYear,
-        uint8 score
-    ) external returns (uint256 currentTokenId, bool hasNext);
-
     function hasMoreTokens(
         uint256 poolId,
         uint256 gameYear
