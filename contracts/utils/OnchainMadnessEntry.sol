@@ -59,6 +59,10 @@ interface IPerfectPool {
         address contractAddress,
         bool authorized
     ) external;
+
+    function burnTokens(uint256 amount) external;
+
+    function getCurrentYear() external view returns (uint256 year);
 }
 
 interface IOnchainMadnessEntryFactory {
@@ -462,6 +466,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
+        if (perfectPool.getCurrentYear() != _gameYear) {
+            return (0, 0);
+        }
         (, uint8 score) = betValidator(_tokenId);
         (uint256 pot, uint8 maxScore, , bool claimEnabled) = entryStorage
             .getGame(poolId, _gameYear);
@@ -532,5 +539,22 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _gameYear
     ) external view returns (bool) {
         return entryStorage.hasMoreTokens(poolId, _gameYear);
+    }
+
+    /**
+     * @notice Function to burn all non-claimed PPS tokens.
+     */
+    function burnPPSTokens() public onlyNftDeployer nonReentrant {
+        perfectPool.burnTokens(perfectPool.balanceOf(address(this)));
+    }
+
+    /**
+     * @notice Sends all USDC on this contract to the perfectPool contract.
+     */
+    function dismissPot() public onlyNftDeployer nonReentrant {
+        IERC20(USDC).transfer(
+            address(perfectPool),
+            USDC.balanceOf(address(this))
+        );
     }
 }

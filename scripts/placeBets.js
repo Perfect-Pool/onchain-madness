@@ -18,7 +18,7 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 
 const TOURNAMENT_YEAR = 2024;
-const POOL = 8;
+const POOL = 0;
 const BET_AMOUNT = ethers.utils.parseUnits("20", 6); // 20 USDC (6 decimals)
 
 // Minimal USDC ABI for the functions we need

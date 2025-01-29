@@ -27,10 +27,18 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         address indexed poolAddress,
         string poolName
     );
-    /// @notice Emitted when a new iteration starts for a year
+    /// @notice Emitted when a the iteration needs to be continued
     event ContinueIteration(uint256 indexed year);
     /// @notice Emitted when an iteration is completed for a year
     event IterationFinished(uint256 indexed year);
+    /// @notice Emitted when a the burn iteration needs to be continued
+    event ContinueBurnIteration(uint256 indexed year);
+    /// @notice Emitted when a the burn iteration is completed for a year
+    event BurnIterationFinished(uint256 indexed year);
+    /// @notice Emitted when a the dismiss iteration needs to be continued
+    event ContinueDismissIteration(uint256 indexed year);
+    /// @notice Emitted when a the dismiss iteration is completed for a year
+    event DismissIterationFinished(uint256 indexed year);
     /// @notice Emitted when a prize is claimed for a token
     event PrizeClaimed(uint256 indexed _tokenId, uint256 _poolId);
     /// @notice Emitted when a bet is placed
@@ -45,6 +53,10 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     /// @notice Emitted when the game deployer is changed
     event GameDeployerChanged(address _gameDeployer);
 
+    /** CONSTANTS **/
+    /// @notice Time after tournament to start burning PPS tokens
+    uint256 public constant PPS_BURN_DELAY = 30 days; 
+
     /** STATE VARIABLES **/
     /// @notice Mapping of pool IDs to pool addresses
     mapping(uint256 => address) public pools;
@@ -52,8 +64,20 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     mapping(address => uint256) private poolIds;
     /// @notice Mapping of years to their corresponding pool ID iterations
     mapping(uint256 => uint256) public yearToPoolIdIteration;
+    /// @notice Mapping of years to their corresponding pool ID burn iterations
+    mapping(uint256 => uint256) public yearToPoolIdBurnIteration;
+    /// @notice Mapping of years to their corresponding pool ID dismiss iterations
+    mapping(uint256 => uint256) public yearToPoolIdDismissIteration;
     /// @notice Mapping to track valid OnchainMadness contract addresses
     mapping(address => bool) public onchainMadnessContracts;
+    /// @notice Mapping to block duplication of pool names
+    mapping(bytes32 => bool) public poolNames;
+    /// @notice Mapping to check if the PPS tokens have already been burned for a year
+    mapping(uint256 => bool) public yearToPPSBurned;
+    /// @notice Mapping to check the date to burn PPS tokens
+    mapping(uint256 => uint256) public yearToPPSBurnDate;
+    /// @notice Mapping to check if the prizes have already been dismissed for a year
+    mapping(uint256 => bool) public yearToPrizeDismissed;
 
     /// @notice Counter for pool IDs
     uint256 private currentPoolId;
@@ -108,6 +132,8 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @param _isProtocolPool Whether this is a protocol pool
      * @param _isPrivatePool Whether this is a private pool
      * @param _pin Pin for private pools
+     * @param _poolName Name of the pool
+     * @return The ID of the created pool
      */
     function createPool(
         bool _isProtocolPool,
@@ -115,6 +141,12 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         string calldata _pin,
         string calldata _poolName
     ) external whenNotPaused nonReentrant returns (uint256) {
+        require(
+            poolNames[keccak256(bytes(_poolName))] == false,
+            "Pool name already exists"
+        );
+        poolNames[keccak256(bytes(_poolName))] = true;
+
         // Deploy new pool using clone
         address newPool = Clones.clone(implementation);
         uint256 poolId = currentPoolId;
@@ -223,6 +255,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
+            yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
             return;
         }
 
@@ -233,6 +266,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         while (processedIterations < 10) {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
+                yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
                 return;
             }
 
@@ -257,6 +291,125 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             return;
         }
         emit IterationFinished(_gameYear);
+        yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+    }
+
+    /**
+     * @dev Checks if the tokens needs to be burned
+     * @param _gameYear The year to check
+     * @return True if the tokens need to be burned, false otherwise
+     */
+    function needsToBeBurned(uint256 _gameYear) public view returns (bool) {
+        // return
+        //     yearToPPSBurnDate[_gameYear] > 0 &&
+        //     !yearToPPSBurned[_gameYear] &&
+        //     block.timestamp > yearToPPSBurnDate[_gameYear]; //production
+        return true; // for testing
+    }
+
+    /**
+     * @dev Iterates through the pools to burn PPS tokens for a given year
+     * Checks if the burn date has passed and the tokens have not already been burned.
+     * If burn date is still 0, denies the burn.
+     * @param _gameYear The year to iterate
+     */
+    function iterateBurnYearTokens(
+        uint256 _gameYear
+    ) public whenNotPaused nonReentrant {
+        require(
+            needsToBeBurned(_gameYear),
+            "The claim period has not ended yet."
+        );
+
+        uint256 _currentPoolId = yearToPoolIdBurnIteration[_gameYear];
+        uint256 processedIterations = 0;
+
+        while (processedIterations < 10) {
+            if (pools[_currentPoolId] == address(0)) {
+                emit BurnIterationFinished(_gameYear);
+                yearToPPSBurned[_gameYear] = true;
+                return;
+            }
+
+            OnchainMadnessEntry pool = OnchainMadnessEntry(
+                pools[_currentPoolId]
+            );
+            pool.burnPPSTokens();
+            _currentPoolId++;
+            processedIterations++;
+        }
+
+        // Update the current pool ID for this year's burn iteration
+        yearToPoolIdBurnIteration[_gameYear] = _currentPoolId;
+
+        // Emit appropriate event based on iteration status
+        if (
+            _currentPoolId > currentPoolId &&
+            pools[_currentPoolId] != address(0)
+        ) {
+            emit ContinueBurnIteration(_gameYear);
+            return;
+        }
+        emit BurnIterationFinished(_gameYear);
+        yearToPPSBurned[_gameYear] = true;
+    }
+
+    /**
+     * @dev Checks if the prize can be dismissed
+     * @param _gameYear The year to check
+     * @return True if the prize can be dismissed, false otherwise
+     */
+    function needsToBeDismissed(uint256 _gameYear) public view returns (bool) {
+        // return
+        //     IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
+        //         .getCurrentYear() > _gameYear; //production
+        return true; // for testing
+    }
+
+    /**
+     * @dev Iterates through the pools to dismiss prizes for a given year
+     * Checks if the year needs to be dismissed and if it hasn't been dismissed yet.
+     * @param _gameYear The year to iterate
+     */
+    function iterateDismissYear(
+        uint256 _gameYear
+    ) public whenNotPaused nonReentrant {
+        require(
+            needsToBeDismissed(_gameYear),
+            "This year's prizes cannot be dismissed yet."
+        );
+
+        uint256 _currentPoolId = yearToPoolIdDismissIteration[_gameYear];
+        uint256 processedIterations = 0;
+
+        while (processedIterations < 10) {
+            if (pools[_currentPoolId] == address(0)) {
+                emit DismissIterationFinished(_gameYear);
+                yearToPrizeDismissed[_gameYear] = true;
+                return;
+            }
+
+            OnchainMadnessEntry pool = OnchainMadnessEntry(
+                pools[_currentPoolId]
+            );
+            pool.dismissPot();
+            _currentPoolId++;
+            processedIterations++;
+        }
+
+        // Update the current pool ID for this year's dismiss iteration
+        yearToPoolIdDismissIteration[_gameYear] = _currentPoolId;
+
+        // Emit appropriate event based on iteration status
+        if (
+            _currentPoolId > currentPoolId &&
+            pools[_currentPoolId] != address(0)
+        ) {
+            emit ContinueDismissIteration(_gameYear);
+            return;
+        }
+        emit DismissIterationFinished(_gameYear);
+        yearToPrizeDismissed[_gameYear] = true;
     }
 
     /**

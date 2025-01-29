@@ -52,7 +52,7 @@ contract NftImage {
                                     betTeamNames,
                                     _tokenId,
                                     _poolId,
-                                    poolName,
+                                    BuildImage.filterPoolName(poolName),
                                     BuildImage.formatPrize(prize.toString()),
                                     amountClaimed > 0
                                 )

@@ -6,6 +6,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
+interface IGamesFactory {
+    function isFinished(uint256 year) external view returns (bool);
+}
+
 /**
  * @title PerfectPool
  * @author PerfectPool Team
@@ -22,6 +26,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
  */
 contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     /** STATE VARIABLES **/
+    /// @dev The initial value of the tokens per USDC
+    uint256 public constant INITIAL_TOKEN_PER_USDC = 20;
     /// @dev The USDC token contract used for deposits and withdrawals
     IERC20 public immutable USDC;
 
@@ -33,9 +39,9 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     bool public lockMint;
     /// @dev When true, permanently disables all token minting
     bool public definitiveLockMint;
-    /// @dev Timestamp until which withdrawals are blocked (except for winners)
-    uint256 public withdrawalBlockedTimestamp;
-    
+    /// @dev The Game Factory contract
+    IGamesFactory public gameFactory;
+
     /// @dev Addresses authorized to mint tokens when lockPermit is true
     mapping(address => bool) public authorizedMinters;
     /// @dev Addresses of authorized Onchain Madness game contracts
@@ -57,22 +63,35 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     /// @dev Emitted when the number of winners for a year increases
     event WinnersQtyIncreased(uint256 year, uint256 qty);
 
+    /** MODIFIERS **/
+    modifier onlyGameContract() {
+        require(
+            onchainMadnessContracts[msg.sender] || msg.sender == owner(),
+            "Not authorized"
+        );
+        _;
+    }
+
     /**
      * @dev Initializes the PerfectPool token with USDC integration
      * @param _usdc Address of the USDC token contract
      * @param name Name of the ERC20 token
      * @param symbol Symbol of the ERC20 token
      * @param _gameContract Address of the Onchain Madness game contract
+     * @param _gameFactory Address of the Game Factory contract
      */
     constructor(
         address _usdc,
         string memory name,
         string memory symbol,
-        address _gameContract
+        address _gameContract,
+        address _gameFactory
     ) ERC20(name, symbol) Ownable(msg.sender) {
         require(_usdc != address(0), "Invalid USDC address");
         USDC = IERC20(_usdc);
         onchainMadnessContracts[_gameContract] = true;
+        onchainMadnessContracts[_gameFactory] = true;
+        gameFactory = IGamesFactory(_gameFactory);
     }
 
     /**
@@ -112,7 +131,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         );
 
         //USDC has 6 decimals and tokens have 18 decimals. Converting USDC to tokens
-        uint256 tokensToMint = amountUSDC * 2 * 10**12;
+        uint256 tokensToMint = amountUSDC * INITIAL_TOKEN_PER_USDC * 10 ** 12;
 
         for (uint256 i = 0; i < receivers.length; i++) {
             uint256 receiverAmount = (tokensToMint * percentage[i]) / 100;
@@ -129,12 +148,16 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param amount Number of tokens to burn for USDC withdrawal
      */
     function withdraw(uint256 amount) external nonReentrant {
+        require(
+            isAbleToWithdraw(),
+            "Withdrawals are locked until this year's game is finished."
+        );
         require(!lockWithdrawal, "Withdrawals are locked");
-        require(withdrawalBlockedTimestamp < block.timestamp, "Only the game winner can withdraw for now.");
         require(amount > 0, "Amount must be greater than 0");
         require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
-        uint256 usdcAmount = (amount * USDC.balanceOf(address(this))) / totalSupply();
+        uint256 usdcAmount = (amount * USDC.balanceOf(address(this))) /
+            totalSupply();
 
         _burn(msg.sender, amount);
         require(USDC.transfer(msg.sender, usdcAmount), "USDC transfer failed");
@@ -176,7 +199,6 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      */
     function resetData(uint256 year) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
-        require(withdrawalBlockedTimestamp < block.timestamp, "Not all game winners have withdrawn.");
 
         yearToWinnersQty[year] = 0;
         yearToPrize[year] = 0;
@@ -190,23 +212,29 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param year The tournament year for prize distribution
      * @param _gameContract The Onchain Madness contract to receive the prize
      */
-    function perfectPrize(uint256 year, address _gameContract) external nonReentrant {
+    function perfectPrize(
+        uint256 year,
+        address _gameContract
+    ) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
         require(yearToWinnersQty[year] > 0, "No winners");
 
         // if the prize has not been claimed yet
-        if(yearToPrize[year] == 0) {
+        if (yearToPrize[year] == 0) {
             yearToPrize[year] = USDC.balanceOf(address(this));
         }
 
         uint256 prizeAmount = yearToPrize[year] / yearToWinnersQty[year];
 
         // if there is not enough USDC in the contract
-        if(USDC.balanceOf(address(this)) < prizeAmount) {
+        if (USDC.balanceOf(address(this)) < prizeAmount) {
             prizeAmount = USDC.balanceOf(address(this));
         }
-        
-        require(USDC.transfer(_gameContract, prizeAmount), "USDC transfer failed");
+
+        require(
+            USDC.transfer(_gameContract, prizeAmount),
+            "USDC transfer failed"
+        );
 
         emit PerfectPrizeAwarded(_gameContract, prizeAmount);
     }
@@ -225,7 +253,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @dev Allows owner to enable/disable USDC withdrawals
      * @param _lockWithdrawal True to disable withdrawals, false to enable
      */
-    function setLockWithdrawal(bool _lockWithdrawal) external onlyOwner {
+    function setLockWithdrawal(bool _lockWithdrawal) external onlyGameContract {
         lockWithdrawal = _lockWithdrawal;
     }
 
@@ -253,10 +281,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param minter Address to modify permissions for
      * @param authorized True to grant minting permission, false to revoke
      */
-    function setAuthorizedMinter(
-        address minter,
-        bool authorized
-    ) external {
+    function setAuthorizedMinter(address minter, bool authorized) external {
         require(
             msg.sender == owner() || onchainMadnessContracts[msg.sender],
             "Not authorized"
@@ -279,5 +304,39 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             "Not authorized"
         );
         onchainMadnessContracts[contractAddress] = authorized;
+    }
+
+    /**
+     * @notice Retrieves the current token value in USDC
+     * @return The current token value in USDC
+     */
+    function getTokenValue() public view returns (uint256) {
+        return USDC.balanceOf(address(this)) / totalSupply();
+    }
+
+    /**
+     * @notice Returns if the user can burn tokens for USDC
+     * If the game of the current year is finished, any user can burn tokens.
+     */
+    function isAbleToWithdraw() public view returns (bool) {
+        if (gameFactory.isFinished(getCurrentYear())) return true;
+        return false;
+    }
+
+    /**
+     * @notice Get the current year
+     * @dev Uses timestamp to calculate current year, optimized for gas
+     * @return year The current year (e.g., 2024)
+     */
+    function getCurrentYear() public view returns (uint256 year) {
+        unchecked {
+            uint256 timestamp = block.timestamp;
+            uint256 z = timestamp / 86400 + 719468;
+            uint256 era = z / 146097;
+            uint256 doe = z - era * 146097;
+            uint256 yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
+
+            year = yoe + era * 400 + 1;
+        }
     }
 }

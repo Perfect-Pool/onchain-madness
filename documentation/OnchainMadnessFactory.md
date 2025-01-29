@@ -6,46 +6,36 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 
 - **BetsClosed**: Emitted when the betting period is closed for a tournament year
     - `year`: `uint256` - The year of the tournament
-
 - **FirstFourMatchDecided**: Emitted when a First Four match is decided
     - `year`: `uint256` - The year of the tournament
     - `matchCode`: `string` - The code of the First Four match (FFG1-FFG4)
     - `_winner`: `uint8` - Winner of the match (1 for home, 2 for away)
-
 - **MatchDecided**: Emitted when a match is decided
     - `year`: `uint256` - The year of the tournament
     - `regionName`: `string` - The name of the region
     - `matchIndex`: `uint8` - Index of the match in the current round
-    - `_winner`: `string` - Winner of the match (1 for home, 2 for away)
-
+    - `_winner`: `string` - Winner of the match
 - **FinalRegionDecided**: Emitted when the final region is decided
     - `year`: `uint256` - The year of the tournament
     - `regionName`: `string` - The name of the region
     - `winner`: `string` - The winner of the final region
-
 - **FinalFourMatchDecided**: Emitted when a final four match is decided
     - `year`: `uint256` - The year of the tournament
     - `gameIndex`: `uint8` - Index of the game in the final four
-    - `winners`: `string` - The winners of the game (home or away)
-
+    - `winners`: `string` - The winners of the game
 - **RoundAdvanced**: Emitted when the tournament advances to the next round
     - `year`: `uint256` - The year of the tournament
     - `round`: `uint8` - The round number advanced to
-
 - **TournamentFinished**: Emitted when a tournament is marked as finished
     - `year`: `uint256` - The year of the tournament
     - `winner`: `string` - The winner of the tournament
-
 - **OnchainMadnessCreated**: Emitted when a new OnchainMadness contract is created
     - `proxy`: `address` - The address of the newly created OnchainMadness contract
     - `year`: `uint256` - The year of the tournament
-
 - **ExecutorChanged**: Emitted when the executor address is changed
     - `executor`: `address` - The new executor address
-
 - **TournamentReset**: Emitted when a tournament is reset to its initial state
     - `year`: `uint256` - The year of the tournament
-
 - **Paused**: Emitted when the paused state of the contract is changed
     - `paused`: `bool` - The new paused state
 
@@ -61,6 +51,7 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 
 - **implementation**: `address public immutable` - Address of the OnchainMadness implementation contract
 - **executor**: `address public` - Address authorized to execute tournament operations
+- **lastCreatedTournament**: `uint256 public` - Last created tournament year
 - **paused**: `bool public` - Paused state of the contract
 - **tournaments**: `mapping(uint256 => address) public` - Mapping of tournament addresses by year
 
@@ -79,9 +70,10 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 
 ### createOnchainMadness
 
-- Description: Creates a new OnchainMadness contract for a specific year using the clone pattern. Returns the address of the new contract.
+- Description: Creates a new OnchainMadness contract for a specific year using the clone pattern
 - Arguments:
     - `year`: `uint256` - The year of the tournament to create
+- Returns: `address` - The address of the newly created OnchainMadness contract
 - Modifiers:
     - `onlyExecutor`: Restricted to authorized executor
 
@@ -130,132 +122,196 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - Modifiers:
     - `onlyExecutor`: Restricted to authorized executor
 
-### setFirstFourWinner
+### determineFirstFourWinner
 
 - Description: Records the result of a First Four match and sets the winner
 - Arguments:
     - `year`: `uint256` - The year of the tournament
     - `matchCode`: `string` - The code of the First Four match (FFG1-FFG4)
-    - `_homeId`: `uint256` - ID of the home team
-    - `_awayId`: `uint256` - ID of the away team
     - `_homePoints`: `uint256` - Points scored by the home team
     - `_awayPoints`: `uint256` - Points scored by the away team
+    - `_winner`: `uint8` - Winner of the match (1 for home, 2 for away)
 - Modifiers:
     - `onlyExecutor`: Restricted to authorized executor
 
-### getFirstFourWinners
+### closeBets
 
-- Description: Retrieves the winners of the First Four matches for a specific year
+- Description: Closes the betting period and starts the tournament
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `string[4]` - Array of team names that won the First Four matches
+- Modifiers:
+    - `onlyExecutor`: Restricted to authorized executor
 
-### getGameStatus
+### advanceRound
 
-- Description: Retrieves the status of a tournament for a specific year
+- Description: Advances the tournament to the next round
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `bytes` - ABI-encoded data containing:
-    - `round`: `uint8` - Current round of the tournament
-    - `status`: `uint8` - Current status from the Status enum
+- Modifiers:
+    - `onlyExecutor`: Restricted to authorized executor
 
-### getRegionTeams
+### determineMatchWinner
 
-- Description: Retrieves all teams in a specific region
+- Description: Records the result of a match and sets up the next round match
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-    - `region`: `string` - Name of the region (SOUTH, WEST, MIDWEST, EAST)
-- Returns: `bytes` - ABI-encoded data containing:
-    - `teams`: `string[16]` - Array of team names in the region
-    - `teamsIds`: `uint8[16]` - Array of team IDs corresponding to the team names
+    - `regionName`: `string` - The name of the region
+    - `winner`: `string` - The name of the winning team
+    - `round`: `uint8` - Current round number (1-4)
+    - `matchIndex`: `uint8` - Index of the match in the current round
+    - `homePoints`: `uint256` - Points scored by home team
+    - `awayPoints`: `uint256` - Points scored by away team
+- Modifiers:
+    - `onlyExecutor`: Restricted to authorized executor
 
-### getAllTeams
+### determineFinalRegionWinner
 
-- Description: Retrieves teams from all regions
+- Description: Records the result of a region's final match and sets up Final Four match
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `bytes[4]` - Array of ABI-encoded data, one for each region (SOUTH, WEST, MIDWEST, EAST), each containing:
-    - `teams`: `string[16]` - Array of team names in the region
-    - `teamsIds`: `uint8[16]` - Array of team IDs corresponding to the team names
+    - `regionName`: `string` - The name of the region
+    - `winner`: `string` - The name of the winning team
+    - `homePoints`: `uint256` - Points scored by home team
+    - `awayPoints`: `uint256` - Points scored by away team
+- Modifiers:
+    - `onlyExecutor`: Restricted to authorized executor
+
+### determineFinalFourWinner
+
+- Description: Records the result of a Final Four match and sets up championship match
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+    - `gameIndex`: `uint8` - Index of the Final Four match (0 or 1)
+    - `winners`: `string` - The name of the winning team
+    - `homePoints`: `uint256` - Points scored by home team
+    - `awayPoints`: `uint256` - Points scored by away team
+- Modifiers:
+    - `onlyExecutor`: Restricted to authorized executor
+
+### determineChampion
+
+- Description: Records the result of the championship match and completes the tournament
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+    - `winner`: `string` - The name of the winning team
+    - `homePoints`: `uint256` - Points scored by home team
+    - `awayPoints`: `uint256` - Points scored by away team
+- Modifiers:
+    - `onlyExecutor`: Restricted to authorized executor
+
+### setContract
+
+- Description: Sets a contract address for a given name in the contracts mapping
+- Arguments:
+    - `_name`: `string` - The name identifier for the contract
+    - `_contract`: `address` - The address of the contract to set
+- Modifiers:
+    - `onlyOwner`: Restricted to contract owner
+
+### contracts
+
+- Description: Retrieves a contract address by its name from the contracts mapping
+- Arguments:
+    - `_name`: `string` - The name identifier of the contract
+- Returns: `address` - The address of the requested contract
 
 ### getAllRegionsData
 
-- Description: Get the complete data for all regions in a tournament year
-- Parameters:
-  - `year`: `uint256` - The year of the tournament
-- Returns: `bytes[4]` - Array containing encoded data for each region (South, West, Midwest, East)
-  - Region Data encoding:
-    - `string[16]` teams - Array of team names in the region
-    - `bytes[8]` matchesRound1 - First round matches
-    - `bytes[4]` matchesRound2 - Second round matches
-    - `bytes[2]` matchesRound3 - Third round matches
-    - `bytes` matchRound4 - Fourth round match
-    - `string` winner - Region winner
-  - Match Data encoding:
-    - `string` home - Home team name
-    - `string` away - Away team name
-    - `uint256` home_points - Home team points
-    - `uint256` away_points - Away team points
-    - `string` winner - Winner team name
+- Description: Get the data for all regions
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `bytes[4]` - The regions data in bytes format
+- Notes: Region Data (encoded): string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
 
 ### getFirstFourData
 
-- Description: Get the complete data for the First Four matches
-- Parameters:
-  - `year`: `uint256` - The year of the tournament
-- Returns: `bytes[4]` - Array containing encoded data for each First Four match
-  - Match Data encoding:
-    - `string` home - Home team name
-    - `string` away - Away team name
-    - `uint256` home_points - Home team points
-    - `uint256` away_points - Away team points
-    - `string` winner - Winner team name
+- Description: Get the data for the First Four
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `bytes[4]` - The First Four data in bytes format
+- Notes: Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
+
+### getFinalFourData
+
+- Description: Get the data for the Final Four
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `bytes` - The Final Four data in bytes format
+- Notes: Final Four Data (encoded): bytes[2] matchesRound1, bytes matchFinal, string winner
+
+### getGameStatus
+
+- Description: Get the round and game status for the current year
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `bytes` - The current round and game status in bytes format
+- Notes: Game Status (encoded): uint8 currentRound, uint8 status
+
+### isFinished
+
+- Description: Get if the last created tournament is finished
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `bool` - True if the tournament is finished, false otherwise
+
+### getAllTeamsIdsNames
+
+- Description: Get the team names and IDs for all the regions in a specific year
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `bytes[4]` - The team names IDs for all the regions in bytes format
+- Notes: Teams (encoded): string[16] teams, uint8[16] teamsIds
 
 ### getFinalResult
 
 - Description: Retrieves the final result array of winner IDs for all matches in a tournament
-- Parameters:
-  - `year`: `uint256` - The year of the tournament
-- Returns: `uint8[63]` - Array of winner IDs representing all match results
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `uint8[63]` - An array of 63 winner IDs representing all match results
 
 ### getTeamSymbols
 
 - Description: Converts an array of team IDs to their corresponding team symbols/names
-- Parameters:
-  - `year`: `uint256` - The year of the tournament
-  - `teamIds`: `uint8[63]` - Array of team IDs to convert
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+    - `teamIds`: `uint8[63]` - Array of team IDs to convert
 - Returns: `string[63]` - Array of team symbols/names corresponding to the input IDs
 
-### getFinalFourData
+### getAllTeamIds
 
-- Description: Returns the Final Four match data
+- Description: Get all the teams in a specific region
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `bytes` - ABI-encoded data containing:
-    - `matchesRound1`: `bytes[2]` - First round matches data
-    - `matchFinal`: `bytes` - Final match data
-    - `winner`: `string` - Name of the winning team
-    - Each match data contains:
-        - `home`: `string` - Home team name
-        - `away`: `string` - Away team name
-        - `home_points`: `uint256` - Points scored by home team
-        - `away_points`: `uint256` - Points scored by away team
-        - `winner`: `string` - Name of the winning team
+    - `_region`: `bytes32` - The name of the region
+- Returns: `uint8[16]` - The IDs of the teams in the region
 
-### getAllTeamsIdsNames
+### getRegion
 
-- Description: Returns team names and IDs for all regions
+- Description: Get a Region data based on its name
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `bytes[4]` - Array of ABI-encoded data for each region (SOUTH, WEST, MIDWEST, EAST), each containing:
-    - `teams`: `string[16]` - Array of team names in the region
-    - `teamsIds`: `uint8[16]` - Array of team IDs corresponding to the team names
+    - `_regionName`: `bytes32` - The name of the region
+- Returns: `OnchainMadness.Region` - The data of the region
 
-### getGameStatus
+### getMatch
 
-- Description: Returns the status of a tournament for a specific year
+- Description: Get a match data based on its ID
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `bytes` - ABI-encoded data containing:
-    - `currentRound`: `uint8` - Current round of the tournament
-    - `status`: `uint8` - Current status (0: Disabled, 1: BetsOn, 2: OnGoing, 3: Finished)
+    - `_matchId`: `uint8` - The ID of the match
+- Returns: `OnchainMadness.Match` - The data of the match
+
+### getFinalFour
+
+- Description: Get the Final Four data
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+- Returns: `OnchainMadness.FinalFour` - The data of the Final Four
+
+### getTeamName
+
+- Description: Get the name of a team based on its ID
+- Arguments:
+    - `year`: `uint256` - The year of the tournament
+    - `_teamId`: `uint8` - The ID of the team
+- Returns: `string` - The name of the team

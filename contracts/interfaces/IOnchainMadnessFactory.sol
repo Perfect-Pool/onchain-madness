@@ -20,6 +20,10 @@ interface IOnchainMadnessFactory {
         bytes32 _region
     ) external view returns (uint8[16] memory);
 
+    function lastCreatedTournament() external view returns (uint256);
+
+    function isFinished(uint256 year) external view returns (bool);
+
     function paused() external view returns (bool);
 
     function contracts(string memory _name) external view returns (address);

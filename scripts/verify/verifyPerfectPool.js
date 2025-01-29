@@ -18,6 +18,7 @@ async function main() {
       contracts[networkName]["USDC"],
       "PerfectPoolShare",
       "PPS",
+      contracts[networkName]["OM_ENTRY_DEPLOYER"],
       contracts[networkName]["OM_DEPLOYER"],
     ],
     contract: "contracts/utils/PerfectPool.sol:PerfectPool",

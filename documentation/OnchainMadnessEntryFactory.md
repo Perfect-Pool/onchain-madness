@@ -1,38 +1,57 @@
-# OnchainMadnessTicketFactory
+# OnchainMadnessEntryFactory
 
 Factory contract for creating and managing OnchainMadnessTicket pools. Uses the Clones pattern to deploy minimal proxy contracts for each pool, providing efficient pool management and ticket operations.
 
 ## Events
 
-- **TicketPoolCreated**: Emitted when a new ticket pool is created
+- **EntryPoolCreated**: Emitted when a new entry pool is created
     - `poolId`: `uint256` - ID of the created pool
     - `poolAddress`: `address` - Address of the created pool
-
+    - `poolName`: `string` - Address of the created pool
 - **ContinueIteration**: Emitted when a new iteration starts for a year
     - `year`: `uint256` - Tournament year being iterated
-
 - **IterationFinished**: Emitted when an iteration is completed for a year
     - `year`: `uint256` - Tournament year that finished iteration
-
+- **ContinueBurnIteration**: Emitted when a burn iteration needs to be continued
+    - `year`: `uint256` - Tournament year being iterated
+- **BurnIterationFinished**: Emitted when a burn iteration is completed for a year
+    - `year`: `uint256` - Tournament year that finished burn iteration
+- **ContinueDismissIteration**: Emitted when a dismiss iteration needs to be continued
+    - `year`: `uint256` - Tournament year being iterated
+- **DismissIterationFinished**: Emitted when a dismiss iteration is completed for a year
+    - `year`: `uint256` - Tournament year that finished dismiss iteration
 - **PrizeClaimed**: Emitted when a prize is claimed for a token
     - `_tokenId`: `uint256` - ID of the token claiming prize
     - `_poolId`: `uint256` - ID of the pool
-
 - **BetPlaced**: Emitted when a bet is placed
-    - `_player`: `address` - Address of the player placing the bet
-    - `_gameYear`: `uint256` - Year of the tournament
-    - `_tokenId`: `uint256` - ID of the minted token
-
+    - `gameYear`: `uint256` - Year of the tournament
+    - `poolId`: `uint256` - ID of the pool
+    - `tokenId`: `uint256` - ID of the minted token
+    - `player`: `address` - Address of the player placing the bet
 - **GamePotIncreased**: Emitted when the game pot is increased
     - `_gameYear`: `uint256` - Year of the tournament
     - `_amount`: `uint256` - Amount added to the pot
+- **GameDeployerChanged**: Emitted when the game deployer is changed
+    - `_gameDeployer`: `address` - New game deployer address
+
+## Constants
+
+- **PPS_BURN_DELAY**: `uint256 public` - Time after tournament to start burning PPS tokens (30 days)
 
 ## State Variables
 
 - **pools**: `mapping(uint256 => address) public` - Mapping of pool IDs to pool addresses
 - **yearToPoolIdIteration**: `mapping(uint256 => uint256) public` - Mapping of years to their corresponding pool ID iterations
+- **yearToPoolIdBurnIteration**: `mapping(uint256 => uint256) public` - Mapping of years to their corresponding pool ID burn iterations
+- **yearToPoolIdDismissIteration**: `mapping(uint256 => uint256) public` - Mapping of years to their corresponding pool ID dismiss iterations
 - **onchainMadnessContracts**: `mapping(address => bool) public` - Mapping to track valid OnchainMadness contract addresses
+- **poolNames**: `mapping(bytes32 => bool) public` - Mapping to block duplication of pool names
+- **yearToPPSBurned**: `mapping(uint256 => bool) public` - Mapping to check if the PPS tokens have already been burned for a year
+- **yearToPPSBurnDate**: `mapping(uint256 => uint256) public` - Mapping to check the date to burn PPS tokens
+- **yearToPrizeDismissed**: `mapping(uint256 => bool) public` - Mapping to check if the prizes have already been dismissed for a year
 - **implementation**: `address public immutable` - Address of the implementation contract for cloning
+- **gameDeployer**: `IOnchainMadnessFactory public` - Reference to the game factory contract
+- **USDC**: `IERC20 public` - Reference to the USDC token contract
 
 ## Functions
 
@@ -41,17 +60,19 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Description: Initializes the factory with the implementation contract address
 - Arguments:
     - `_implementation`: `address` - Address of the implementation contract
+    - `_gameDeployer`: `address` - Address of the game deployer contract
 - Modifiers:
     - `Ownable`: Initializes ownership
 
 ### createPool
 
-- Description: Creates a new OnchainMadnessTicket pool using the clone pattern
+- Description: Creates a new OnchainMadnessEntry pool using the clone pattern
 - Arguments:
-    - `_gameDeployer`: `address` - Address of the game deployer contract
     - `_isProtocolPool`: `bool` - Whether this is a protocol pool
     - `_isPrivatePool`: `bool` - Whether this is a private pool
     - `_pin`: `string` - Pin for private pools
+    - `_poolName`: `string` - The name of the pool (15 chars maximum)
+- Returns: `uint256` - The ID of the newly created pool
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
@@ -71,7 +92,6 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Description: Mints a new NFT representing a bracket prediction
 - Arguments:
     - `_poolId`: `uint256` - ID of the pool
-    - `_player`: `address` - Address to mint the NFT to
     - `_gameYear`: `uint256` - Tournament year
     - `bets`: `uint8[63]` - Array of 63 predictions for the tournament
     - `_pin`: `string` - PIN for private pools
@@ -98,7 +118,18 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Arguments:
     - `_poolId`: `uint256` - ID of the pool
     - `_player`: `address` - Address to receive the prize
-    - `_tokenId`: `uint256` - Token ID representing the bracket
+    - `_tokenId`: `uint256` - Token ID of the NFT that will be claimed
+- Modifiers:
+    - `whenNotPaused`: Only when contract is not paused
+    - `nonReentrant`: Prevents reentrancy
+
+### claimAll
+
+- Description: Claims prize for a winning bracket
+- Arguments:
+    - `_poolId`: `uint256` - ID of the pool
+    - `_player`: `address` - Address to receive the prize
+    - `_tokenIds` `uint256[]` - Token IDs of the NFTs that will be claimed
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
@@ -201,6 +232,18 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
     - `_poolAddress`: `address` - The pool address
 - Returns: `uint256` - The pool ID
 
+### getPoolData
+
+- Description: Returns the created pool data
+- Arguments:
+    - `_poolId`: `uint256` - ID of the pool
+- Returns:
+    - `name`: `string` - The name of the pool
+    - `poolAddress`: `adddress` - The pool contract address
+    - `isPrivate`: `bool` - Whether the pool is private
+    - `isProtocol`: `bool` - Whether the pool is created by the protocol
+    - `pin`: `bytes` - The PIN required to join the pool
+    - `creator`: `address` - The address of the creator of the pool
 
 ### verifyShares
 
@@ -209,6 +252,53 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
     - `_poolId`: `uint256` - ID of the pool
     - `_player`: `address` - Address of the player
 - Returns: `uint256` - Amount of PP tokens available for the player
+
+
+### iterateBurnYearTokens
+
+- Description: Iterates through the pools to burn PPS tokens for a given year
+- Arguments:
+    - `_gameYear`: `uint256` - The year to iterate
+- Modifiers:
+    - `whenNotPaused`: Only when contract is not paused
+    - `nonReentrant`: Prevents reentrancy
+
+### iterateDismissYear
+
+- Description: Iterates through the pools to dismiss prizes for a given year
+- Arguments:
+    - `_gameYear`: `uint256` - The year to iterate
+- Modifiers:
+    - `whenNotPaused`: Only when contract is not paused
+    - `nonReentrant`: Prevents reentrancy
+
+### needsToBeBurned
+
+- Description: Checks if the tokens need to be burned
+- Arguments:
+    - `_gameYear`: `uint256` - The year to check
+- Returns: `bool` - True if the tokens need to be burned, false otherwise
+
+### needsToBeDismissed
+
+- Description: Checks if the prize can be dismissed
+- Arguments:
+    - `_gameYear`: `uint256` - The year to check
+- Returns: `bool` - True if the prize can be dismissed, false otherwise
+
+### getPoolAddress
+
+- Description: Gets the pool address for a given pool ID
+- Arguments:
+    - `_poolId`: `uint256` - ID of the pool to query
+- Returns: `address` - Address of the pool
+
+### getPoolId
+
+- Description: Gets the pool ID for a given pool address
+- Arguments:
+    - `_poolAddress`: `address` - Address of the pool to query
+- Returns: `uint256` - ID of the pool
 
 ### pause
 

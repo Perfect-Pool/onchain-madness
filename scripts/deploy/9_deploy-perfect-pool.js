@@ -25,6 +25,7 @@ async function main() {
       networkData.USDC,
       "PerfectPoolShare",
       "PPS",
+      networkData.OM_ENTRY_DEPLOYER,
       networkData.OM_DEPLOYER
     );
     await perfectPool.deployed();

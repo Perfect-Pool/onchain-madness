@@ -24,6 +24,10 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
     - `year`: `uint256` - Tournament year
     - `qty`: `uint256` - New total number of winners
 
+## Constants
+
+- **INITIAL_TOKEN_PER_USDC**: `uint256 public` - The initial value of the tokens per USDC (20)
+
 ## State Variables
 
 - **USDC**: `IERC20 public immutable` - The USDC token contract used for deposits and withdrawals
@@ -31,12 +35,17 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - **lockWithdrawal**: `bool public` - Controls whether token withdrawals are allowed
 - **lockMint**: `bool public` - Controls whether token minting is temporarily paused
 - **definitiveLockMint**: `bool public` - When true, permanently disables all token minting
-- **totalUSDCDeposited**: `uint256 public` - Total amount of USDC deposited into the contract
-- **withdrawalBlockedTimestamp**: `uint256 public` - Timestamp until which withdrawals are blocked (except for winners)
+- **gameFactory**: `IGamesFactory public` - Reference to the game factory contract
 - **authorizedMinters**: `mapping(address => bool) public` - Addresses authorized to mint tokens when lockPermit is true
 - **onchainMadnessContracts**: `mapping(address => bool) public` - Addresses of authorized Onchain Madness game contracts
 - **yearToWinnersQty**: `mapping(uint256 => uint256) public` - Number of winners per tournament year
 - **yearToPrize**: `mapping(uint256 => uint256) public` - Total prize amount per tournament year
+
+## Modifiers
+
+- `onlyGameContract`: Ensures the caller is an authorized game contract or the owner
+- `nonReentrant`: Prevents reentrancy attacks
+- `onlyOwner`: Restricted to contract owner
 
 ## Functions
 
@@ -47,6 +56,8 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
     - `_usdc`: `address` - Address of the USDC token contract
     - `name`: `string` - Name of the ERC20 token
     - `symbol`: `string` - Symbol of the ERC20 token
+    - `_gameContract`: `address` - Address of the Onchain Madness game contract
+    - `_gameFactory`: `address` - Address of the Game Factory contract
 
 ### increasePool
 
@@ -95,7 +106,7 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - Description: Awards the perfect prize to tournament winners
 - Arguments:
     - `year`: `uint256` - The tournament year for prize distribution
-    - `gameContract`: `address` - The Onchain Madness contract to receive the prize
+    - `_gameContract`: `address` - The Onchain Madness contract to receive the prize
 - Modifiers:
     - `nonReentrant`: Prevents reentrancy attacks
 
@@ -112,40 +123,38 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 
 - Description: Manages authorized Onchain Madness game contracts
 - Arguments:
-    - `gameContract`: `address` - Address of the game contract
-    - `authorized`: `bool` - True to authorize, false to revoke
+    - `contractAddress`: `address` - Address of the Onchain Madness contract
+    - `authorized`: `bool` - True to authorize the contract, false to revoke
 - Modifiers:
     - `onlyOwner`: Restricted to contract owner
 
 ### setLockPermit
 
-- Description: Sets whether minting requires authorization
+- Description: Controls minting permission requirements
 - Arguments:
-    - `_lockPermit`: `bool` - New lock permit state
+    - `_lockPermit`: `bool` - True to require authorization, false to allow anyone
 - Modifiers:
     - `onlyOwner`: Restricted to contract owner
 
 ### setLockWithdrawal
 
-- Description: Sets whether token withdrawals are allowed
+- Description: Controls token withdrawal capability
 - Arguments:
-    - `_lockWithdrawal`: `bool` - New lock withdrawal state
+    - `_lockWithdrawal`: `bool` - True to disable withdrawals, false to enable
 - Modifiers:
-    - `onlyOwner`: Restricted to contract owner
+    - `onlyGameContract`: Restricted to game contracts
 
 ### setLockMint
 
-- Description: Sets whether token minting is temporarily paused
+- Description: Controls temporary minting capability
 - Arguments:
-    - `_lockMint`: `bool` - New lock mint state
+    - `_lockMint`: `bool` - True to pause minting, false to resume
 - Modifiers:
     - `onlyOwner`: Restricted to contract owner
 
 ### setDefinitiveLockMint
 
-- Description: Permanently disables all token minting
-- Arguments:
-    - `_definitiveLockMint`: `bool` - Must be true to lock minting permanently
+- Description: Permanently disables token minting
 - Modifiers:
     - `onlyOwner`: Restricted to contract owner
 
@@ -156,3 +165,18 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
     - `_withdrawalBlockedTimestamp`: `uint256` - New withdrawal blocked timestamp
 - Modifiers:
     - `onlyOwner`: Restricted to contract owner
+
+### getTokenValue
+
+- Description: Retrieves the current token value in USDC
+- Returns: `uint256` - The current token value in USDC
+
+### isAbleToWithdraw
+
+- Description: Returns if the user can burn tokens for USDC
+- Returns: `bool` - True if the game of the current year is finished
+
+### getCurrentYear
+
+- Description: Get the current year
+- Returns: `uint256` - The current year (e.g., 2024)

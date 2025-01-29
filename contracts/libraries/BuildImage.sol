@@ -30,6 +30,27 @@ library BuildImage {
             );
     }
 
+    function filterPoolName(
+        string memory poolName
+    ) public pure returns (string memory) {
+        bytes memory poolNameBytes = bytes(poolName);
+        bytes memory result = new bytes(poolNameBytes.length);
+        uint256 j = 0;
+        
+        for (uint256 i = 0; i < poolNameBytes.length; i++) {
+            bytes1 char = poolNameBytes[i];
+            if (char != 0x3c && char != 0x3e && char != 0x26) {
+                result[j++] = char;
+            }
+        }
+        
+        assembly {
+            mstore(result, j)
+        }
+        
+        return string(result);
+    }
+
     function formatPrize(
         string memory prize
     ) public pure returns (string memory) {

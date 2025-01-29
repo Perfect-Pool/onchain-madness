@@ -12,6 +12,10 @@ interface IOnchainMadnessEntryFactory {
     function iterateYearTokens(uint256 _year) external;
 }
 
+interface IPerfectPool {
+    function resetData(uint256 year) external;
+}
+
 /**
  * @title OnchainMadnessFactory
  * @author PerfectPool
@@ -116,6 +120,10 @@ contract OnchainMadnessFactory is Ownable {
      */
     address public executor;
     /**
+     * @dev Last created tournament year
+     */
+    uint256 public lastCreatedTournament;
+    /**
      * @dev Paused state of the contract
      */
     bool public paused = false;
@@ -157,10 +165,12 @@ contract OnchainMadnessFactory is Ownable {
     function createOnchainMadness(
         uint256 year
     ) public onlyExecutor returns (address) {
+        require(tournaments[year] == address(0), "OMF-02");
         address clone = Clones.clone(implementation);
         OnchainMadness(clone).initialize(year, address(this));
         emit OnchainMadnessCreated(clone, year);
         tournaments[year] = clone;
+        lastCreatedTournament = year;
         return clone;
     }
 
@@ -180,6 +190,7 @@ contract OnchainMadnessFactory is Ownable {
      */
     function resetGame(uint256 year) public onlyExecutor {
         tournaments[year] = address(0);
+        IPerfectPool(contracts("PERFECTPOOL")).resetData(year);
 
         emit TournamentReset(year);
     }
@@ -460,6 +471,19 @@ contract OnchainMadnessFactory is Ownable {
                 OnchainMadness(tournaments[year]).currentRound(),
                 OnchainMadness(tournaments[year]).status()
             );
+    }
+
+    /**
+     * @dev Get if the last created tournament is finished
+     * @param year The year of the tournament
+     * @return True if the tournament is finished, false otherwise
+     */
+    function isFinished(uint256 year) public view returns (bool) {
+        if (tournaments[year] == address(0)) return false;
+        OnchainMadness.FinalFour memory finalFour = OnchainMadness(
+            tournaments[year]
+        ).getFinalFour();
+        return finalFour.winner != 0;
     }
 
     /**
