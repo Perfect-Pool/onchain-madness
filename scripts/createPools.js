@@ -18,6 +18,57 @@ function generatePin() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
+// Generate a random 3-digit hex string
+function generateRandomHexSuffix() {
+  return Math.floor(Math.random() * 0xFFF).toString(16).padStart(3, '0');
+}
+
+// Create pool with retry logic
+async function createPoolWithRetry(deployer, isProtocolPool, isPrivatePool, pin, baseName, maxRetries = 5) {
+  let attempts = 0;
+  let currentName = baseName;
+
+  while (attempts < maxRetries) {
+    try {
+      // First simulate the transaction
+      await deployer.callStatic.createPool(
+        isProtocolPool,
+        isPrivatePool,
+        pin,
+        currentName
+      );
+
+      // If simulation succeeds, execute the actual transaction
+      const tx = await deployer.createPool(
+        isProtocolPool,
+        isPrivatePool,
+        pin,
+        currentName
+      );
+      const receipt = await tx.wait();
+      
+      // Get pool ID from event logs
+      const event = receipt.events.find(e => e.event === "EntryPoolCreated");
+      if (!event) {
+        throw new Error("EntryPoolCreated event not found in transaction receipt");
+      }
+      
+      return { receipt, name: currentName };
+    } catch (error) {
+      if (error.message.includes("Pool name already exists")) {
+        attempts++;
+        if (attempts === maxRetries) {
+          throw new Error(`Failed to create pool after ${maxRetries} attempts`);
+        }
+        currentName = `${baseName}-${generateRandomHexSuffix()}`;
+        console.log(`Pool name already exists. Retrying with name: ${currentName}`);
+      } else {
+        throw error; // Re-throw if it's a different error
+      }
+    }
+  }
+}
+
 async function main() {
   // Get contract data
   const variablesPath = path.join(__dirname, "..", "contracts.json");
@@ -37,13 +88,13 @@ async function main() {
   try {
     // 1. Create Protocol-owned pool
     console.log("\n1. Creating Protocol-owned pool...");
-    const protocolTx = await deployer.createPool(
-      true,  // isProtocolPool
-      false, // isPrivatePool
-      "",    // no PIN needed
+    const { receipt: protocolReceipt, name: protocolName } = await createPoolWithRetry(
+      deployer,
+      true,   // isProtocolPool
+      false,  // isPrivatePool
+      "",     // no PIN needed
       "🏆 Onchain Madness Official" // pool name with official badge icon (emoji)
     );
-    const protocolReceipt = await protocolTx.wait();
     
     // Get pool ID from event logs
     const protocolEvent = protocolReceipt.events.find(e => e.event === "EntryPoolCreated");
@@ -55,7 +106,7 @@ async function main() {
     console.log(`✅ Protocol Pool created:`);
     console.log(`   Pool ID: ${protocolPoolId}`);
     console.log(`   Pool Address: ${protocolPoolAddress}`);
-    console.log(`   Name: Perfect Pool March Madness`);
+    console.log(`   Name: ${protocolName}`);
 
   } catch (error) {
     console.error("Error creating pools:");
