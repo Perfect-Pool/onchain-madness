@@ -12,7 +12,7 @@ import "../interfaces/IOnchainMadnessFactory.sol";
  * @title OnchainMadnessEntryFactory
  * @author PerfectPool Team
  * @notice Factory contract for creating and managing OnchainMadnessEntry pools
- * @dev Uses the Clones pattern to deploy minimal proxy contracts for each pool
+ * @notice Uses the Clones pattern to deploy minimal proxy contracts for each pool
  * Features:
  * - Creates and manages entry pools
  * - Handles pool initialization and configuration
@@ -91,7 +91,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Checks if the caller is the contract owner
-     * @dev Only the contract owner can call this function
+     * @notice Only the contract owner can call this function
      */
     modifier onlyAdmin() {
         require(gameDeployer.owner() == msg.sender, "Caller is not admin");
@@ -128,7 +128,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Creates a new OnchainMadnessEntry pool
-     * @dev Deploys a new minimal proxy clone of the implementation contract
+     * @notice Deploys a new minimal proxy clone of the implementation contract
      * @param _isProtocolPool Whether this is a protocol pool
      * @param _isPrivatePool Whether this is a private pool
      * @param _pin Pin for private pools
@@ -180,7 +180,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Claims the PP share tokens for a player
-     * @dev Wrapper function that calls the corresponding function in the pool contract
+     * @notice Wrapper function that calls the corresponding function in the pool contract
      * @param _poolId ID of the pool
      * @param _player Address of the player claiming their share
      */
@@ -193,7 +193,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Verifies the shares for a player
-     * @dev Checks the amount of PP tokens available for the player to claim
+     * @notice Checks the amount of PP tokens available for the player to claim
      * @param _poolId ID of the pool
      * @param _player Address of the player
      * @return Amount of PP tokens available for the player
@@ -207,7 +207,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Mints a new NFT representing a bracket prediction
-     * @dev Wrapper function that calls safeMint in the pool contract. Validates prediction against actual results.
+     * @notice Wrapper function that calls safeMint in the pool contract. Validates prediction against actual results.
      * @param _poolId ID of the pool
      * @param _gameYear Tournament year
      * @param bets Array of 63 predictions for the tournament
@@ -239,7 +239,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @dev Iterates through NFTs across all pools for a given year
+     * @notice Iterates through NFTs across all pools for a given year
      * @param _gameYear The year to iterate
      */
     function iterateYearTokens(
@@ -295,7 +295,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @dev Checks if the tokens needs to be burned
+     * @notice Checks if the tokens needs to be burned
      * @param _gameYear The year to check
      * @return True if the tokens need to be burned, false otherwise
      */
@@ -308,7 +308,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @dev Iterates through the pools to burn PPS tokens for a given year
+     * @notice Iterates through the pools to burn PPS tokens for a given year
      * Checks if the burn date has passed and the tokens have not already been burned.
      * If burn date is still 0, denies the burn.
      * @param _gameYear The year to iterate
@@ -355,7 +355,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @dev Checks if the prize can be dismissed
+     * @notice Checks if the prize can be dismissed
      * @param _gameYear The year to check
      * @return True if the prize can be dismissed, false otherwise
      */
@@ -367,7 +367,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @dev Iterates through the pools to dismiss prizes for a given year
+     * @notice Iterates through the pools to dismiss prizes for a given year
      * Checks if the year needs to be dismissed and if it hasn't been dismissed yet.
      * @param _gameYear The year to iterate
      */
@@ -414,7 +414,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Claims prize for a winning bracket
-     * @dev Wrapper function that calls claimPrize in the pool contract. Validates game completion and transfers prize.
+     * @notice Wrapper function that calls claimPrize in the pool contract. Validates game completion and transfers prize.
      * @param _poolId ID of the pool
      * @param _tokenId Token ID representing the bracket
      */
@@ -431,7 +431,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Claims prize for multiple tokenIds at the same pool
-     * @dev Iterates through the tokenIds and calls claimPrize for each one using claimPrize()
+     * @notice Iterates through the tokenIds and calls claimPrize for each one using claimPrize()
      * @param _poolId ID of the pool
      * @param _tokenIds Token IDs representing the brackets
      */
@@ -450,7 +450,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Increases the prize pool for a specific game
-     * @dev Wrapper function that calls increaseGamePot in the pool contract. Updates the total prize pool.
+     * @notice Wrapper function that calls increaseGamePot in the pool contract. Updates the total prize pool.
      * @param _poolId ID of the pool
      * @param _gameYear Tournament year to increase pot for
      * @param _amount Amount of USDC to add to the pot
@@ -470,7 +470,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the token URI for a given NFT
-     * @dev Wrapper function that calls tokenURI in the pool contract
+     * @notice Wrapper function that calls tokenURI in the pool contract
      * @param _poolId ID of the pool
      * @param _tokenId ID of the NFT
      * @return The token URI
@@ -503,7 +503,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the bet data for a given NFT
-     * @dev Wrapper function that calls getBetData in the pool contract
+     * @notice Wrapper function that calls getBetData in the pool contract
      * @param _poolId ID of the pool
      * @param _tokenId ID of the NFT
      * @return The bet data
@@ -518,7 +518,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the game year for a given NFT
-     * @dev Wrapper function that calls getGameYear in the pool contract
+     * @notice Wrapper function that calls getGameYear in the pool contract
      * @param _poolId ID of the pool
      * @param _tokenId ID of the NFT
      * @return The game year
@@ -533,7 +533,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Validates a bracket prediction and returns its score
-     * @dev Wrapper function that calls betValidator in the pool contract. Checks prediction against actual results.
+     * @notice Wrapper function that calls betValidator in the pool contract. Checks prediction against actual results.
      * @param _poolId ID of the pool
      * @param _tokenId Token ID of the bracket to validate
      * @return validator Validation data for the bracket
@@ -549,7 +549,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the team symbols for a given NFT
-     * @dev Wrapper function that calls getTeamSymbols in the pool contract
+     * @notice Wrapper function that calls getTeamSymbols in the pool contract
      * @param _poolId ID of the pool
      * @param _tokenId ID of the NFT
      * @return The team symbols
@@ -566,7 +566,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the amount of prize claimed for a bracket
-     * @dev Wrapper function that calls amountPrizeClaimed in the pool contract. Shows how much USDC was claimed.
+     * @notice Wrapper function that calls amountPrizeClaimed in the pool contract. Shows how much USDC was claimed.
      * @param _poolId ID of the pool
      * @param _tokenId Token ID of the bracket
      * @return amountToClaim Amount of USDC claimed as prize
@@ -584,7 +584,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the potential payout for a game year
-     * @dev Wrapper function that calls potentialPayout in the pool contract. Calculates maximum possible prize.
+     * @notice Wrapper function that calls potentialPayout in the pool contract. Calculates maximum possible prize.
      * @param _poolId ID of the pool
      * @param gameYear Tournament year to check
      * @return payout Maximum potential payout in USDC
@@ -601,7 +601,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /**
      * @notice Returns the number of players for a game year
-     * @dev Wrapper function that calls playerQuantity in the pool contract. Counts total participants.
+     * @notice Wrapper function that calls playerQuantity in the pool contract. Counts total participants.
      * @param _poolId ID of the pool
      * @param gameYear Tournament year to check
      * @return quantity Number of players participating
@@ -629,7 +629,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @dev Returns the created pool data
+     * @notice Returns the created pool data
      * @param poolId The ID of the pool
      * @return name The name of the pool
      * @return poolAddress The address of the pool
@@ -668,6 +668,15 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      */
     function getGameDeployer() external view returns (address) {
         return address(gameDeployer);
+    }
+
+    /**
+     * @notice Returns if the pool name exists
+     * @param _poolName The name of the pool
+     * @return exists Whether the pool name exists
+     */
+    function poolNameExists(string calldata _poolName) public view returns (bool) {
+        return poolNames[keccak256(bytes(_poolName))];
     }
 
     /**

@@ -353,8 +353,8 @@
     <defs>
         <linearGradient id="paint0_linear_3468_11744" x1="0" y1="0" x2="784.769" y2="294.705"
             gradientUnits="userSpaceOnUse">
-            <stop offset="0.0266" stop-color="#0062FF" />
-            <stop offset="0.9899" stop-color="#1DB954" />
+            <stop offset="0.0266" stop-color="#CD5D9B" />
+            <stop offset="0.9899" stop-color="#FB923C" />
         </linearGradient>
         <linearGradient id="col1_green" x1="80" y1="195.75" x2="242.5" y2="195.75" gradientUnits="userSpaceOnUse">
             <stop stop-color="#4ADE80" stop-opacity="0.75" />

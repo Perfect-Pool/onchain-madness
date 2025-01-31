@@ -253,7 +253,6 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
     - `_player`: `address` - Address of the player
 - Returns: `uint256` - Amount of PP tokens available for the player
 
-
 ### iterateBurnYearTokens
 
 - Description: Iterates through the pools to burn PPS tokens for a given year
@@ -299,6 +298,14 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Arguments:
     - `_poolAddress`: `address` - Address of the pool to query
 - Returns: `uint256` - ID of the pool
+
+### poolNameExists
+
+- Description: Returns whether a pool name already exists
+- Arguments:
+    - `_poolName`: `string` - The name of the pool to check
+- Returns:
+    - `exists`: `bool` - Whether the pool name exists
 
 ### pause
 
