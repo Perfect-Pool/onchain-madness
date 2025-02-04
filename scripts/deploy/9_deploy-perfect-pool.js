@@ -20,7 +20,11 @@ async function main() {
   const name = "PERFECTPOOL";
   if (networkData.PERFECTPOOL === "") {
     console.log(`Deploying PerfectPool...`);
-    const PerfectPool = await ethers.getContractFactory("PerfectPool");
+    const PerfectPool = await ethers.getContractFactory("PerfectPool", {
+      libraries: {
+        OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+      },
+    });
     const perfectPool = await PerfectPool.deploy(
       networkData.USDC,
       "PerfectPoolShare",
@@ -37,28 +41,10 @@ async function main() {
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    console.log(`Setting base contracts to PerfectPool...`);
-    await perfectPool.setOnchainMadnessContract(
-      networkData.OM_ENTRY_DEPLOYER,
-      true
-    );
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
   } else {
     console.log(`PerfectPool already deployed at ${networkData.PERFECTPOOL}`);
     console.log(`Setting PerfectPool address to OnchainMadnessFactory...`);
     await OnchainMadnessFactory.setContract(name, networkData.PERFECTPOOL);
-
-    const perfectPool = await ethers.getContractAt(
-      "PerfectPool",
-      networkData.PERFECTPOOL
-    );
-    console.log(`Setting base contracts to PerfectPool...`);
-    await perfectPool.setOnchainMadnessContract(
-      networkData.OM_ENTRY_DEPLOYER,
-      true
-    );
   }
 }
 

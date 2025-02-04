@@ -12,7 +12,7 @@ import "../interfaces/IOnchainMadnessFactory.sol";
  * @title OnchainMadnessEntryFactory
  * @author PerfectPool Team
  * @notice Factory contract for creating and managing OnchainMadnessEntry pools
- * @notice Uses the Clones pattern to deploy minimal proxy contracts for each pool
+ * @dev Uses the Clones pattern to deploy minimal proxy contracts for each pool
  * Features:
  * - Creates and manages entry pools
  * - Handles pool initialization and configuration
@@ -351,6 +351,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             return;
         }
         emit BurnIterationFinished(_gameYear);
+        IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).setLockWithdrawal(false);
         yearToPPSBurned[_gameYear] = true;
     }
 
@@ -360,9 +361,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @return True if the prize can be dismissed, false otherwise
      */
     function needsToBeDismissed(uint256 _gameYear) public view returns (bool) {
+        // (uint256 currentYear,,) = OnchainMadnessLib.getCurrentDate();
         // return
-        //     IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
-        //         .getCurrentYear() > _gameYear; //production
+        //     currentYear > _gameYear; //production
         return true; // for testing
     }
 

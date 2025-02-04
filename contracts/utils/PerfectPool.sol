@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "../libraries/OnchainMadnessLib.sol";
 
 interface IGamesFactory {
     function isFinished(uint256 year) external view returns (bool);
@@ -149,10 +150,9 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      */
     function withdraw(uint256 amount) external nonReentrant {
         require(
-            isAbleToWithdraw(),
-            "Withdrawals are locked until this year's game is finished."
+            isAbleToWithdraw() && !lockWithdrawal,
+            "Withdrawals are locked for the moment."
         );
-        require(!lockWithdrawal, "Withdrawals are locked");
         require(amount > 0, "Amount must be greater than 0");
         require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
@@ -236,6 +236,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             "USDC transfer failed"
         );
 
+        lockWithdrawal = true;
+
         emit PerfectPrizeAwarded(_gameContract, prizeAmount);
     }
 
@@ -281,11 +283,10 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param minter Address to modify permissions for
      * @param authorized True to grant minting permission, false to revoke
      */
-    function setAuthorizedMinter(address minter, bool authorized) external {
-        require(
-            msg.sender == owner() || onchainMadnessContracts[msg.sender],
-            "Not authorized"
-        );
+    function setAuthorizedMinter(
+        address minter,
+        bool authorized
+    ) external onlyGameContract {
         authorizedMinters[minter] = authorized;
     }
 
@@ -299,10 +300,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         address contractAddress,
         bool authorized
     ) external {
-        require(
-            msg.sender == owner() || onchainMadnessContracts[msg.sender],
-            "Not authorized"
-        );
+        require(onchainMadnessContracts[msg.sender], "Not authorized");
         onchainMadnessContracts[contractAddress] = authorized;
     }
 
@@ -319,24 +317,9 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * If the game of the current year is finished, any user can burn tokens.
      */
     function isAbleToWithdraw() public view returns (bool) {
-        if (gameFactory.isFinished(getCurrentYear())) return true;
+        (uint256 year, uint256 month, uint256 day) = OnchainMadnessLib.getCurrentDate();
+        if (gameFactory.isFinished(year) || (month < 3 && day < 29))
+            return true;
         return false;
-    }
-
-    /**
-     * @notice Get the current year
-     * @dev Uses timestamp to calculate current year, optimized for gas
-     * @return year The current year (e.g., 2024)
-     */
-    function getCurrentYear() public view returns (uint256 year) {
-        unchecked {
-            uint256 timestamp = block.timestamp;
-            uint256 z = timestamp / 86400 + 719468;
-            uint256 era = z / 146097;
-            uint256 doe = z - era * 146097;
-            uint256 yoe = (doe - doe / 1460 + doe / 36524 - doe / 146096) / 365;
-
-            year = yoe + era * 400 + 1;
-        }
     }
 }

@@ -62,7 +62,7 @@ interface IPerfectPool {
 
     function burnTokens(uint256 amount) external;
 
-    function getCurrentYear() external view returns (uint256 year);
+    function setLockWithdrawal(bool _lockWithdrawal) external;
 }
 
 interface IOnchainMadnessEntryFactory {
@@ -110,6 +110,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     IERC20 private immutable USDC;
     /// @dev Reference to the entry storage contract
     IEntryStorage public entryStorage;
+
+    /// @dev Mapping to track if the pot was dismissed for a specific year
+    mapping(uint256 => bool) public yearToPotDismissed;
 
     /** MODIFIERS **/
     /**
@@ -294,6 +297,12 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         );
         require(status == 3, "Game not finished.");
 
+        uint256 amountPPS = entryStorage.getPpShare(poolId, _player);
+        if(amountPPS > 0) {
+            entryStorage.setPpShare(poolId, _player, 0);
+            perfectPool.transfer(_player, amountPPS);
+        }
+
         (, uint8 tokenScore) = betValidator(_tokenId);
         require(maxScore == tokenScore, "You are not a winner");
 
@@ -466,9 +475,10 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
-        if (perfectPool.getCurrentYear() != _gameYear) {
+        if(yearToPotDismissed[_gameYear] == true) {
             return (0, 0);
         }
+
         (, uint8 score) = betValidator(_tokenId);
         (uint256 pot, uint8 maxScore, , bool claimEnabled) = entryStorage
             .getGame(poolId, _gameYear);
@@ -556,5 +566,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             address(perfectPool),
             USDC.balanceOf(address(this))
         );
+
+        yearToPotDismissed[currentGameYear] = true;
     }
 }
