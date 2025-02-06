@@ -16,6 +16,8 @@ async function main() {
     address: address,
     constructorArguments: [
       contracts[networkName]["USDC"],
+      contracts[networkName]["aUSDC"],
+      contracts[networkName]["LendingPool"],
       "PerfectPoolShare",
       "PPS",
       contracts[networkName]["OM_ENTRY_DEPLOYER"],

@@ -27,6 +27,8 @@ async function main() {
     });
     const perfectPool = await PerfectPool.deploy(
       networkData.USDC,
+      networkData.aUSDC,
+      networkData.LendingPool,
       "PerfectPoolShare",
       "PPS",
       networkData.OM_ENTRY_DEPLOYER,

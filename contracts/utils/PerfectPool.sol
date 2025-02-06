@@ -11,6 +11,21 @@ interface IGamesFactory {
     function isFinished(uint256 year) external view returns (bool);
 }
 
+interface ILendingPool {
+    function deposit(
+        address asset,
+        uint256 amount,
+        address onBehalfOf,
+        uint16 referralCode
+    ) external;
+
+    function withdraw(
+        address asset,
+        uint256 amount,
+        address to
+    ) external returns (uint256);
+}
+
 /**
  * @title PerfectPool
  * @author PerfectPool Team
@@ -31,6 +46,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     uint256 public constant INITIAL_TOKEN_PER_USDC = 20;
     /// @dev The USDC token contract used for deposits and withdrawals
     IERC20 public immutable USDC;
+    IERC20 public immutable aUSDC;
+    ILendingPool public immutable lendingPool;
 
     /// @dev Controls whether minting requires authorization
     bool public lockPermit;
@@ -40,6 +57,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     bool public lockMint;
     /// @dev When true, permanently disables all token minting
     bool public definitiveLockMint;
+    /// @dev When true, USDC is deposited into aUSDC
+    bool public aUSDCDeposit;
     /// @dev The Game Factory contract
     IGamesFactory public gameFactory;
 
@@ -63,6 +82,14 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     event PerfectPrizeAwarded(address winner, uint256 amount);
     /// @dev Emitted when the number of winners for a year increases
     event WinnersQtyIncreased(uint256 year, uint256 qty);
+    /// @dev Emitted when USDC is transferred to aUSDC
+    event aUSDCDeposited(address indexed token, uint256 amount);
+    /// @dev Emitted when USDC is transferred from aUSDC
+    event aUSDCWithdrawn(
+        address indexed token,
+        address indexed to,
+        uint256 amount
+    );
 
     /** MODIFIERS **/
     modifier onlyGameContract() {
@@ -76,6 +103,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     /**
      * @dev Initializes the PerfectPool token with USDC integration
      * @param _usdc Address of the USDC token contract
+     * @param _aUSDC Address of the aUSDC token contract
+     * @param _lendingPool Address of the Lending Pool contract
      * @param name Name of the ERC20 token
      * @param symbol Symbol of the ERC20 token
      * @param _gameContract Address of the Onchain Madness game contract
@@ -83,6 +112,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      */
     constructor(
         address _usdc,
+        address _aUSDC,
+        address _lendingPool,
         string memory name,
         string memory symbol,
         address _gameContract,
@@ -93,6 +124,64 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         onchainMadnessContracts[_gameContract] = true;
         onchainMadnessContracts[_gameFactory] = true;
         gameFactory = IGamesFactory(_gameFactory);
+
+        aUSDC = IERC20(_aUSDC);
+        lendingPool = ILendingPool(_lendingPool);
+    }
+
+    /**
+     * @notice Shows the USDC added to aUSDC balance
+     * @return The balance of the USDC/aUSDC token contract
+     */
+    function dollarBalance() public view returns (uint256) {
+        return USDC.balanceOf(address(this)) + aUSDC.balanceOf(address(this));
+    }
+
+    /**
+     * @notice Deposits tokens from the contract's balance into AAVE lending pool
+     * @dev Uses the contract's own token balance for deposit
+     */
+    function depositToAave() external nonReentrant onlyOwner {
+        uint256 amount = USDC.balanceOf(address(this));
+        require(amount > 0, "Amount must be greater than 0");
+
+        _depositToAave(amount);
+    }
+
+    /**
+     * @dev Internal function to handle AAVE deposits
+     * @param amount Amount of USDC to deposit into AAVE
+     */
+    function _depositToAave(uint256 amount) internal {
+        USDC.approve(address(lendingPool), amount);
+        lendingPool.deposit(address(USDC), amount, address(this), 0);
+
+        aUSDCDeposit = true;
+
+        emit aUSDCDeposited(address(USDC), amount);
+    }
+
+    /**
+     * @notice Withdraws tokens from AAVE lending pool to this contract
+     * @dev Uses the contract's own aUSDC balance for withdrawal
+     * @param amount Amount of aUSDC to withdraw
+     */
+    function _withdrawFromAave(uint256 amount) internal nonReentrant {
+        aUSDC.approve(address(lendingPool), amount);
+        lendingPool.withdraw(address(aUSDC), amount, address(this));
+
+        emit aUSDCWithdrawn(address(aUSDC), address(this), amount);
+    }
+
+    /**
+     * @notice Withdraws all aUSDC tokens from AAVE lending pool to this contract
+     */
+    function withdrawAllFromAave() external nonReentrant onlyOwner {
+        uint256 amount = aUSDC.balanceOf(address(this));
+        require(amount > 0, "Amount must be greater than 0");
+
+        _withdrawFromAave(amount);
+        aUSDCDeposit = false;
     }
 
     /**
@@ -139,6 +228,10 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             _mint(receivers[i], receiverAmount);
         }
 
+        if (aUSDCDeposit) {
+            _depositToAave(amountUSDC);
+        }
+
         emit PoolIncreased(amountUSDC, tokensToMint);
     }
 
@@ -156,8 +249,14 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         require(amount > 0, "Amount must be greater than 0");
         require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
-        uint256 usdcAmount = (amount * USDC.balanceOf(address(this))) /
-            totalSupply();
+        uint256 usdcAmount = (amount * dollarBalance()) / totalSupply();
+
+        if (aUSDCDeposit) {
+            //check if the is enough USDC to withdraw, if not withdraw the rest from aUSDC
+            if (USDC.balanceOf(address(this)) < usdcAmount) {
+                _withdrawFromAave(usdcAmount - USDC.balanceOf(address(this)));
+            }
+        }
 
         _burn(msg.sender, amount);
         require(USDC.transfer(msg.sender, usdcAmount), "USDC transfer failed");
@@ -221,14 +320,21 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
 
         // if the prize has not been claimed yet
         if (yearToPrize[year] == 0) {
-            yearToPrize[year] = USDC.balanceOf(address(this));
+            yearToPrize[year] = dollarBalance();
         }
 
         uint256 prizeAmount = yearToPrize[year] / yearToWinnersQty[year];
 
         // if there is not enough USDC in the contract
-        if (USDC.balanceOf(address(this)) < prizeAmount) {
-            prizeAmount = USDC.balanceOf(address(this));
+        if (dollarBalance() < prizeAmount) {
+            prizeAmount = dollarBalance();
+        }
+
+        if (aUSDCDeposit) {
+            //check if the is enough USDC to withdraw, if not withdraw the rest from aUSDC
+            if (USDC.balanceOf(address(this)) < prizeAmount) {
+                _withdrawFromAave(prizeAmount - USDC.balanceOf(address(this)));
+            }
         }
 
         require(
@@ -309,7 +415,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @return The current token value in USDC
      */
     function getTokenValue() public view returns (uint256) {
-        return USDC.balanceOf(address(this)) / totalSupply();
+        return dollarBalance() / totalSupply();
     }
 
     /**
@@ -317,7 +423,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * If the game of the current year is finished, any user can burn tokens.
      */
     function isAbleToWithdraw() public view returns (bool) {
-        (uint256 year, uint256 month, uint256 day) = OnchainMadnessLib.getCurrentDate();
+        (uint256 year, uint256 month, uint256 day) = OnchainMadnessLib
+            .getCurrentDate();
         if (gameFactory.isFinished(year) || (month < 3 && day < 29))
             return true;
         return false;
