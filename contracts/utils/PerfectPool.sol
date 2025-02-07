@@ -59,6 +59,10 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     bool public definitiveLockMint;
     /// @dev When true, USDC is deposited into aUSDC
     bool public aUSDCDeposit;
+    /// @dev The month to block withdrawal
+    uint256 public withdrawalMonth;
+    /// @dev The day to block withdrawal
+    uint256 public withdrawalDay;
     /// @dev The Game Factory contract
     IGamesFactory public gameFactory;
 
@@ -425,8 +429,20 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     function isAbleToWithdraw() public view returns (bool) {
         (uint256 year, uint256 month, uint256 day) = OnchainMadnessLib
             .getCurrentDate();
-        if (gameFactory.isFinished(year) || (month < 3 && day < 29))
-            return true;
+        if (
+            gameFactory.isFinished(year) ||
+            (month <= withdrawalMonth && day <= withdrawalDay)
+        ) return true;
         return false;
+    }
+
+    /**
+     * @notice Set date to block withdrawal
+     * @param month Month to block withdrawal
+     * @param day Day to block withdrawal
+     */
+    function setWithdrawalDate(uint256 month, uint256 day) external onlyOwner {
+        withdrawalMonth = month;
+        withdrawalDay = day;
     }
 }

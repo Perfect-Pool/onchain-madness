@@ -16,6 +16,46 @@ async function main() {
     `OnchainMadnessFactory loaded at ${OnchainMadnessFactory.address}`
   );
 
+  let fakeLending;
+
+  // Deploy FakeLending and get aUSDC address if needed
+  if (networkData.LendingPool === "") {
+    console.log("Deploying FakeLending contract...");
+    const FakeLending = await ethers.getContractFactory("FakeLending");
+    fakeLending = await FakeLending.deploy(networkData.USDC);
+    await fakeLending.deployed();
+    console.log(`FakeLending deployed at ${fakeLending.address}`);
+
+    // Get aUSDC address from the FakeLending contract
+    const aUSDCAddress = await fakeLending.aUSDC();
+    console.log(`aUSDC token deployed at ${aUSDCAddress}`);
+
+    // Update the network data
+    networkData.LendingPool = fakeLending.address;
+    networkData.aUSDC = aUSDCAddress;
+    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
+    
+    // Wait a bit for the network to sync
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  } else {
+    console.log(`LendingPool already deployed at ${networkData.LendingPool}`);
+    fakeLending = await ethers.getContractAt("FakeLending", networkData.LendingPool);
+  }
+
+  // Get aUSDC address if needed
+  if (networkData.aUSDC === "") {
+    // Get aUSDC address from the FakeLending contract
+    const aUSDCAddress = await fakeLending.aUSDC();
+    console.log(`aUSDC token deployed at ${aUSDCAddress}`);
+
+    // Update the network data
+    networkData.aUSDC = aUSDCAddress;
+    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
+    
+    // Wait a bit for the network to sync
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
   console.log(`Executor Address: ${networkData.Executor}`);
   const name = "PERFECTPOOL";
   if (networkData.PERFECTPOOL === "") {
