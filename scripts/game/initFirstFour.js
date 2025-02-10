@@ -34,7 +34,7 @@ async function decodeFirstFourMatch(matchBytes) {
 
 async function main() {
   // Get contract data
-  const variablesPath = path.join(__dirname, "..", "contracts.json");
+  const variablesPath = path.join(__dirname, "..", "..", "contracts.json");
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
