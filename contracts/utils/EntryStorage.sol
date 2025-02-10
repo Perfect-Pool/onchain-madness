@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
+import "../libraries/OnchainMadnessLib.sol";
+
 /**
  * @title IOnchainMadnessEntryFactory
  * @dev Interface for validating entry factory contracts
@@ -51,6 +53,7 @@ contract EntryStorage {
         mapping(uint256 => uint256) scoreBetQty;
         uint256[] tokens;
         uint256 tokensIterationIndex;
+        mapping(address => uint256) ppShare;
     }
 
     /**
@@ -66,7 +69,6 @@ contract EntryStorage {
         mapping(uint256 => uint256) tokenToGameYear;
         mapping(uint256 => uint8[63]) nftBet;
         mapping(uint256 => uint256) tokenClaimed;
-        mapping(address => uint256) ppShare;
     }
 
     /// @dev Mapping of pool ID to its storage data
@@ -152,12 +154,7 @@ contract EntryStorage {
         )
     {
         Game storage game = pools[poolId].games[gameYear];
-        return (
-            game.pot,
-            game.maxScore,
-            game.potClaimed,
-            game.claimEnabled
-        );
+        return (game.pot, game.maxScore, game.potClaimed, game.claimEnabled);
     }
 
     /**
@@ -211,10 +208,11 @@ contract EntryStorage {
         uint256 price;
 
         // Update shares
-        pools[poolId].ppShare[
+        pools[poolId].games[gameYear].ppShare[
             gameDeployer.contracts("TREASURY")
         ] += treasuryShare;
-        pools[poolId].ppShare[recipient] += (shareAmount - treasuryShare);
+        pools[poolId].games[gameYear].ppShare[recipient] += (shareAmount -
+            treasuryShare);
         (price, pools[poolId].nftBet[tokenId]) = abi.decode(
             dataUpdate,
             (uint256, uint8[63])
@@ -308,26 +306,32 @@ contract EntryStorage {
      * @param poolId The pool identifier
      * @param user Address to set share for
      * @param amount Share amount to set
+     * @param gameYear The game year
      */
     function setPpShare(
         uint256 poolId,
         address user,
-        uint256 amount
+        uint256 amount,
+        uint256 gameYear
     ) external onlyEntryContract {
-        pools[poolId].ppShare[user] = amount;
+        pools[poolId].games[gameYear].ppShare[user] = amount;
     }
 
     /**
      * @notice Retrieves Perfect Pool share for an address
      * @param poolId The pool identifier
      * @param user Address to query
+     * @param gameYear The game year
      * @return Share amount for the address
      */
     function getPpShare(
         uint256 poolId,
-        address user
+        address user,
+        uint256 gameYear
     ) external view returns (uint256) {
-        return pools[poolId].ppShare[user];
+        (uint256 currentYear, , ) = OnchainMadnessLib.getCurrentDate();
+        if (currentYear != gameYear) return 0;
+        return pools[poolId].games[gameYear].ppShare[user];
     }
 
     /**

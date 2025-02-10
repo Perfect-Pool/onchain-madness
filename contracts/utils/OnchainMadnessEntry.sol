@@ -49,9 +49,9 @@ interface IPerfectPool {
         uint256 amount
     ) external returns (bool);
 
-    function perfectPrize(uint256 year, address gameContract) external;
+    function perfectPrize(uint256 year) external;
 
-    function increaseWinnersQty(uint256 year) external;
+    function increaseWinnersQty(uint256 year, address gameContract) external;
 
     function setAuthorizedMinter(address minter, bool authorized) external;
 
@@ -230,6 +230,11 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
 
         _safeMint(_player, _nextTokenId);
         _nextTokenId++;
+        IPerfectPool(
+            IOnchainMadnessFactory(
+                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
+            ).contracts("PERFECTPOOL")
+        ).setLockWithdrawal(false);
         return _nextTokenId - 1;
     }
 
@@ -256,7 +261,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         entryStorage.updateScore(poolId, _gameYear, score);
 
         if (score == 63) {
-            perfectPool.increaseWinnersQty(_gameYear);
+            perfectPool.increaseWinnersQty(_gameYear, address(this));
         }
 
         return (true, score);
@@ -297,9 +302,9 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         );
         require(status == 3, "Game not finished.");
 
-        uint256 amountPPS = entryStorage.getPpShare(poolId, _player);
-        if(amountPPS > 0) {
-            entryStorage.setPpShare(poolId, _player, 0);
+        uint256 amountPPS = entryStorage.getPpShare(poolId, _player, _gameYear);
+        if (amountPPS > 0) {
+            entryStorage.setPpShare(poolId, _player, 0, _gameYear);
             perfectPool.transfer(_player, amountPPS);
         }
 
@@ -329,19 +334,15 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @notice Claims PerfectPool tokens earned from shares
      * @dev Transfers accumulated PP tokens to the player
      * @param _player Address to receive the tokens
+     * @param _gameYear Tournament year to check
      */
-    function claimPPShare(address _player) external onlyNftDeployer {
-        (, uint8 status) = abi.decode(
-            IOnchainMadnessFactory(
-                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
-            ).getGameStatus(currentGameYear),
-            (uint8, uint8)
-        );
-        require(status == 3, "Game not finished.");
-
-        uint256 amount = entryStorage.getPpShare(poolId, _player);
+    function claimPPShare(
+        address _player,
+        uint256 _gameYear
+    ) external onlyNftDeployer {
+        uint256 amount = entryStorage.getPpShare(poolId, _player, _gameYear);
         require(amount > 0, "No ppShare tokens to claim.");
-        entryStorage.setPpShare(poolId, _player, 0);
+        entryStorage.setPpShare(poolId, _player, 0, _gameYear);
         perfectPool.transfer(_player, amount);
     }
 
@@ -349,10 +350,14 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @notice Verifies the shares for a player
      * @dev Checks the amount of PP tokens available for the player to claim
      * @param _player Address to check
+     * @param _gameYear Tournament year to check
      * @return Amount of PP tokens available for the player
      */
-    function getPPShare(address _player) public view returns (uint256) {
-        return entryStorage.getPpShare(poolId, _player);
+    function getPPShare(
+        address _player,
+        uint256 _gameYear
+    ) public view returns (uint256) {
+        return entryStorage.getPpShare(poolId, _player, _gameYear);
     }
 
     /**
@@ -475,7 +480,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _tokenId
     ) public view returns (uint256 amountToClaim, uint256 amountClaimed) {
         uint256 _gameYear = entryStorage.getTokenGameYear(poolId, _tokenId);
-        if(yearToPotDismissed[_gameYear] == true) {
+        if (yearToPotDismissed[_gameYear] == true) {
             return (0, 0);
         }
 

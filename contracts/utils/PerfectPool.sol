@@ -63,6 +63,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     uint256 public withdrawalMonth;
     /// @dev The day to block withdrawal
     uint256 public withdrawalDay;
+    /// @dev Addresses of winner pools
+    address[] public winnerPools;
     /// @dev The Game Factory contract
     IGamesFactory public gameFactory;
 
@@ -70,8 +72,6 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     mapping(address => bool) public authorizedMinters;
     /// @dev Addresses of authorized Onchain Madness game contracts
     mapping(address => bool) public onchainMadnessContracts;
-    /// @dev Number of winners per tournament year
-    mapping(uint256 => uint256) public yearToWinnersQty;
     /// @dev Total prize amount per tournament year
     mapping(uint256 => uint256) public yearToPrize;
 
@@ -83,7 +83,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     /// @dev Emitted when USDC is withdrawn by burning tokens
     event USDCWithdrawn(address indexed user, uint256 amount);
     /// @dev Emitted when a perfect prize is awarded to a winner
-    event PerfectPrizeAwarded(address winner, uint256 amount);
+    event PerfectPrizeAwarded(address[] winners, uint256 amount);
     /// @dev Emitted when the number of winners for a year increases
     event WinnersQtyIncreased(uint256 year, uint256 qty);
     /// @dev Emitted when USDC is transferred to aUSDC
@@ -131,6 +131,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
 
         aUSDC = IERC20(_aUSDC);
         lendingPool = ILendingPool(_lendingPool);
+        withdrawalMonth = 2;
+        withdrawalDay = 28;
     }
 
     /**
@@ -247,7 +249,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      */
     function withdraw(uint256 amount) external nonReentrant {
         require(
-            isAbleToWithdraw() && !lockWithdrawal,
+            isAbleToWithdraw(),
             "Withdrawals are locked for the moment."
         );
         require(amount > 0, "Amount must be greater than 0");
@@ -286,12 +288,16 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @dev Only callable by authorized Onchain Madness contracts
      * Used to track prize distribution for perfect bracket winners
      * @param year The tournament year to increase winners for
+     * @param gameContract The game contract to increase winners for
      */
-    function increaseWinnersQty(uint256 year) external nonReentrant {
+    function increaseWinnersQty(
+        uint256 year,
+        address gameContract
+    ) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
-        yearToWinnersQty[year]++;
+        winnerPools.push(gameContract);
 
-        emit WinnersQtyIncreased(year, yearToWinnersQty[year]);
+        emit WinnersQtyIncreased(year, winnerPools.length);
     }
 
     /**
@@ -303,7 +309,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     function resetData(uint256 year) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
 
-        yearToWinnersQty[year] = 0;
+        winnerPools = new address[](0);
         yearToPrize[year] = 0;
     }
 
@@ -313,42 +319,37 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * Prize amount is either the total USDC balance when first claimed
      * or the remaining balance if insufficient funds
      * @param year The tournament year for prize distribution
-     * @param _gameContract The Onchain Madness contract to receive the prize
      */
-    function perfectPrize(
-        uint256 year,
-        address _gameContract
-    ) external nonReentrant {
+    function perfectPrize(uint256 year) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
-        require(yearToWinnersQty[year] > 0, "No winners");
+        if (winnerPools.length == 0) return;
 
         // if the prize has not been claimed yet
         if (yearToPrize[year] == 0) {
             yearToPrize[year] = dollarBalance();
         }
 
-        uint256 prizeAmount = yearToPrize[year] / yearToWinnersQty[year];
-
-        // if there is not enough USDC in the contract
-        if (dollarBalance() < prizeAmount) {
-            prizeAmount = dollarBalance();
-        }
+        uint256 prizeAmount = yearToPrize[year] / winnerPools.length;
+        address[] memory gameContracts = winnerPools;
 
         if (aUSDCDeposit) {
-            //check if the is enough USDC to withdraw, if not withdraw the rest from aUSDC
-            if (USDC.balanceOf(address(this)) < prizeAmount) {
-                _withdrawFromAave(prizeAmount - USDC.balanceOf(address(this)));
-            }
+            _withdrawFromAave(aUSDC.balanceOf(address(this)));
         }
 
-        require(
-            USDC.transfer(_gameContract, prizeAmount),
-            "USDC transfer failed"
-        );
+        for (uint256 i = 0; i < gameContracts.length; i++) {
+            // to avoid overflows
+            if (dollarBalance() < prizeAmount) {
+                prizeAmount = dollarBalance();
+            }
 
-        lockWithdrawal = true;
+            require(
+                USDC.transfer(gameContracts[i], prizeAmount),
+                "USDC transfer failed"
+            );
+        }
+        winnerPools = new address[](0);
 
-        emit PerfectPrizeAwarded(_gameContract, prizeAmount);
+        emit PerfectPrizeAwarded(gameContracts, yearToPrize[year]);
     }
 
     /**
@@ -430,8 +431,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         (uint256 year, uint256 month, uint256 day) = OnchainMadnessLib
             .getCurrentDate();
         if (
-            gameFactory.isFinished(year) ||
-            (month <= withdrawalMonth && day <= withdrawalDay)
+            (gameFactory.isFinished(year) ||
+            (month <= withdrawalMonth && day <= withdrawalDay)) && !lockWithdrawal
         ) return true;
         return false;
     }

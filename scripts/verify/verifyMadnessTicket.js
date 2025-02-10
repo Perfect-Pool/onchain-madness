@@ -33,6 +33,9 @@ async function main() {
     address: addressEntryStorage,
     constructorArguments: [contracts[networkName].OM_DEPLOYER],
     contract: "contracts/utils/EntryStorage.sol:EntryStorage",
+    libraries: {
+      OnchainMadnessLib: contracts[networkName].Libraries.OnchainMadnessLib,
+    },
   });
 
   const addressBetCheck = contracts[networkName].BET_CHECK;

@@ -55,7 +55,11 @@ async function main() {
   const nameStorage = "OM_ENTRY_STORAGE";
 
   if (networkData.OM_ENTRY_STORAGE === "") {
-    const EntryStorage = await ethers.getContractFactory("EntryStorage");
+    const EntryStorage = await ethers.getContractFactory("EntryStorage", {
+      libraries: {
+        OnchainMadnessLib: libraryAddress,
+      },
+    });
     const entryStorage = await EntryStorage.deploy(networkData.OM_DEPLOYER);
     await entryStorage.deployed();
     console.log(`EntryStorage deployed at ${entryStorage.address}`);
@@ -75,7 +79,10 @@ async function main() {
       `EntryStorage already deployed at ${networkData.OM_ENTRY_STORAGE}`
     );
     console.log(`Setting EntryStorage address to OnchainMadnessFactory...`);
-    await OnchainMadnessFactory.setContract(nameStorage, networkData.OM_ENTRY_STORAGE);
+    await OnchainMadnessFactory.setContract(
+      nameStorage,
+      networkData.OM_ENTRY_STORAGE
+    );
   }
 
   await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -87,12 +94,11 @@ async function main() {
     const OnchainMadnessEntryFactory = await ethers.getContractFactory(
       "OnchainMadnessEntryFactory"
     );
-    const onchainMadnessEntryFactory =
-      await OnchainMadnessEntryFactory.deploy(
-        networkData.OM_ENTRY,
-        networkData.OM_DEPLOYER,
-        networkData.USDC
-      );
+    const onchainMadnessEntryFactory = await OnchainMadnessEntryFactory.deploy(
+      networkData.OM_ENTRY,
+      networkData.OM_DEPLOYER,
+      networkData.USDC
+    );
     await onchainMadnessEntryFactory.deployed();
     console.log(
       `OnchainMadnessEntryFactory deployed at ${onchainMadnessEntryFactory.address}`

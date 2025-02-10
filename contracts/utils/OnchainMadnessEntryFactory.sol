@@ -55,7 +55,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
     /** CONSTANTS **/
     /// @notice Time after tournament to start burning PPS tokens
-    uint256 public constant PPS_BURN_DELAY = 30 days; 
+    uint256 public constant PPS_BURN_DELAY = 30 days;
 
     /** STATE VARIABLES **/
     /// @notice Mapping of pool IDs to pool addresses
@@ -183,12 +183,17 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @notice Wrapper function that calls the corresponding function in the pool contract
      * @param _poolId ID of the pool
      * @param _player Address of the player claiming their share
+     * @param _gameYear Tournament year to check
      */
     function claimPPShare(
         uint256 _poolId,
-        address _player
+        address _player,
+        uint256 _gameYear
     ) public whenNotPaused nonReentrant {
-        OnchainMadnessEntry(getPoolAddress(_poolId)).claimPPShare(_player);
+        OnchainMadnessEntry(getPoolAddress(_poolId)).claimPPShare(
+            _player,
+            _gameYear
+        );
     }
 
     /**
@@ -196,13 +201,19 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @notice Checks the amount of PP tokens available for the player to claim
      * @param _poolId ID of the pool
      * @param _player Address of the player
+     * @param _gameYear Tournament year to check
      * @return Amount of PP tokens available for the player
      */
     function verifyShares(
         uint256 _poolId,
-        address _player
+        address _player,
+        uint256 _gameYear
     ) public view returns (uint256) {
-        return OnchainMadnessEntry(getPoolAddress(_poolId)).getPPShare(_player);
+        return
+            OnchainMadnessEntry(getPoolAddress(_poolId)).getPPShare(
+                _player,
+                _gameYear
+            );
     }
 
     /**
@@ -256,6 +267,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
             yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+            IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).perfectPrize(
+                _gameYear
+            );
             return;
         }
 
@@ -267,6 +281,8 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
                 yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+                IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
+                    .perfectPrize(_gameYear);
                 return;
             }
 
@@ -292,6 +308,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         }
         emit IterationFinished(_gameYear);
         yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+        IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).perfectPrize(
+            _gameYear
+        );
     }
 
     /**
@@ -327,6 +346,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         while (processedIterations < 10) {
             if (pools[_currentPoolId] == address(0)) {
                 emit BurnIterationFinished(_gameYear);
+                if (yearToPPSBurned[_gameYear] == false)
+                    IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
+                        .setLockWithdrawal(false);
                 yearToPPSBurned[_gameYear] = true;
                 return;
             }
@@ -351,7 +373,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             return;
         }
         emit BurnIterationFinished(_gameYear);
-        IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).setLockWithdrawal(false);
+        if (yearToPPSBurned[_gameYear] == false)
+            IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
+                .setLockWithdrawal(false);
         yearToPPSBurned[_gameYear] = true;
     }
 
@@ -676,7 +700,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @param _poolName The name of the pool
      * @return exists Whether the pool name exists
      */
-    function poolNameExists(string calldata _poolName) public view returns (bool) {
+    function poolNameExists(
+        string calldata _poolName
+    ) public view returns (bool) {
         return poolNames[keccak256(bytes(_poolName))];
     }
 
