@@ -330,7 +330,7 @@ contract EntryStorage {
         uint256 gameYear
     ) external view returns (uint256) {
         (uint256 currentYear, , ) = OnchainMadnessLib.getCurrentDate();
-        if (currentYear != gameYear) return 0;
+        // if (currentYear != gameYear) return 0; //production
         return pools[poolId].games[gameYear].ppShare[user];
     }
 

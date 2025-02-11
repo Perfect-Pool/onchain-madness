@@ -5,13 +5,6 @@ import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./OnchainMadness.sol";
 
-/**
- * Interface for OnchainMadnessFactory
- */
-interface IOnchainMadnessEntryFactory {
-    function iterateYearTokens(uint256 _year) external;
-}
-
 interface IPerfectPool {
     function resetData(uint256 year) external;
 }
@@ -388,9 +381,6 @@ contract OnchainMadnessFactory is Ownable {
             homePoints,
             awayPoints
         );
-
-        IOnchainMadnessEntryFactory(contracts("OM_ENTRY_DEPLOYER"))
-            .iterateYearTokens(year);
 
         emit TournamentFinished(year, winner);
     }
