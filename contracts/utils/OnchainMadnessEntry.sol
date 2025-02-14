@@ -234,7 +234,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             IOnchainMadnessFactory(
                 IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
             ).contracts("PERFECTPOOL")
-        ).setLockWithdrawal(false);
+        ).setLockWithdrawal(true);
         return _nextTokenId - 1;
     }
 
