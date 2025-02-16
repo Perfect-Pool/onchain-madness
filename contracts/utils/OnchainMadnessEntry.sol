@@ -6,6 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../interfaces/IOnchainMadnessFactory.sol";
 import "../interfaces/IEntryStorage.sol";
 import "../interfaces/IERC20.sol";
+import "../interfaces/IPerfectPool.sol";
 import "../libraries/OnchainMadnessLib.sol";
 
 /**
@@ -29,40 +30,6 @@ interface IBetCheck {
         uint256 year,
         uint8[63] memory bets
     ) external view returns (uint8[63] memory betResults, uint8 points);
-}
-
-/**
- * @title IPerfectPool
- * @dev Interface for interacting with the PerfectPool contract
- */
-interface IPerfectPool {
-    function increasePool(
-        uint256 amountUSDC,
-        uint8[] calldata percentage,
-        address[] calldata receivers
-    ) external;
-
-    function balanceOf(address account) external view returns (uint256);
-
-    function transfer(
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
-
-    function perfectPrize(uint256 year) external;
-
-    function increaseWinnersQty(uint256 year, address gameContract) external;
-
-    function setAuthorizedMinter(address minter, bool authorized) external;
-
-    function setOnchainMadnessContract(
-        address contractAddress,
-        bool authorized
-    ) external;
-
-    function burnTokens(uint256 amount) external;
-
-    function setLockWithdrawal(bool _lockWithdrawal) external;
 }
 
 interface IOnchainMadnessEntryFactory {
@@ -212,7 +179,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         percentages[0] = 100;
 
         address[] memory recipients = new address[](1);
-        recipients[0] = address(this);
+        recipients[0] = nftDeployer;
 
         uint256 shareAmount = price / 10;
 
@@ -302,12 +269,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         );
         require(status == 3, "Game not finished.");
 
-        uint256 amountPPS = entryStorage.getPpShare(poolId, _player, _gameYear);
-        if (amountPPS > 0) {
-            entryStorage.setPpShare(poolId, _player, 0, _gameYear);
-            perfectPool.transfer(_player, amountPPS);
-        }
-
         (, uint8 tokenScore) = betValidator(_tokenId);
         require(maxScore == tokenScore, "You are not a winner");
 
@@ -328,36 +289,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         } else {
             USDC.transfer(_player, amount);
         }
-    }
-
-    /**
-     * @notice Claims PerfectPool tokens earned from shares
-     * @dev Transfers accumulated PP tokens to the player
-     * @param _player Address to receive the tokens
-     * @param _gameYear Tournament year to check
-     */
-    function claimPPShare(
-        address _player,
-        uint256 _gameYear
-    ) external onlyNftDeployer {
-        uint256 amount = entryStorage.getPpShare(poolId, _player, _gameYear);
-        require(amount > 0, "No ppShare tokens to claim.");
-        entryStorage.setPpShare(poolId, _player, 0, _gameYear);
-        perfectPool.transfer(_player, amount);
-    }
-
-    /**
-     * @notice Verifies the shares for a player
-     * @dev Checks the amount of PP tokens available for the player to claim
-     * @param _player Address to check
-     * @param _gameYear Tournament year to check
-     * @return Amount of PP tokens available for the player
-     */
-    function getPPShare(
-        address _player,
-        uint256 _gameYear
-    ) public view returns (uint256) {
-        return entryStorage.getPpShare(poolId, _player, _gameYear);
     }
 
     /**
@@ -554,13 +485,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 _gameYear
     ) external view returns (bool) {
         return entryStorage.hasMoreTokens(poolId, _gameYear);
-    }
-
-    /**
-     * @notice Function to burn all non-claimed PPS tokens.
-     */
-    function burnPPSTokens() public onlyNftDeployer nonReentrant {
-        perfectPool.burnTokens(perfectPool.balanceOf(address(this)));
     }
 
     /**

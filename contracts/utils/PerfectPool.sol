@@ -248,10 +248,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param amount Number of tokens to burn for USDC withdrawal
      */
     function withdraw(uint256 amount) external nonReentrant {
-        require(
-            isAbleToWithdraw(),
-            "Withdrawals are locked for the moment."
-        );
+        require(isAbleToWithdraw(), "Withdrawals are locked for the moment.");
         require(amount > 0, "Amount must be greater than 0");
         require(balanceOf(msg.sender) >= amount, "Insufficient balance");
 
@@ -432,7 +429,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             .getCurrentDate();
         if (
             (gameFactory.isFinished(year) ||
-            (month <= withdrawalMonth && day <= withdrawalDay)) && !lockWithdrawal
+                (month <= withdrawalMonth && day <= withdrawalDay)) &&
+            !lockWithdrawal
         ) return true;
         return false;
     }

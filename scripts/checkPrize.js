@@ -53,7 +53,7 @@ async function main() {
       const [, points] = await factory.betValidator(POOL, n);
       console.log(`Points: ${points}`);
       const [toClaim, claimed] = await factory.amountPrizeClaimed(POOL, n);
-      const shares = await factory.verifyShares(POOL, wallet.address, YEAR);
+      const shares = await factory.verifyShares(wallet.address, YEAR);
       console.log(`Shares: ${shares}`);
       console.log(`To Claim: ${toClaim}`);
       console.log(`Claimed: ${claimed}`);

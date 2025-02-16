@@ -34,7 +34,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     /// @notice Emitted when a the burn iteration needs to be continued
     event ContinueBurnIteration(uint256 indexed year);
     /// @notice Emitted when a the burn iteration is completed for a year
-    event BurnIterationFinished(uint256 indexed year);
+    event BurnFinished(uint256 indexed year);
     /// @notice Emitted when a the dismiss iteration needs to be continued
     event ContinueDismissIteration(uint256 indexed year);
     /// @notice Emitted when a the dismiss iteration is completed for a year
@@ -179,41 +179,39 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Claims the PP share tokens for a player
-     * @notice Wrapper function that calls the corresponding function in the pool contract
-     * @param _poolId ID of the pool
-     * @param _player Address of the player claiming their share
+     * @notice Claims PerfectPool tokens earned from shares
+     * @dev Transfers accumulated PP tokens to the player
+     * @param _player Address to receive the tokens
      * @param _gameYear Tournament year to check
      */
-    function claimPPShare(
-        uint256 _poolId,
-        address _player,
-        uint256 _gameYear
-    ) public whenNotPaused nonReentrant {
-        OnchainMadnessEntry(getPoolAddress(_poolId)).claimPPShare(
+    function claimPPShare(address _player, uint256 _gameYear) external {
+        IEntryStorage entryStorage = IEntryStorage(
+            IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE"))
+        );
+        uint256 amount = entryStorage.getPpShare(_player, _gameYear);
+        require(amount > 0, "No ppShare tokens to claim.");
+        entryStorage.resetPpShare(_player, _gameYear);
+        IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).transfer(
             _player,
-            _gameYear
+            amount
         );
     }
 
     /**
      * @notice Verifies the shares for a player
-     * @notice Checks the amount of PP tokens available for the player to claim
-     * @param _poolId ID of the pool
-     * @param _player Address of the player
+     * @dev Checks the amount of PP tokens available for the player to claim
+     * @param _player Address to check
      * @param _gameYear Tournament year to check
      * @return Amount of PP tokens available for the player
      */
     function verifyShares(
-        uint256 _poolId,
         address _player,
         uint256 _gameYear
     ) public view returns (uint256) {
         return
-            OnchainMadnessEntry(getPoolAddress(_poolId)).getPPShare(
-                _player,
-                _gameYear
-            );
+            IEntryStorage(
+                IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE"))
+            ).getPpShare(_player, _gameYear);
     }
 
     /**
@@ -263,14 +261,18 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         require(status == 3, "Game not finished.");
 
         uint256 _currentPoolId = yearToPoolIdIteration[_gameYear];
+        IPerfectPool perfectPool = IPerfectPool(
+            gameDeployer.contracts("PERFECTPOOL")
+        );
 
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
             yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
-            IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
-                .setLockWithdrawal(true);
+            if (!perfectPool.lockWithdrawal()) {
+                perfectPool.setLockWithdrawal(true);
+            }
             return;
-        }
+        }   
 
         uint256 processedIterations = 0;
         bool hasMoreTokens = false;
@@ -280,8 +282,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
                 yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
-                IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
-                    .setLockWithdrawal(true);
+                if (!perfectPool.lockWithdrawal()) {
+                    perfectPool.setLockWithdrawal(true);
+                }
                 return;
             }
 
@@ -307,9 +310,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         }
         emit IterationFinished(_gameYear);
         yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
-        IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).setLockWithdrawal(
-            true
-        );
+        if (!perfectPool.lockWithdrawal()) {
+            perfectPool.setLockWithdrawal(true);
+        }
     }
 
     /**
@@ -331,7 +334,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * If burn date is still 0, denies the burn.
      * @param _gameYear The year to iterate
      */
-    function iterateBurnYearTokens(
+    function burnYearTokens(
         uint256 _gameYear
     ) public whenNotPaused nonReentrant {
         require(
@@ -339,43 +342,15 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             "The claim period has not ended yet."
         );
 
-        uint256 _currentPoolId = yearToPoolIdBurnIteration[_gameYear];
-        uint256 processedIterations = 0;
-
-        while (processedIterations < 10) {
-            if (pools[_currentPoolId] == address(0)) {
-                emit BurnIterationFinished(_gameYear);
-                if (yearToPPSBurned[_gameYear] == false)
-                    IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
-                        .setLockWithdrawal(false);
-                yearToPPSBurned[_gameYear] = true;
-                return;
-            }
-
-            OnchainMadnessEntry pool = OnchainMadnessEntry(
-                pools[_currentPoolId]
-            );
-            pool.burnPPSTokens();
-            _currentPoolId++;
-            processedIterations++;
+        IPerfectPool perfectPool = IPerfectPool(
+            gameDeployer.contracts("PERFECTPOOL")
+        );
+        if (yearToPPSBurned[_gameYear] == false) {
+            perfectPool.burnTokens(perfectPool.balanceOf(address(this)));
+            emit BurnFinished(_gameYear);
+            perfectPool.setLockWithdrawal(false);
+            yearToPPSBurned[_gameYear] = true;
         }
-
-        // Update the current pool ID for this year's burn iteration
-        yearToPoolIdBurnIteration[_gameYear] = _currentPoolId;
-
-        // Emit appropriate event based on iteration status
-        if (
-            _currentPoolId > currentPoolId &&
-            pools[_currentPoolId] != address(0)
-        ) {
-            emit ContinueBurnIteration(_gameYear);
-            return;
-        }
-        emit BurnIterationFinished(_gameYear);
-        if (yearToPPSBurned[_gameYear] == false)
-            IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
-                .setLockWithdrawal(false);
-        yearToPPSBurned[_gameYear] = true;
     }
 
     /**
@@ -463,7 +438,21 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         uint256 _poolId,
         uint256[] memory _tokenIds
     ) public whenNotPaused nonReentrant {
+        IEntryStorage entryStorage = IEntryStorage(
+            IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE"))
+        );
         for (uint256 i = 0; i < _tokenIds.length; i++) {
+            uint256 gameYear = entryStorage.getTokenGameYear(
+                _poolId,
+                _tokenIds[i]
+            );
+            uint256 amountPPS = entryStorage.getPpShare(msg.sender, gameYear);
+            if (amountPPS > 0) {
+                IPerfectPool(
+                    IPerfectPool(gameDeployer.contracts("PERFECTPOOL"))
+                ).transfer(msg.sender, amountPPS);
+                entryStorage.resetPpShare(msg.sender, gameYear);
+            }
             OnchainMadnessEntry(getPoolAddress(_poolId)).claimPrize(
                 msg.sender,
                 _tokenIds[i]

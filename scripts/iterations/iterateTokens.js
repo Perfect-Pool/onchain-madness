@@ -50,8 +50,6 @@ async function main() {
         console.log(
           "\nEvent 'IterationFinished' found. No more tokens to iterate."
         );
-        const tx = await factory.iterateYearTokens(TOURNAMENT_YEAR);
-        await tx.wait();
         break;
       }
       n++;

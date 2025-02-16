@@ -22,7 +22,7 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - **FinalFourMatchDecided**: Emitted when a final four match is decided
     - `year`: `uint256` - The year of the tournament
     - `gameIndex`: `uint8` - Index of the game in the final four
-    - `winners`: `string` - The winners of the game
+    - `winners`: `string` - The name of the winning team
 - **RoundAdvanced**: Emitted when the tournament advances to the next round
     - `year`: `uint256` - The year of the tournament
     - `round`: `uint8` - The round number advanced to
@@ -221,7 +221,9 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - Arguments:
     - `year`: `uint256` - The year of the tournament
 - Returns: `bytes[4]` - The regions data in bytes format
-- Notes: Region Data (encoded): string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
+- Notes: 
+    - Region Data (encoded): string[16] teams, bytes[8] matchesRound1, bytes[4] matchesRound2, bytes[2] matchesRound3, bytes matchRound4, string winner
+    - Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
 
 ### getFirstFourData
 
@@ -237,7 +239,9 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - Arguments:
     - `year`: `uint256` - The year of the tournament
 - Returns: `bytes` - The Final Four data in bytes format
-- Notes: Final Four Data (encoded): bytes[2] matchesRound1, bytes matchFinal, string winner
+- Notes: 
+    - Final Four Data (encoded): bytes[2] matchesRound1, bytes matchFinal, string winner
+    - Match Data (encoded): string home, string away, uint256 home_points, uint256 away_points, string winner
 
 ### getGameStatus
 
@@ -291,7 +295,7 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - Arguments:
     - `year`: `uint256` - The year of the tournament
     - `_regionName`: `bytes32` - The name of the region
-- Returns: `OnchainMadness.Region` - The data of the region
+- Returns: `OnchainMadness.Region memory` - The data of the region as Region memory
 
 ### getMatch
 
@@ -299,14 +303,14 @@ Factory contract for creating and managing NCAA Tournament bracket games. Uses t
 - Arguments:
     - `year`: `uint256` - The year of the tournament
     - `_matchId`: `uint8` - The ID of the match
-- Returns: `OnchainMadness.Match` - The data of the match
+- Returns: `OnchainMadness.Match memory` - The data of the match as Match memory
 
 ### getFinalFour
 
 - Description: Get the Final Four data
 - Arguments:
     - `year`: `uint256` - The year of the tournament
-- Returns: `OnchainMadness.FinalFour` - The data of the Final Four
+- Returns: `OnchainMadness.FinalFour memory` - The data of the Final Four as FinalFour memory
 
 ### getTeamName
 

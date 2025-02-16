@@ -54,7 +54,6 @@ contract EntryStorage {
         mapping(uint256 => uint256) scoreBetQty;
         uint256[] tokens;
         uint256 tokensIterationIndex;
-        mapping(address => uint256) ppShare;
     }
 
     /**
@@ -74,6 +73,8 @@ contract EntryStorage {
 
     /// @dev Mapping of pool ID to its storage data
     mapping(uint256 => PoolStorage) private pools;
+    /// @dev Mapping of shares per year per player
+    mapping(uint256 => mapping(address => uint256)) private ppShare;
     /// @dev Mapping of pool ID to initialization status
     mapping(uint256 => bool) private initialized;
 
@@ -210,11 +211,8 @@ contract EntryStorage {
         uint256 price;
 
         // Update shares
-        pools[poolId].games[gameYear].ppShare[
-            gameDeployer.contracts("TREASURY")
-        ] += treasuryShare;
-        pools[poolId].games[gameYear].ppShare[recipient] += (share -
-            treasuryShare);
+        ppShare[gameYear][gameDeployer.contracts("TREASURY")] += treasuryShare;
+        ppShare[gameYear][recipient] += (share - treasuryShare);
         (price, pools[poolId].nftBet[tokenId]) = abi.decode(
             dataUpdate,
             (uint256, uint8[63])
@@ -304,36 +302,30 @@ contract EntryStorage {
     }
 
     /**
-     * @notice Sets Perfect Pool share for an address
-     * @param poolId The pool identifier
+     * @notice To set the Perfect Pool share for an address as burned
      * @param user Address to set share for
-     * @param amount Share amount to set
      * @param gameYear The game year
      */
-    function setPpShare(
-        uint256 poolId,
+    function resetPpShare(
         address user,
-        uint256 amount,
         uint256 gameYear
     ) external onlyEntryContract {
-        pools[poolId].games[gameYear].ppShare[user] = amount;
+        ppShare[gameYear][user] = 0;
     }
 
     /**
      * @notice Retrieves Perfect Pool share for an address
-     * @param poolId The pool identifier
      * @param user Address to query
      * @param gameYear The game year
      * @return Share amount for the address
      */
     function getPpShare(
-        uint256 poolId,
         address user,
         uint256 gameYear
     ) external view returns (uint256) {
         (uint256 currentYear, , ) = OnchainMadnessLib.getCurrentDate();
         // if (currentYear != gameYear) return 0; //production
-        return pools[poolId].games[gameYear].ppShare[user];
+        return ppShare[gameYear][user];
     }
 
     /**

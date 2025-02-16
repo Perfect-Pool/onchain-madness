@@ -1,20 +1,20 @@
 # OnchainMadnessEntryFactory
 
-Factory contract for creating and managing OnchainMadnessTicket pools. Uses the Clones pattern to deploy minimal proxy contracts for each pool, providing efficient pool management and ticket operations.
+Factory contract for creating and managing OnchainMadnessEntry pools. Uses the Clones pattern to deploy minimal proxy contracts for each pool, providing efficient pool management and ticket operations.
 
 ## Events
 
 - **EntryPoolCreated**: Emitted when a new entry pool is created
     - `poolId`: `uint256` - ID of the created pool
     - `poolAddress`: `address` - Address of the created pool
-    - `poolName`: `string` - Address of the created pool
-- **ContinueIteration**: Emitted when a new iteration starts for a year
+    - `poolName`: `string` - Name of the created pool
+- **ContinueIteration**: Emitted when the iteration needs to be continued
     - `year`: `uint256` - Tournament year being iterated
 - **IterationFinished**: Emitted when an iteration is completed for a year
     - `year`: `uint256` - Tournament year that finished iteration
 - **ContinueBurnIteration**: Emitted when a burn iteration needs to be continued
     - `year`: `uint256` - Tournament year being iterated
-- **BurnIterationFinished**: Emitted when a burn iteration is completed for a year
+- **BurnFinished**: Emitted when a burn iteration is completed for a year
     - `year`: `uint256` - Tournament year that finished burn iteration
 - **ContinueDismissIteration**: Emitted when a dismiss iteration needs to be continued
     - `year`: `uint256` - Tournament year being iterated
@@ -53,6 +53,10 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - **gameDeployer**: `IOnchainMadnessFactory public` - Reference to the game factory contract
 - **USDC**: `IERC20 public` - Reference to the USDC token contract
 
+## Modifiers
+
+- `onlyAdmin()`: Checks if the caller is the contract owner
+
 ## Functions
 
 ### Constructor
@@ -61,8 +65,15 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Arguments:
     - `_implementation`: `address` - Address of the implementation contract
     - `_gameDeployer`: `address` - Address of the game deployer contract
+    - `_token`: `address` - Address of the USDC token contract
+
+### setGameDeployer
+
+- Description: Sets the game deployer contract
+- Arguments:
+    - `_gameDeployer`: `address` - Address of the game deployer contract
 - Modifiers:
-    - `Ownable`: Initializes ownership
+    - `onlyAdmin`: Only admin can call this function
 
 ### createPool
 
@@ -79,13 +90,18 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 
 ### claimPPShare
 
-- Description: Claims the PP share tokens for a player
+- Description: Claims PerfectPool tokens earned from shares
 - Arguments:
-    - `_poolId`: `uint256` - ID of the pool
-    - `_player`: `address` - Address of the player claiming their share
-- Modifiers:
-    - `whenNotPaused`: Only when contract is not paused
-    - `nonReentrant`: Prevents reentrancy
+    - `_player`: `address` - Address to receive the tokens
+    - `_gameYear`: `uint256` - Tournament year to check
+
+### verifyShares
+
+- Description: Verifies the shares for a player
+- Arguments:
+    - `_player`: `address` - Address to check
+    - `_gameYear`: `uint256` - Tournament year to check
+- Returns: `uint256` - Amount of PP tokens available for the player
 
 ### safeMint
 
@@ -95,7 +111,6 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
     - `_gameYear`: `uint256` - Tournament year
     - `bets`: `uint8[63]` - Array of 63 predictions for the tournament
     - `_pin`: `string` - PIN for private pools
-- Returns: `uint256` - The ID of the newly minted token
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
@@ -104,10 +119,39 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 
 - Description: Iterates through NFTs across all pools for a given year
 - Arguments:
-    - `_year`: `uint256` - The year to iterate
-- Returns:
-    - `success`: `bool` - Whether there are more tokens to process
-    - `score`: `uint8` - Score achieved by the current token
+    - `_gameYear`: `uint256` - The year to iterate
+- Modifiers:
+    - `whenNotPaused`: Only when contract is not paused
+    - `nonReentrant`: Prevents reentrancy
+
+### needsToBeBurned
+
+- Description: Checks if the tokens need to be burned
+- Arguments:
+    - `_gameYear`: `uint256` - The year to check
+- Returns: `bool` - True if the tokens need to be burned, false otherwise
+
+### burnYearTokens
+
+- Description: Iterates through the pools to burn PPS tokens for a given year
+- Arguments:
+    - `_gameYear`: `uint256` - The year to iterate
+- Modifiers:
+    - `whenNotPaused`: Only when contract is not paused
+    - `nonReentrant`: Prevents reentrancy
+
+### needsToBeDismissed
+
+- Description: Checks if the prize can be dismissed
+- Arguments:
+    - `_gameYear`: `uint256` - The year to check
+- Returns: `bool` - True if the prize can be dismissed, false otherwise
+
+### iterateDismissYear
+
+- Description: Iterates through the pools to dismiss prizes for a given year
+- Arguments:
+    - `_gameYear`: `uint256` - The year to iterate
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
@@ -117,19 +161,17 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Description: Claims prize for a winning bracket
 - Arguments:
     - `_poolId`: `uint256` - ID of the pool
-    - `_player`: `address` - Address to receive the prize
-    - `_tokenId`: `uint256` - Token ID of the NFT that will be claimed
+    - `_tokenId`: `uint256` - Token ID representing the bracket
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
 
 ### claimAll
 
-- Description: Claims prize for a winning bracket
+- Description: Claims prize for multiple tokenIds at the same pool
 - Arguments:
     - `_poolId`: `uint256` - ID of the pool
-    - `_player`: `address` - Address to receive the prize
-    - `_tokenIds` `uint256[]` - Token IDs of the NFTs that will be claimed
+    - `_tokenIds`: `uint256[]` - Token IDs representing the brackets
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
@@ -139,8 +181,8 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 - Description: Increases the prize pool for a specific game
 - Arguments:
     - `_poolId`: `uint256` - ID of the pool
-    - `_gameYear`: `uint256` - Tournament year
-    - `_amount`: `uint256` - Amount to increase the pot by
+    - `_gameYear`: `uint256` - Tournament year to increase pot for
+    - `_amount`: `uint256` - Amount of USDC to add to the pot
 - Modifiers:
     - `whenNotPaused`: Only when contract is not paused
     - `nonReentrant`: Prevents reentrancy
@@ -236,85 +278,35 @@ Factory contract for creating and managing OnchainMadnessTicket pools. Uses the 
 
 - Description: Returns the created pool data
 - Arguments:
-    - `_poolId`: `uint256` - ID of the pool
+    - `poolId`: `uint256` - The ID of the pool
 - Returns:
     - `name`: `string` - The name of the pool
-    - `poolAddress`: `adddress` - The pool contract address
+    - `poolAddress`: `address` - The pool contract address
     - `isPrivate`: `bool` - Whether the pool is private
     - `isProtocol`: `bool` - Whether the pool is created by the protocol
     - `pin`: `bytes` - The PIN required to join the pool
     - `creator`: `address` - The address of the creator of the pool
 
-### verifyShares
+### getGameDeployer
 
-- Description: Verifies the shares for a player
-- Arguments:
-    - `_poolId`: `uint256` - ID of the pool
-    - `_player`: `address` - Address of the player
-- Returns: `uint256` - Amount of PP tokens available for the player
-
-### iterateBurnYearTokens
-
-- Description: Iterates through the pools to burn PPS tokens for a given year
-- Arguments:
-    - `_gameYear`: `uint256` - The year to iterate
-- Modifiers:
-    - `whenNotPaused`: Only when contract is not paused
-    - `nonReentrant`: Prevents reentrancy
-
-### iterateDismissYear
-
-- Description: Iterates through the pools to dismiss prizes for a given year
-- Arguments:
-    - `_gameYear`: `uint256` - The year to iterate
-- Modifiers:
-    - `whenNotPaused`: Only when contract is not paused
-    - `nonReentrant`: Prevents reentrancy
-
-### needsToBeBurned
-
-- Description: Checks if the tokens need to be burned
-- Arguments:
-    - `_gameYear`: `uint256` - The year to check
-- Returns: `bool` - True if the tokens need to be burned, false otherwise
-
-### needsToBeDismissed
-
-- Description: Checks if the prize can be dismissed
-- Arguments:
-    - `_gameYear`: `uint256` - The year to check
-- Returns: `bool` - True if the prize can be dismissed, false otherwise
-
-### getPoolAddress
-
-- Description: Gets the pool address for a given pool ID
-- Arguments:
-    - `_poolId`: `uint256` - ID of the pool to query
-- Returns: `address` - Address of the pool
-
-### getPoolId
-
-- Description: Gets the pool ID for a given pool address
-- Arguments:
-    - `_poolAddress`: `address` - Address of the pool to query
-- Returns: `uint256` - ID of the pool
+- Description: Returns the address of the game deployer contract
+- Returns: `address` - The game deployer address
 
 ### poolNameExists
 
-- Description: Returns whether a pool name already exists
+- Description: Returns if the pool name exists
 - Arguments:
-    - `_poolName`: `string` - The name of the pool to check
-- Returns:
-    - `exists`: `bool` - Whether the pool name exists
+    - `_poolName`: `string` - The name of the pool
+- Returns: `bool` - Whether the pool name exists
 
 ### pause
 
 - Description: Pauses the contract
 - Modifiers:
-    - `onlyOwner`: Restricted to contract owner
+    - `onlyAdmin`: Only admin can call this function
 
 ### unpause
 
 - Description: Unpauses the contract
 - Modifiers:
-    - `onlyOwner`: Restricted to contract owner
+    - `onlyAdmin`: Only admin can call this function

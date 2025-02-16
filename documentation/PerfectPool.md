@@ -16,13 +16,22 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
     - `user`: `address` - Address of the withdrawing account
     - `amount`: `uint256` - Amount of USDC withdrawn
 
-- **PerfectPrizeAwarded**: Emitted when a perfect prize is awarded to a winner
-    - `winner`: `address` - Address of the prize winner
+- **PerfectPrizeAwarded**: Emitted when a perfect prize is awarded to winners
+    - `winners`: `address[]` - Array of winner addresses
     - `amount`: `uint256` - Amount of USDC awarded
 
 - **WinnersQtyIncreased**: Emitted when the number of winners for a year increases
     - `year`: `uint256` - Tournament year
     - `qty`: `uint256` - New total number of winners
+
+- **aUSDCDeposited**: Emitted when USDC is transferred to aUSDC
+    - `token`: `address` - Address of the token being deposited
+    - `amount`: `uint256` - Amount being deposited
+
+- **aUSDCWithdrawn**: Emitted when USDC is transferred from aUSDC
+    - `token`: `address` - Address of the token being withdrawn
+    - `to`: `address` - Address receiving the withdrawn tokens
+    - `amount`: `uint256` - Amount being withdrawn
 
 ## Constants
 
@@ -31,21 +40,24 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 ## State Variables
 
 - **USDC**: `IERC20 public immutable` - The USDC token contract used for deposits and withdrawals
+- **aUSDC**: `IERC20 public immutable` - The aUSDC token contract for AAVE integration
+- **lendingPool**: `ILendingPool public immutable` - The AAVE lending pool contract
 - **lockPermit**: `bool public` - Controls whether minting requires authorization
 - **lockWithdrawal**: `bool public` - Controls whether token withdrawals are allowed
 - **lockMint**: `bool public` - Controls whether token minting is temporarily paused
 - **definitiveLockMint**: `bool public` - When true, permanently disables all token minting
-- **gameFactory**: `IGamesFactory public` - Reference to the game factory contract
+- **aUSDCDeposit**: `bool public` - When true, USDC is deposited into aUSDC
+- **withdrawalMonth**: `uint256 public` - The month to block withdrawal
+- **withdrawalDay**: `uint256 public` - The day to block withdrawal
+- **winnerPools**: `address[] public` - Addresses of winner pools
+- **gameFactory**: `IGamesFactory public` - The Game Factory contract
 - **authorizedMinters**: `mapping(address => bool) public` - Addresses authorized to mint tokens when lockPermit is true
 - **onchainMadnessContracts**: `mapping(address => bool) public` - Addresses of authorized Onchain Madness game contracts
-- **yearToWinnersQty**: `mapping(uint256 => uint256) public` - Number of winners per tournament year
 - **yearToPrize**: `mapping(uint256 => uint256) public` - Total prize amount per tournament year
 
 ## Modifiers
 
 - `onlyGameContract`: Ensures the caller is an authorized game contract or the owner
-- `nonReentrant`: Prevents reentrancy attacks
-- `onlyOwner`: Restricted to contract owner
 
 ## Functions
 
@@ -54,20 +66,41 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - Description: Initializes the PerfectPool token with USDC integration
 - Arguments:
     - `_usdc`: `address` - Address of the USDC token contract
+    - `_aUSDC`: `address` - Address of the aUSDC token contract
+    - `_lendingPool`: `address` - Address of the Lending Pool contract
     - `name`: `string` - Name of the ERC20 token
     - `symbol`: `string` - Symbol of the ERC20 token
     - `_gameContract`: `address` - Address of the Onchain Madness game contract
     - `_gameFactory`: `address` - Address of the Game Factory contract
 
+### dollarBalance
+
+- Description: Shows the USDC added to aUSDC balance
+- Returns: `uint256` - The balance of the USDC/aUSDC token contract
+
+### depositToAave
+
+- Description: Deposits tokens from the contract's balance into AAVE lending pool
+- Modifiers:
+    - `nonReentrant`: Prevents reentrancy
+    - `onlyOwner`: Restricted to contract owner
+
+### withdrawAllFromAave
+
+- Description: Withdraws all aUSDC tokens from AAVE lending pool to this contract
+- Modifiers:
+    - `nonReentrant`: Prevents reentrancy
+    - `onlyOwner`: Restricted to contract owner
+
 ### increasePool
 
-- Description: Increases the pool by depositing USDC and minting tokens at a 2:1 ratio
+- Description: Increases the pool by depositing USDC and minting tokens at a 20:1 ratio
 - Arguments:
     - `amountUSDC`: `uint256` - Amount of USDC to deposit
     - `percentage`: `uint8[]` - Array of percentage allocations for token distribution (must sum to 100)
     - `receivers`: `address[]` - Array of addresses to receive tokens based on percentages
 - Modifiers:
-    - `nonReentrant`: Prevents reentrancy attacks
+    - `nonReentrant`: Prevents reentrancy
 
 ### withdraw
 
@@ -75,7 +108,7 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - Arguments:
     - `amount`: `uint256` - Number of tokens to burn for USDC withdrawal
 - Modifiers:
-    - `nonReentrant`: Prevents reentrancy attacks
+    - `nonReentrant`: Prevents reentrancy
 
 ### burnTokens
 
@@ -83,15 +116,16 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - Arguments:
     - `amount`: `uint256` - Number of tokens to burn
 - Modifiers:
-    - `nonReentrant`: Prevents reentrancy attacks
+    - `nonReentrant`: Prevents reentrancy
 
 ### increaseWinnersQty
 
 - Description: Increases the winner count for a specific tournament year
 - Arguments:
     - `year`: `uint256` - The tournament year to increase winners for
+    - `gameContract`: `address` - The game contract to increase winners for
 - Modifiers:
-    - `nonReentrant`: Prevents reentrancy attacks
+    - `nonReentrant`: Prevents reentrancy
 
 ### resetData
 
@@ -99,34 +133,15 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - Arguments:
     - `year`: `uint256` - The tournament year to reset
 - Modifiers:
-    - `nonReentrant`: Prevents reentrancy attacks
+    - `nonReentrant`: Prevents reentrancy
 
 ### perfectPrize
 
 - Description: Awards the perfect prize to tournament winners
 - Arguments:
     - `year`: `uint256` - The tournament year for prize distribution
-    - `_gameContract`: `address` - The Onchain Madness contract to receive the prize
 - Modifiers:
-    - `nonReentrant`: Prevents reentrancy attacks
-
-### setAuthorizedMinter
-
-- Description: Manages addresses authorized to mint tokens
-- Arguments:
-    - `minter`: `address` - Address to modify permissions for
-    - `authorized`: `bool` - True to grant minting permission, false to revoke
-- Modifiers:
-    - `onlyOwner`: Restricted to contract owner
-
-### setOnchainMadnessContract
-
-- Description: Manages authorized Onchain Madness game contracts
-- Arguments:
-    - `contractAddress`: `address` - Address of the Onchain Madness contract
-    - `authorized`: `bool` - True to authorize the contract, false to revoke
-- Modifiers:
-    - `onlyOwner`: Restricted to contract owner
+    - `nonReentrant`: Prevents reentrancy
 
 ### setLockPermit
 
@@ -158,13 +173,21 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 - Modifiers:
     - `onlyOwner`: Restricted to contract owner
 
-### setWithdrawalBlockedTimestamp
+### setAuthorizedMinter
 
-- Description: Sets the timestamp until which withdrawals are blocked
+- Description: Manages addresses authorized to mint tokens
 - Arguments:
-    - `_withdrawalBlockedTimestamp`: `uint256` - New withdrawal blocked timestamp
+    - `minter`: `address` - Address to modify permissions for
+    - `authorized`: `bool` - True to grant minting permission, false to revoke
 - Modifiers:
-    - `onlyOwner`: Restricted to contract owner
+    - `onlyGameContract`: Restricted to game contracts
+
+### setOnchainMadnessContract
+
+- Description: Manages authorized Onchain Madness contracts
+- Arguments:
+    - `contractAddress`: `address` - Address of the Onchain Madness contract
+    - `authorized`: `bool` - True to authorize the contract, false to revoke
 
 ### getTokenValue
 
@@ -174,9 +197,13 @@ An ERC20 token contract that allows USDC deposits, token minting, burning, and w
 ### isAbleToWithdraw
 
 - Description: Returns if the user can burn tokens for USDC
-- Returns: `bool` - True if the game of the current year is finished
+- Returns: `bool` - True if the game of the current year is finished or within withdrawal period
 
-### getCurrentYear
+### setWithdrawalDate
 
-- Description: Get the current year
-- Returns: `uint256` - The current year (e.g., 2024)
+- Description: Set date to block withdrawal
+- Arguments:
+    - `month`: `uint256` - Month to block withdrawal
+    - `day`: `uint256` - Day to block withdrawal
+- Modifiers:
+    - `onlyOwner`: Restricted to contract owner

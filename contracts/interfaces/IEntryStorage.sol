@@ -58,15 +58,12 @@ interface IEntryStorage {
         uint256 tokenId
     ) external view returns (uint256);
 
-    function setPpShare(
-        uint256 poolId,
+    function resetPpShare(
         address user,
-        uint256 amount,
         uint256 gameYear
     ) external;
 
     function getPpShare(
-        uint256 poolId,
         address user,
         uint256 gameYear
     ) external view returns (uint256);
