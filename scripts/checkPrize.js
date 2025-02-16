@@ -17,7 +17,7 @@ const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 
-const POOL = 4;
+const POOL = 0;
 const YEAR = 2024;
 
 async function main() {
@@ -36,6 +36,8 @@ async function main() {
   );
   const factory = EntryFactory.attach(networkData["OM_ENTRY_DEPLOYER"]);
 
+  const [wallet] = await ethers.getSigners();
+
   try {
     console.log("\nIterating tokens...");
     let n = 1;
@@ -51,6 +53,8 @@ async function main() {
       const [, points] = await factory.betValidator(POOL, n);
       console.log(`Points: ${points}`);
       const [toClaim, claimed] = await factory.amountPrizeClaimed(POOL, n);
+      const shares = await factory.verifyShares(POOL, wallet.address, YEAR);
+      console.log(`Shares: ${shares}`);
       console.log(`To Claim: ${toClaim}`);
       console.log(`Claimed: ${claimed}`);
       n++;

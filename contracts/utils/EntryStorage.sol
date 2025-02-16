@@ -35,6 +35,7 @@ interface IOnchainMadnessFactory {
  * - Perfect Pool share distribution
  */
 contract EntryStorage {
+    uint256 public constant PPS_PER_USDC = 20;
     /**
      * @dev Represents a single game's data and state
      * @param pot Total amount in the game's prize pool
@@ -204,14 +205,15 @@ contract EntryStorage {
         pools[poolId].tokenToGameYear[tokenId] = gameYear;
         game.tokens.push(tokenId);
 
-        uint256 treasuryShare = shareAmount / 2;
+        uint256 share = shareAmount * PPS_PER_USDC * 10 ** 12;
+        uint256 treasuryShare = share / 2;
         uint256 price;
 
         // Update shares
         pools[poolId].games[gameYear].ppShare[
             gameDeployer.contracts("TREASURY")
         ] += treasuryShare;
-        pools[poolId].games[gameYear].ppShare[recipient] += (shareAmount -
+        pools[poolId].games[gameYear].ppShare[recipient] += (share -
             treasuryShare);
         (price, pools[poolId].nftBet[tokenId]) = abi.decode(
             dataUpdate,
