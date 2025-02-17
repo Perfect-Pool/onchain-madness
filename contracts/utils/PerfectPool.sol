@@ -172,7 +172,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @dev Uses the contract's own aUSDC balance for withdrawal
      * @param amount Amount of aUSDC to withdraw
      */
-    function _withdrawFromAave(uint256 amount) internal nonReentrant {
+    function _withdrawFromAave(uint256 amount) internal {
         aUSDC.approve(address(lendingPool), amount);
         lendingPool.withdraw(address(aUSDC), amount, address(this));
 

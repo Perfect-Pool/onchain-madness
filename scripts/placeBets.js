@@ -9,7 +9,7 @@
  * - Elite Eight: 4 games
  * - Final Four: 2 games
  * - Championship: 1 game
- * 
+ *
  * Each bet costs 20 USDC and requires approval before minting
  */
 
@@ -25,7 +25,7 @@ const BET_AMOUNT = ethers.utils.parseUnits("20", 6); // 20 USDC (6 decimals)
 const USDC_ABI = [
   "function approve(address spender, uint256 amount) external returns (bool)",
   "function balanceOf(address account) external view returns (uint256)",
-  "function allowance(address owner, address spender) external view returns (uint256)"
+  "function allowance(address owner, address spender) external view returns (uint256)",
 ];
 
 // Generate a random array of 63 predictions (0 or 1)
@@ -49,26 +49,39 @@ async function main() {
   console.log(`USDC address: ${networkData["USDC"]}`);
 
   // Get contract instances
-  const EntryFactory = await ethers.getContractFactory("OnchainMadnessEntryFactory");
+  const EntryFactory = await ethers.getContractFactory(
+    "OnchainMadnessEntryFactory"
+  );
   const factory = EntryFactory.attach(networkData["OM_ENTRY_DEPLOYER"]);
-  
+
   const [signer] = await ethers.getSigners();
   const usdc = new ethers.Contract(networkData["USDC"], USDC_ABI, signer);
+  const protocolBets = generateRandomPredictions();
 
   try {
     // Check USDC balance
     const balance = await usdc.balanceOf(signer.address);
     const requiredAmount = BET_AMOUNT.mul(3); // Need 20 USDC for each of the 3 bets
-    
+
     console.log(`USDC Balance: ${ethers.utils.formatUnits(balance, 6)} USDC`);
-    console.log(`Required Amount: ${ethers.utils.formatUnits(requiredAmount, 6)} USDC`);
-    
+    console.log(
+      `Required Amount: ${ethers.utils.formatUnits(requiredAmount, 6)} USDC`
+    );
+
     if (balance.lt(requiredAmount)) {
-      throw new Error(`Insufficient USDC balance. Need ${ethers.utils.formatUnits(requiredAmount, 6)} USDC`);
+      throw new Error(
+        `Insufficient USDC balance. Need ${ethers.utils.formatUnits(
+          requiredAmount,
+          6
+        )} USDC`
+      );
     }
 
     //Verify USDC Approval
-    const approvedAmount = await usdc.allowance(signer.address, factory.address);
+    const approvedAmount = await usdc.allowance(
+      signer.address,
+      factory.address
+    );
     if (approvedAmount.lt(requiredAmount)) {
       console.log("\nApproving USDC spending...");
       const approveTx = await usdc.approve(factory.address, balance);
@@ -78,38 +91,43 @@ async function main() {
 
     // Place bet on Protocol Pool (ID: POOL)
     console.log(`\nPlacing bet on Protocol Pool (ID: ${POOL})...`);
-    const protocolBets = generateRandomPredictions();
     const protocolTx = await factory.safeMint(
-      POOL,                 // poolId
-      TOURNAMENT_YEAR,      // gameYear
-      protocolBets,         // predictions
-      ""                    // no PIN needed
+      POOL, // poolId
+      TOURNAMENT_YEAR, // gameYear
+      protocolBets, // predictions
+      "" // no PIN needed
     );
     const protocolReceipt = await protocolTx.wait();
-    
-    const protocolEvent = protocolReceipt.events.find(e => e.event === "BetPlaced");
+
+    const protocolEvent = protocolReceipt.events.find(
+      (e) => e.event === "BetPlaced"
+    );
     if (!protocolEvent) {
       throw new Error("BetPlaced event not found in transaction receipt");
     }
     const [bettor, gameYear, protocolTokenId] = protocolEvent.args;
-    
+
     console.log(`✅ Bet placed on Protocol Pool:`);
     console.log(`   Token ID: ${protocolTokenId}`);
     console.log(`   Bettor: ${bettor}`);
 
     // Final USDC balance
     const finalBalance = await usdc.balanceOf(signer.address);
-    console.log(`\nFinal USDC Balance: ${ethers.utils.formatUnits(finalBalance, 6)} USDC`);
+    console.log(
+      `\nFinal USDC Balance: ${ethers.utils.formatUnits(finalBalance, 6)} USDC`
+    );
 
     // Summary
     console.log("\n=== Summary of Placed Bets ===");
-    console.log(`Total USDC Spent: ${ethers.utils.formatUnits(BET_AMOUNT.mul(3), 6)} USDC`);
-    
+    console.log(
+      `Total USDC Spent: ${ethers.utils.formatUnits(BET_AMOUNT.mul(3), 6)} USDC`
+    );
+
     console.log("\nProtocol Pool (ID: 0):");
     console.log(`Token ID: ${protocolTokenId}`);
     console.log(`Bettor: ${bettor}`);
-
   } catch (error) {
+    console.log(`   Predictions: ${protocolBets}`);
     console.error("Error placing bets:");
     console.error(error.message);
     process.exit(1);

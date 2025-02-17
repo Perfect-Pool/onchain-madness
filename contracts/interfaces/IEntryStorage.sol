@@ -4,6 +4,8 @@ pragma solidity ^0.8.20;
 interface IEntryStorage {
     function initialize(uint256 poolId) external;
 
+    function PPS_PER_USDC() external view returns (uint256);
+
     function getGame(
         uint256 poolId,
         uint256 gameYear

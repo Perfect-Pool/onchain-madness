@@ -111,4 +111,12 @@ contract AToken is ERC20 {
         require(msg.sender == lendingPool, "Only lending pool can burn");
         _burn(from, amount);
     }
+
+    /**
+     * @dev Returns the number of decimals used to get its user representation.
+     * @return The number of decimals. In this case 6 to match USDC.
+     */
+    function decimals() public pure virtual override returns (uint8) {
+        return 6;
+    }
 }

@@ -211,8 +211,7 @@ contract EntryStorage {
         uint256 price;
 
         // Update shares
-        ppShare[gameYear][gameDeployer.contracts("TREASURY")] += treasuryShare;
-        ppShare[gameYear][recipient] += (share - treasuryShare);
+        ppShare[gameYear][recipient] += treasuryShare;
         (price, pools[poolId].nftBet[tokenId]) = abi.decode(
             dataUpdate,
             (uint256, uint8[63])

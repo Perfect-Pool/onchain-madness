@@ -99,6 +99,12 @@ async function main() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await betCheck.setDeployer(onchainMadnessFactory.address);
     }
+    if (networkData.TREASURY !== "") {
+      await onchainMadnessFactory.setContract("TREASURY", networkData.TREASURY);
+      console.log(
+        `Set Treasury contract at ${networkData.TREASURY} on OnchainMadnessFactory`
+      );
+    }
 
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
   } else {

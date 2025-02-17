@@ -27,32 +27,11 @@ async function main() {
   const factory = EntryFactory.attach(networkData["OM_ENTRY_DEPLOYER"]);
 
   try {
-    console.log("\nIterating tokens for burning...");
-    let n = 0;
-    while (true) {
-      console.log(`\nIteration ${n}`);
-      const tx = await factory.iterateBurnYearTokens(TOURNAMENT_YEAR);
-      const receipt = await tx.wait();
+    console.log("\nBurning non claimed tokens...");
+    const tx = await factory.burnYearTokens(TOURNAMENT_YEAR);
+    await tx.wait();
 
-      const eventFinished = receipt.events.find(
-        (e) => e.event === "BurnIterationFinished"
-      );
-      if (eventFinished) {
-        console.log(
-          "\nEvent 'BurnIterationFinished' found. No more tokens to burn."
-        );
-        break;
-      }
-
-      const eventContinue = receipt.events.find(
-        (e) => e.event === "ContinueBurnIteration"
-      );
-      if (!eventContinue) {
-        console.log("\nNo continuation event found. Stopping iteration.");
-        break;
-      }
-      n++;
-    }
+    console.log("\nTokens burned successfully!");
   } catch (error) {
     console.error("Error burning tokens:");
     console.error(error.message);

@@ -230,18 +230,26 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     ) public whenNotPaused nonReentrant {
         //approve USDC for the pool
         address poolAddress = getPoolAddress(_poolId);
+        uint256 price = OnchainMadnessEntry(poolAddress).price();
 
-        USDC.transferFrom(
-            msg.sender,
-            poolAddress,
-            OnchainMadnessEntry(poolAddress).price()
-        );
+        USDC.transferFrom(msg.sender, poolAddress, price);
 
         uint256 nextTokenId = OnchainMadnessEntry(poolAddress).safeMint(
             msg.sender,
             _gameYear,
             bets,
             _pin
+        );
+
+        uint256 share = (price / 10) *
+            IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE"))
+                .PPS_PER_USDC() *
+            10 ** 12;
+
+        //transfer ppShare to treasury, avoiding underflow / overflow
+        IPerfectPool(gameDeployer.contracts("PERFECTPOOL")).transfer(
+            gameDeployer.contracts("TREASURY"),
+            share - (share / 2)
         );
 
         emit BetPlaced(_gameYear, _poolId, nextTokenId, msg.sender);
@@ -272,7 +280,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
                 perfectPool.setLockWithdrawal(true);
             }
             return;
-        }   
+        }
 
         uint256 processedIterations = 0;
         bool hasMoreTokens = false;
