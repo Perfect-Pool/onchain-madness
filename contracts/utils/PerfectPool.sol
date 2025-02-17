@@ -12,7 +12,7 @@ interface IGamesFactory {
 }
 
 interface ILendingPool {
-    function deposit(
+    function supply(
         address asset,
         uint256 amount,
         address onBehalfOf,
@@ -160,7 +160,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      */
     function _depositToAave(uint256 amount) internal {
         USDC.approve(address(lendingPool), amount);
-        lendingPool.deposit(address(USDC), amount, address(this), 0);
+        lendingPool.supply(address(USDC), amount, address(this), 0);
 
         aUSDCDeposit = true;
 
@@ -173,8 +173,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @param amount Amount of aUSDC to withdraw
      */
     function _withdrawFromAave(uint256 amount) internal {
-        aUSDC.approve(address(lendingPool), amount);
-        lendingPool.withdraw(address(aUSDC), amount, address(this));
+        lendingPool.withdraw(address(USDC), amount, address(this));
 
         emit aUSDCWithdrawn(address(aUSDC), address(this), amount);
     }

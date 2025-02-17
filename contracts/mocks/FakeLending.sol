@@ -7,8 +7,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /**
  * @title FakeLending
  * @author PerfectPool
- * @notice A mock contract that simulates Aave's LendingPool behavior for testing purposes.
- * When USDC is deposited, it mints aUSDC tokens to the depositer.
+ * @notice A mock contract that simulates Aave V3's Pool behavior for testing purposes.
+ * When USDC is supplied, it mints aUSDC tokens to the supplier.
  * When withdrawn, it burns aUSDC tokens and returns USDC to the withdrawer.
  */
 contract FakeLending {
@@ -25,13 +25,13 @@ contract FakeLending {
     }
 
     /**
-     * @dev Deposits USDC and mints aUSDC tokens to the specified address
-     * @param asset The address of the asset to deposit (must be USDC)
-     * @param amount The amount to deposit
+     * @dev Supplies USDC and mints aUSDC tokens to the specified address
+     * @param asset The address of the asset to supply (must be USDC)
+     * @param amount The amount to supply
      * @param onBehalfOf The address that will receive the aTokens
      * @param referralCode The referral code (unused)
      */
-    function deposit(
+    function supply(
         address asset,
         uint256 amount,
         address onBehalfOf,
@@ -49,8 +49,8 @@ contract FakeLending {
 
     /**
      * @dev Withdraws USDC by burning aUSDC tokens
-     * @param asset The address of the asset to withdraw (must be USDC)
-     * @param amount The amount to withdraw
+     * @param asset The address of the underlying asset to withdraw (must be USDC)
+     * @param amount The amount of underlying asset to withdraw
      * @param to The address that will receive the USDC
      * @return The amount withdrawn
      */
