@@ -3,6 +3,12 @@ const path = require("path");
 const { ethers } = require("hardhat");
 
 async function main() {
+  // Get the deployer's address and nonce
+  const [deployer] = await ethers.getSigners();
+  const nonce = await deployer.getTransactionCount();
+  console.log(`Deployer address: ${deployer.address}`);
+  console.log(`Current nonce: ${nonce}`);
+  
   const variablesPath = path.join(__dirname, "..", "..", "contracts.json");
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;

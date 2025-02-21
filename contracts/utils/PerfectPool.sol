@@ -191,7 +191,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
 
     /**
      * @notice Increases the pool by depositing USDC and minting tokens
-     * @dev Mints tokens at a 2:1 ratio with the deposited USDC amount
+     * @dev Mints tokens at a 20:1 ratio with the deposited USDC amount
      * All minted tokens are distributed among receivers according to percentages
      * @param amountUSDC Amount of USDC to deposit
      * @param percentage Array of percentage allocations for token distribution (must sum to 100)
