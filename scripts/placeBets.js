@@ -18,7 +18,7 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 
 const TOURNAMENT_YEAR = 2024;
-const POOL = 0;
+const POOL = 21;
 const BET_AMOUNT = ethers.utils.parseUnits("20", 6); // 20 USDC (6 decimals)
 
 // Minimal USDC ABI for the functions we need
@@ -61,17 +61,16 @@ async function main() {
   try {
     // Check USDC balance
     const balance = await usdc.balanceOf(signer.address);
-    const requiredAmount = BET_AMOUNT.mul(3); // Need 20 USDC for each of the 3 bets
 
     console.log(`USDC Balance: ${ethers.utils.formatUnits(balance, 6)} USDC`);
     console.log(
-      `Required Amount: ${ethers.utils.formatUnits(requiredAmount, 6)} USDC`
+      `Required Amount: ${ethers.utils.formatUnits(BET_AMOUNT, 6)} USDC`
     );
 
-    if (balance.lt(requiredAmount)) {
+    if (balance.lt(BET_AMOUNT)) {
       throw new Error(
         `Insufficient USDC balance. Need ${ethers.utils.formatUnits(
-          requiredAmount,
+          BET_AMOUNT,
           6
         )} USDC`
       );
@@ -82,7 +81,7 @@ async function main() {
       signer.address,
       factory.address
     );
-    if (approvedAmount.lt(requiredAmount)) {
+    if (approvedAmount.lt(BET_AMOUNT)) {
       console.log("\nApproving USDC spending...");
       const approveTx = await usdc.approve(factory.address, balance);
       await approveTx.wait();

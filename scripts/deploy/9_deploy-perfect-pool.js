@@ -69,8 +69,8 @@ async function main() {
       networkData.USDC,
       networkData.aUSDC,
       networkData.LendingPool,
-      "PerfectPoolShare",
-      "PPS",
+      "OnchainMadnessShare",
+      "OCM",
       networkData.OM_ENTRY_DEPLOYER,
       networkData.OM_DEPLOYER
     );

@@ -307,20 +307,15 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         // Update the current pool ID for this year
         yearToPoolIdIteration[_gameYear] = _currentPoolId;
 
-        // Emit appropriate event based on iteration status
-        if (
-            hasMoreTokens ||
-            (_currentPoolId > currentPoolId &&
-                pools[_currentPoolId] != address(0))
-        ) {
-            emit ContinueIteration(_gameYear);
+        if (pools[_currentPoolId] == address(0)) {
+            emit IterationFinished(_gameYear);
+            yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+            if (!perfectPool.lockWithdrawal()) {
+                perfectPool.setLockWithdrawal(true);
+            }
             return;
         }
-        emit IterationFinished(_gameYear);
-        yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
-        if (!perfectPool.lockWithdrawal()) {
-            perfectPool.setLockWithdrawal(true);
-        }
+        emit ContinueIteration(_gameYear);
     }
 
     /**

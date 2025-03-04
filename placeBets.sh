@@ -1,6 +1,6 @@
 #!/bin/bash
 
-N=50
+N=5
 
 for ((i=1; i<=N; i++))
 do
