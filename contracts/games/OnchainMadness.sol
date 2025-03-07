@@ -38,7 +38,6 @@ contract OnchainMadness {
     bytes32 public constant WEST = keccak256("WEST");
     bytes32 public constant MIDWEST = keccak256("MIDWEST");
     bytes32 public constant EAST = keccak256("EAST");
-    bytes[4] private matchCodes;
 
     /** STRUCTS AND ENUMS **/
     /**
@@ -103,8 +102,7 @@ contract OnchainMadness {
     mapping(uint8 => bytes) private teams;
     mapping(bytes => uint8) private teamToId;
     mapping(bytes => uint8) private firstFourMatches;
-    mapping(bytes => uint8) private firstFourWinnersIds;
-    uint8[4] private firstFourWinners;
+    mapping(bytes => uint8[2]) private matchPosition;
 
     uint256 public year;
     uint8 public currentRound;
@@ -136,19 +134,20 @@ contract OnchainMadness {
         playersActualIndex = 1;
         matchesActualIndex = 1;
 
-        matchCodes = [
-            bytes("FFG1"),
-            bytes("FFG2"),
-            bytes("FFG3"),
-            bytes("FFG4")
-        ];
-
-        firstFourWinnersIds[bytes("FFG1")] = 0;
-        firstFourWinnersIds[bytes("FFG2")] = 1;
-        firstFourWinnersIds[bytes("FFG3")] = 2;
-        firstFourWinnersIds[bytes("FFG4")] = 3;
-
         status = Status.BetsOn;
+    }
+
+    /**
+     * @dev Checks if a match code belongs to the First Four
+     * @param matchCode The code of the match
+     * @return True if the match is part of the First Four, false otherwise
+     */
+    function _checkIsFfg(bytes memory matchCode) internal pure returns (bool) {
+        return
+            keccak256(matchCode) == keccak256(bytes("FFG1")) ||
+            keccak256(matchCode) == keccak256(bytes("FFG2")) ||
+            keccak256(matchCode) == keccak256(bytes("FFG3")) ||
+            keccak256(matchCode) == keccak256(bytes("FFG4"));
     }
 
     /**
@@ -217,8 +216,13 @@ contract OnchainMadness {
                 matches[matchesActualIndex].home = teamIds[i - 1];
                 matches[matchesActualIndex].away = teamIds[i];
                 matchIds[matchIndex] = matchesActualIndex;
+                if (_checkIsFfg(teamHash)) {
+                    matchPosition[teamHash] = [matchesActualIndex, 1];
+                }
                 matchIndex++;
                 matchesActualIndex++;
+            } else if (_checkIsFfg(teamHash)) {
+                matchPosition[teamHash] = [matchesActualIndex, 0];
             }
         }
 
@@ -253,8 +257,12 @@ contract OnchainMadness {
             ? currentMatch.home
             : currentMatch.away;
 
-        firstFourWinners[firstFourWinnersIds[bytes(matchCode)]] = currentMatch
-            .winner;
+        Match storage bracketMatch = matches[matchPosition[bytes(matchCode)][0]];
+        if(matchPosition[bytes(matchCode)][1] == 0) {
+            bracketMatch.home = currentMatch.winner;
+        } else {
+            bracketMatch.away = currentMatch.winner;
+        }
     }
 
     /**
@@ -318,15 +326,25 @@ contract OnchainMadness {
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        require(
-            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
-                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
-            "OM-08"
-        );
-
-        // Store match points
-        currentMatch.home_points = homePoints;
-        currentMatch.away_points = awayPoints;
+        if (winnerId == teamToId[bytes(getTeamName(currentMatch.home))]) {
+            if (homePoints > awayPoints) {
+                currentMatch.home_points = homePoints;
+                currentMatch.away_points = awayPoints;
+            } else {
+                currentMatch.home_points = awayPoints;
+                currentMatch.away_points = homePoints;
+            }
+        } else if (
+            winnerId == teamToId[bytes(getTeamName(currentMatch.away))]
+        ) {
+            if (awayPoints > homePoints) {
+                currentMatch.away_points = awayPoints;
+                currentMatch.home_points = homePoints;
+            } else {
+                currentMatch.away_points = homePoints;
+                currentMatch.home_points = awayPoints;
+            }
+        } else revert("OM-08");
         currentMatch.winner = winnerId;
 
         // Set up next round match
@@ -637,32 +655,7 @@ contract OnchainMadness {
      * @return The name of the team
      */
     function getTeamName(uint8 _teamId) public view returns (string memory) {
-        if (_teamId == 0) {
-            return "";
-        }
-
-        if (
-            teamToId[bytes("FFG1")] == _teamId &&
-            matches[firstFourMatches[bytes("FFG1")]].winner != 0
-        ) {
-            return string(teams[firstFourWinners[0]]);
-        } else if (
-            teamToId[bytes("FFG2")] == _teamId &&
-            matches[firstFourMatches[bytes("FFG2")]].winner != 0
-        ) {
-            return string(teams[firstFourWinners[1]]);
-        } else if (
-            teamToId[bytes("FFG3")] == _teamId &&
-            matches[firstFourMatches[bytes("FFG3")]].winner != 0
-        ) {
-            return string(teams[firstFourWinners[2]]);
-        } else if (
-            teamToId[bytes("FFG4")] == _teamId &&
-            matches[firstFourMatches[bytes("FFG4")]].winner != 0
-        ) {
-            return string(teams[firstFourWinners[3]]);
-        }
-        return string(teams[_teamId]);
+        return _teamId == 0 ? "" : string(teams[_teamId]);
     }
 
     /**
