@@ -12,16 +12,6 @@ interface IOnchainMadnessEntryFactory {
 }
 
 /**
- * @title IOnchainMadnessFactory
- * @dev Interface for accessing game factory contract addresses
- */
-interface IOnchainMadnessFactory {
-    function contracts(string memory _name) external view returns (address);
-
-    function owner() external view returns (address);
-}
-
-/**
  * @title EntryStorage
  * @author PerfectPool Team
  * @notice Storage contract for OnchainMadnessEntry data

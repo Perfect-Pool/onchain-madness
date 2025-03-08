@@ -1,57 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IOnchainMadnessFactory {
-    struct Match {
-        uint8 home;
-        uint8 away;
-        uint8 winner;
-        uint256 home_points;
-        uint256 away_points;
-    }
-
-    struct Region {
-        uint8[16] teams;
-        uint8[8] matchesRound1;
-        uint8[4] matchesRound2;
-        uint8[2] matchesRound3;
-        uint8 matchRound4;
-        uint8 winner;
-    }
-
-    /**
-     * @dev Represents the Final Four round
-     * @param matchesRound1 Array of Final Four gameMatch IDs
-     * @param matchFinal Championship gameMatch ID
-     * @param winner ID of the tournament winner
-     */
-    struct FinalFour {
-        uint8[2] matchesRound1;
-        uint8 matchFinal;
-        uint8 winner;
-    }
-
-    function getRegion(
-        uint256 year,
-        bytes32 _regionName
-    ) external view returns (Region memory);
-
-    function getMatch(
-        uint256 year,
-        uint8 _matchId
-    ) external view returns (Match memory);
-
-    function getTeamName(
-        uint256 year,
-        uint8 _teamId
-    ) external view returns (string memory);
-
-    function getFinalFour(
-        uint256 year
-    ) external view returns (FinalFour memory);
-
-    function owner() external view returns (address);
-}
+import "../interfaces/IOnchainMadnessFactory.sol";
+import "../libraries/OnchainMadnessLib.sol";
 
 contract BetCheck {
     IOnchainMadnessFactory public factory;
@@ -73,384 +24,216 @@ contract BetCheck {
         factory = IOnchainMadnessFactory(_factory);
     }
 
-    function getBetResults(
+    function getBetTeamNames(
         uint256 year,
         uint8[63] memory bets
-    )
-        public
-        view
-        returns (
-            string[63] memory betTeamNames,
-            uint8[63] memory betResults,
-            uint8 points
-        )
-    {
-        points = 0;
-        string[63] memory _betTeamNames;
-        uint8[63] memory _betResults;
+    ) public view returns (string[63] memory teamNames) {
+        uint8[16] memory teamsEast = factory.getRegion(year, EAST).teams;
+        uint8[16] memory teamsSouth = factory.getRegion(year, SOUTH).teams;
+        uint8[16] memory teamsWest = factory.getRegion(year, WEST).teams;
+        uint8[16] memory teamsMidwest = factory.getRegion(year, MIDWEST).teams;
 
-        points = regionCheck(
-            factory.getRegion(year, EAST),
-            bets,
-            [0, 32, 48, 56],
-            points,
+        teamNames = factory.getTeamSymbols(
             year,
-            _betTeamNames,
-            _betResults
+            OnchainMadnessLib.betTeamNames(
+                bets,
+                teamsEast,
+                teamsSouth,
+                teamsWest,
+                teamsMidwest
+            )
         );
-        points = regionCheck(
-            factory.getRegion(year, SOUTH),
-            bets,
-            [8, 36, 50, 57],
-            points,
-            year,
-            _betTeamNames,
-            _betResults
-        );
-        points = regionCheck(
-            factory.getRegion(year, WEST),
-            bets,
-            [16, 40, 52, 58],
-            points,
-            year,
-            _betTeamNames,
-            _betResults
-        );
-        points = regionCheck(
-            factory.getRegion(year, MIDWEST),
-            bets,
-            [24, 44, 54, 59],
-            points,
-            year,
-            _betTeamNames,
-            _betResults
-        );
-
-        points = finalFourCheck(
-            factory.getFinalFour(year),
-            [
-                _betTeamNames[14],
-                _betTeamNames[29],
-                _betTeamNames[44],
-                _betTeamNames[59]
-            ],
-            bets,
-            _betTeamNames,
-            _betResults,
-            points,
-            year
-        );
-
-        betTeamNames = _betTeamNames;
-        betResults = _betResults;
     }
 
-    function regionCheck(
-        IOnchainMadnessFactory.Region memory region,
-        uint8[63] memory bets,
-        uint8[4] memory start,
-        uint8 points,
-        uint256 year,
-        string[63] memory betTeamNames,
-        uint8[63] memory betResults
-    ) internal view returns (uint8) {
-        uint8[8] memory round2Teams;
-        uint8[4] memory round3Teams;
-        uint8[2] memory championshipTeams;
-
-        // Process Round 1 (8 matches)
-        for (uint8 i = 0; i < 8; i++) {
-            (
-                betTeamNames[start[0] + i],
-                betResults[start[0] + i]
-            ) = betResultCalculate(
-                factory.getMatch(year, region.matchesRound1[i]),
-                bets[start[0] + i],
-                region.teams[i * 2],
-                region.teams[i * 2 + 1],
-                year
-            );
-            if (betResults[start[0] + i] == 1) points += 1;
-            round2Teams[i] = bets[start[0] + i] == 0
-                ? region.teams[i * 2]
-                : region.teams[i * 2 + 1];
-        }
-
-        // Process Round 2 (4 matches)
-        for (uint8 i = 0; i < 4; i++) {
-            (
-                betTeamNames[start[1] + i],
-                betResults[start[1] + i]
-            ) = betResultCalculate(
-                factory.getMatch(year, region.matchesRound2[i]),
-                bets[start[1] + i],
-                round2Teams[i * 2],
-                round2Teams[i * 2 + 1],
-                year
-            );
-            if (betResults[start[1] + i] == 1) points += 1;
-            round3Teams[i] = bets[start[1] + i] == 0
-                ? round2Teams[i * 2]
-                : round2Teams[i * 2 + 1];
-        }
-
-        // Process Round 3 (2 matches)
-        for (uint8 i = 0; i < 2; i++) {
-            (
-                betTeamNames[start[2] + i],
-                betResults[start[2] + i]
-            ) = betResultCalculate(
-                factory.getMatch(year, region.matchesRound3[i]),
-                bets[start[2] + i],
-                round3Teams[i * 2],
-                round3Teams[i * 2 + 1],
-                year
-            );
-            if (betResults[start[2] + i] == 1) points += 1;
-            championshipTeams[i] = bets[start[2] + i] == 0
-                ? round3Teams[i * 2]
-                : round3Teams[i * 2 + 1];
-        }
-
-        // Process Championship game
-        (betTeamNames[start[3]], betResults[start[3]]) = betResultCalculate(
-            factory.getMatch(year, region.matchRound4),
-            bets[start[3]],
-            championshipTeams[0],
-            championshipTeams[1],
-            year
-        );
-        if (betResults[start[3]] == 1) points += 1;
-
-        return points;
-    }
-
-    function finalFourCheck(
-        IOnchainMadnessFactory.FinalFour memory finalFour,
-        string[4] memory regionWinners,
-        uint8[63] memory bets,
-        string[63] memory betTeamNames,
-        uint8[63] memory betResults,
-        uint8 points,
-        uint256 year
-    ) internal view returns (uint8) {
-        IOnchainMadnessFactory.Match memory gameMatch;
-        string[2] memory finalTeams;
-
-        // Process Final Four semifinals (2 matches)
-        for (uint8 i = 0; i < 2; i++) {
-            gameMatch = factory.getMatch(year, finalFour.matchesRound1[i]);
-            betTeamNames[60 + i] = bets[60 + i] == 0
-                ? regionWinners[i * 2] // East/South
-                : regionWinners[i * 2 + 1]; // West/Midwest
-
-            betResults[60 + i] = gameMatch.winner == 0
-                ? 0
-                : (bets[60 + i] == 0 && gameMatch.winner == gameMatch.home) ||
-                    (bets[60 + i] == 1 && gameMatch.winner == gameMatch.away)
-                ? 1
-                : 2;
-
-            if (betResults[60 + i] == 1) points += 1;
-            finalTeams[i] = bets[60 + i] == 0
-                ? regionWinners[i * 2]
-                : regionWinners[i * 2 + 1];
-        }
-
-        // Process Championship game
-        gameMatch = factory.getMatch(year, finalFour.matchFinal);
-        betTeamNames[62] = bets[62] == 0 ? finalTeams[0] : finalTeams[1];
-        betResults[62] = gameMatch.winner == 0
-            ? 0
-            : (bets[62] == 0 && gameMatch.winner == gameMatch.home) ||
-                (bets[62] == 1 && gameMatch.winner == gameMatch.away)
-            ? 1
-            : 2;
-
-        if (betResults[62] == 1) points += 1;
-
-        return points;
-    }
-
-    function betResultCalculate(
-        IOnchainMadnessFactory.Match memory gameMatch,
-        uint8 bet, // from uint8[63] bets as 0 or 1 values
-        uint8 player1,
-        uint8 player2,
-        uint256 year
-    ) internal view returns (string memory betTeamName, uint8 betResult) {
-        if (bet == 0) {
-            betTeamName = factory.getTeamName(year, player1);
-            if (gameMatch.winner == 0) betResult = 0;
-            else if (gameMatch.winner == gameMatch.home) betResult = 1;
-            else betResult = 2;
-        } else {
-            betTeamName = factory.getTeamName(year, player2);
-            if (gameMatch.winner == 0) betResult = 0;
-            else if (gameMatch.winner == gameMatch.away) betResult = 1;
-            else betResult = 2;
-        }
-    }
-
-    /** POINTS CHECK **/
-    function getBetPoints(
+    function getBetResults(
         uint256 year,
         uint8[63] memory bets
     ) public view returns (uint8[63] memory betResults, uint8 points) {
         points = 0;
-        uint8[63] memory _betResults;
 
-        points = regionPointsCheck(
-            factory.getRegion(year, EAST),
-            bets,
-            0,
-            points,
-            year,
-            _betResults
-        );
-        points = regionPointsCheck(
-            factory.getRegion(year, WEST),
-            bets,
-            15,
-            points,
-            year,
-            _betResults
-        );
-        points = regionPointsCheck(
-            factory.getRegion(year, SOUTH),
-            bets,
-            30,
-            points,
-            year,
-            _betResults
-        );
-        points = regionPointsCheck(
-            factory.getRegion(year, MIDWEST),
-            bets,
-            45,
-            points,
-            year,
-            _betResults
-        );
-
-        (_betResults, points) = finalFourPointsCheck(
-            factory.getFinalFour(year),
-            bets,
-            _betResults,
-            points,
-            year
-        );
-
-        betResults = _betResults;
-    }
-
-    function regionPointsCheck(
-        IOnchainMadnessFactory.Region memory region,
-        uint8[63] memory bets,
-        uint8 start,
-        uint8 points,
-        uint256 year,
-        uint8[63] memory betResults
-    ) internal view returns (uint8) {
-        uint8[8] memory round2Teams;
-        uint8[4] memory round3Teams;
-        uint8[2] memory championshipTeams;
-
-        // Process Round 1 (8 matches)
+        // EAST
         for (uint8 i = 0; i < 8; i++) {
-            betResults[start + i] = betResultCalculatePoints(
-                factory.getMatch(year, region.matchesRound1[i]),
-                bets[start + i]
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, EAST).matchesRound1[i]
+                )
             );
-            if (betResults[start + i] == 1) points += 1;
-            round2Teams[i] = bets[start + i] == 0
-                ? region.teams[i * 2]
-                : region.teams[i * 2 + 1];
         }
 
-        // Process Round 2 (4 matches)
-        for (uint8 i = 0; i < 4; i++) {
-            betResults[start + 8 + i] = betResultCalculatePoints(
-                factory.getMatch(year, region.matchesRound2[i]),
-                bets[start + 8 + i]
+        // SOUTH
+        for (uint8 i = 8; i < 16; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, SOUTH).matchesRound1[i % 8]
+                )
             );
-            if (betResults[start + 8 + i] == 1) points += 1;
-            round3Teams[i] = bets[start + 8 + i] == 0
-                ? round2Teams[i * 2]
-                : round2Teams[i * 2 + 1];
         }
 
-        // Process Round 3 (2 matches)
-        for (uint8 i = 0; i < 2; i++) {
-            betResults[start + 12 + i] = betResultCalculatePoints(
-                factory.getMatch(year, region.matchesRound3[i]),
-                bets[start + 12 + i]
+        //WEST
+        for (uint8 i = 16; i < 24; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, WEST).matchesRound1[i % 8]
+                )
             );
-            if (betResults[start + 12 + i] == 1) points += 1;
-            championshipTeams[i] = bets[start + 12 + i] == 0
-                ? round3Teams[i * 2]
-                : round3Teams[i * 2 + 1];
         }
 
-        // Process Championship game
-        betResults[start + 14] = betResultCalculatePoints(
-            factory.getMatch(year, region.matchRound4),
-            bets[start + 14]
+        //MIDWEST
+        for (uint8 i = 24; i < 32; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound1[i % 8]
+                )
+            );
+        }
+
+        //Round 2: four matches, startin from index 32
+        // EAST
+        for (uint8 i = 32; i < 36; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, EAST).matchesRound2[i % 4]
+                )
+            );
+        }
+        //SOUTH
+        for (uint8 i = 36; i < 40; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, SOUTH).matchesRound2[i % 4]
+                )
+            );
+        }
+        //WEST
+        for (uint8 i = 40; i < 44; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, WEST).matchesRound2[i % 4]
+                )
+            );
+        }
+        //MIDWEST
+        for (uint8 i = 44; i < 48; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound2[i % 4]
+                )
+            );
+        }
+
+        // Round 3: 2 matches, starting from index 48
+        //EAST
+        for (uint8 i = 48; i < 50; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, EAST).matchesRound3[i % 2]
+                )
+            );
+        }
+        //MIDWEST
+        for (uint8 i = 50; i < 52; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound3[i % 2]
+                )
+            );
+        }
+        //SOUTH
+        for (uint8 i = 52; i < 54; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, SOUTH).matchesRound3[i % 2]
+                )
+            );
+        }
+        //WEST
+        for (uint8 i = 54; i < 56; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, WEST).matchesRound3[i % 2]
+                )
+            );
+        }
+
+        //Round 4
+        // EAST
+        (points, betResults[56]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[56],
+            factory.getMatch(year, factory.getRegion(year, EAST).matchRound4)
         );
-        if (betResults[start + 14] == 1) points += 1;
+        //SOUTH
+        (points, betResults[57]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[57],
+            factory.getMatch(year, factory.getRegion(year, SOUTH).matchRound4)
+        );
+        //WEST
+        (points, betResults[58]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[58],
+            factory.getMatch(year, factory.getRegion(year, WEST).matchRound4)
+        );
+        //MIDWEST
+        (points, betResults[59]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[59],
+            factory.getMatch(year, factory.getRegion(year, MIDWEST).matchRound4)
+        );
 
-        return points;
-    }
+        //FINAL FOUR
+        (points, betResults[60]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[60],
+            factory.getMatch(year, factory.getFinalFour(year).matchesRound1[0])
+        );
+        (points, betResults[61]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[61],
+            factory.getMatch(year, factory.getFinalFour(year).matchesRound1[1])
+        );
 
-    function finalFourPointsCheck(
-        IOnchainMadnessFactory.FinalFour memory finalFour,
-        uint8[63] memory bets,
-        uint8[63] memory betResults,
-        uint8 points,
-        uint256 year
-    ) internal view returns (uint8[63] memory, uint8) {
-        IOnchainMadnessFactory.Match memory gameMatch;
-
-        // Process Final Four semifinals (2 matches)
-        for (uint8 i = 0; i < 2; i++) {
-            gameMatch = factory.getMatch(year, finalFour.matchesRound1[i]);
-
-            betResults[60 + i] = gameMatch.winner == 0
-                ? 0
-                : (bets[60 + i] == 0 && gameMatch.winner == gameMatch.home) ||
-                    (bets[60 + i] == 1 && gameMatch.winner == gameMatch.away)
-                ? 1
-                : 2;
-
-            if (betResults[60 + i] == 1) points += 1;
-        }
-
-        // Process Championship game
-        gameMatch = factory.getMatch(year, finalFour.matchFinal);
-        betResults[62] = gameMatch.winner == 0
-            ? 0
-            : (bets[62] == 0 && gameMatch.winner == gameMatch.home) ||
-                (bets[62] == 1 && gameMatch.winner == gameMatch.away)
-            ? 1
-            : 2;
-
-        if (betResults[62] == 1) points += 1;
-
-        return (betResults, points);
-    }
-
-    function betResultCalculatePoints(
-        IOnchainMadnessFactory.Match memory gameMatch,
-        uint8 bet
-    ) internal pure returns (uint8 betResult) {
-        if (bet == 0) {
-            if (gameMatch.winner == 0) betResult = 0;
-            else if (gameMatch.winner == gameMatch.home) betResult = 1;
-            else betResult = 2;
-        } else {
-            if (gameMatch.winner == 0) betResult = 0;
-            else if (gameMatch.winner == gameMatch.away) betResult = 1;
-            else betResult = 2;
-        }
+        //Final Match
+        (points, betResults[62]) = OnchainMadnessLib.calculateResults(
+            points,
+            bets[62],
+            factory.getMatch(year, factory.getFinalFour(year).matchFinal)
+        );
     }
 }

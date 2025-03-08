@@ -25,7 +25,7 @@ interface INftMetadata {
  * @dev Interface for checking bet results
  */
 interface IBetCheck {
-    function getBetPoints(
+    function getBetResults(
         uint256 year,
         uint8[63] memory bets
     ) external view returns (uint8[63] memory betResults, uint8 points);
@@ -377,7 +377,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
             IOnchainMadnessFactory(
                 IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
             ).contracts("BET_CHECK")
-        ).getBetPoints(
+        ).getBetResults(
                 entryStorage.getTokenGameYear(poolId, _tokenId),
                 entryStorage.getNftBet(poolId, _tokenId)
             );

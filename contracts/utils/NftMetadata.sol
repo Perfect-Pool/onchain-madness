@@ -19,14 +19,12 @@ interface IBetCheck {
     function getBetResults(
         uint256 year,
         uint8[63] memory bets
-    )
-        external
-        view
-        returns (
-            string[63] memory betTeamNames,
-            uint8[63] memory betResults,
-            uint8 points
-        );
+    ) external view returns (uint8[63] memory betResults, uint8 points);
+
+    function getBetTeamNames(
+        uint256 year,
+        uint8[63] memory bets
+    ) external view returns (string[63] memory teamNames);
 }
 
 contract NftMetadata {
@@ -71,15 +69,14 @@ contract NftMetadata {
             madnessFactory.contracts("OM_ENTRY_DEPLOYER")
         );
         IBetCheck betCheck = IBetCheck(madnessFactory.contracts("BET_CHECK"));
-
-        (
-            string[63] memory betTeamNames,
-            uint8[63] memory betResults,
-            uint8 points
-        ) = betCheck.getBetResults(
-                _gameYear,
-                entryFactory.getBetData(_poolId, _tokenId)
-            );
+        string[63] memory betTeamNames = betCheck.getBetTeamNames(
+            _gameYear,
+            entryFactory.getBetData(_poolId, _tokenId)
+        );
+        (uint8[63] memory betResults, uint8 points) = betCheck.getBetResults(
+            _gameYear,
+            entryFactory.getBetData(_poolId, _tokenId)
+        );
         return
             string(
                 abi.encodePacked(

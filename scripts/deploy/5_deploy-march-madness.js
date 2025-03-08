@@ -99,17 +99,6 @@ async function main() {
       await new Promise((resolve) => setTimeout(resolve, 2000));
       await betCheck.setDeployer(onchainMadnessFactory.address);
     }
-    if (networkData.REGION_CHECK !== "") {
-      const regionCheck = await ethers.getContractAt(
-        "RegionCheck",
-        networkData.REGION_CHECK
-      );
-      console.log(
-        `Set OnchainMadnessFactory as deployer for RegionCheck at ${regionCheck.address}`
-      );
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      await regionCheck.setDeployer(onchainMadnessFactory.address);
-    }
     if (networkData.TREASURY !== "") {
       await onchainMadnessFactory.setContract("TREASURY", networkData.TREASURY);
       console.log(
@@ -132,7 +121,11 @@ async function main() {
   //BET_CHECK
   if (networkData.BET_CHECK === "") {
     console.log(`Deploying BetCheck...`);
-    const BetCheck = await ethers.getContractFactory("BetCheck");
+    const BetCheck = await ethers.getContractFactory("BetCheck", {
+      libraries: {
+        OnchainMadnessLib: networkData.Libraries.OnchainMadnessLib,
+      },
+    });
     const betCheck = await BetCheck.deploy(networkData.OM_DEPLOYER);
     await betCheck.deployed();
 
@@ -147,26 +140,6 @@ async function main() {
   } else {
     console.log(`BetCheck already deployed at ${networkData.BET_CHECK}`);
     await onchainMadnessFactory.setContract("BET_CHECK", networkData.BET_CHECK);
-  }
-
-  //REGION_CHECK
-  if (networkData.REGION_CHECK === "") {
-    console.log(`Deploying RegionCheck...`);
-    const RegionCheck = await ethers.getContractFactory("RegionCheck");
-    const regionCheck = await RegionCheck.deploy(networkData.OM_DEPLOYER);
-    await regionCheck.deployed();
-
-    console.log(`RegionCheck deployed at ${regionCheck.address}`);
-    networkData.REGION_CHECK = regionCheck.address;
-    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    console.log(`Setting RegionCheck address to OnchainMadnessFactory...`);
-    await onchainMadnessFactory.setContract("REGION_CHECK", networkData.REGION_CHECK);
-  } else {
-    console.log(`RegionCheck already deployed at ${networkData.REGION_CHECK}`);
-    await onchainMadnessFactory.setContract("REGION_CHECK", networkData.REGION_CHECK);
   }
 }
 

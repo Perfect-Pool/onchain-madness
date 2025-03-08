@@ -49,6 +49,9 @@ async function main() {
       contracts[networkName].OM_DEPLOYER,
     ],
     contract: "contracts/utils/BetCheck.sol:BetCheck",
+    libraries: {
+      OnchainMadnessLib: contracts[networkName].Libraries.OnchainMadnessLib,
+    },
   });
 
   const addressEntryFactory = contracts[networkName].OM_ENTRY_DEPLOYER;

@@ -326,7 +326,7 @@ contract OnchainMadness {
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        if (winnerId == teamToId[bytes(getTeamName(currentMatch.home))]) {
+        if (winnerId == currentMatch.home) {
             if (homePoints > awayPoints) {
                 currentMatch.home_points = homePoints;
                 currentMatch.away_points = awayPoints;
@@ -335,7 +335,7 @@ contract OnchainMadness {
                 currentMatch.away_points = homePoints;
             }
         } else if (
-            winnerId == teamToId[bytes(getTeamName(currentMatch.away))]
+            winnerId == currentMatch.away
         ) {
             if (awayPoints > homePoints) {
                 currentMatch.away_points = awayPoints;
@@ -412,14 +412,19 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
-                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
+            winnerId == currentMatch.home ||
+                winnerId == currentMatch.away,
             "OM-08"
         );
 
         // Store match points
-        currentMatch.home_points = homePoints;
-        currentMatch.away_points = awayPoints;
+        if (homePoints > awayPoints) {
+            currentMatch.home_points = homePoints;
+            currentMatch.away_points = awayPoints;
+        } else {
+            currentMatch.home_points = awayPoints;
+            currentMatch.away_points = homePoints;
+        }
         currentMatch.winner = winnerId;
         region.winner = winnerId;
 
@@ -487,14 +492,19 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winners)];
         require(
-            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
-                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
+            winnerId == currentMatch.home ||
+                winnerId == currentMatch.away,
             "OM-08"
         );
 
         // Store match points
-        currentMatch.home_points = homePoints;
-        currentMatch.away_points = awayPoints;
+        if (homePoints > awayPoints) {
+            currentMatch.home_points = homePoints;
+            currentMatch.away_points = awayPoints;
+        } else {
+            currentMatch.home_points = awayPoints;
+            currentMatch.away_points = homePoints;
+        }
         currentMatch.winner = winnerId;
 
         // Create championship match once both Final Four matches are complete
@@ -531,14 +541,19 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == teamToId[bytes(getTeamName(currentMatch.home))] ||
-                winnerId == teamToId[bytes(getTeamName(currentMatch.away))],
+            winnerId == currentMatch.home ||
+                winnerId == currentMatch.away,
             "OM-08"
         );
 
         // Store match points
-        currentMatch.home_points = homePoints;
-        currentMatch.away_points = awayPoints;
+        if (homePoints > awayPoints) {
+            currentMatch.home_points = homePoints;
+            currentMatch.away_points = awayPoints;
+        } else {
+            currentMatch.home_points = awayPoints;
+            currentMatch.away_points = homePoints;
+        }
         currentMatch.winner = winnerId;
         finalFour.winner = winnerId;
 
@@ -694,32 +709,76 @@ contract OnchainMadness {
     function getFinalResult() public view returns (uint8[63] memory) {
         uint8[63] memory winners;
 
+        // Round 1 
+        // EAST
         for (uint8 i = 0; i < 8; i++) {
             winners[i] = matches[regions[EAST].matchesRound1[i]].winner;
-            winners[i + 8] = matches[regions[SOUTH].matchesRound1[i]].winner;
-            winners[i + 16] = matches[regions[WEST].matchesRound1[i]].winner;
-            winners[i + 24] = matches[regions[MIDWEST].matchesRound1[i]].winner;
         }
 
-        for (uint8 i = 0; i < 4; i++) {
-            winners[i + 32] = matches[regions[EAST].matchesRound2[i]].winner;
-            winners[i + 36] = matches[regions[SOUTH].matchesRound2[i]].winner;
-            winners[i + 40] = matches[regions[WEST].matchesRound2[i]].winner;
-            winners[i + 44] = matches[regions[MIDWEST].matchesRound2[i]].winner;
+        // SOUTH
+        for (uint8 i = 8; i < 16; i++) {
+            winners[i] = matches[regions[SOUTH].matchesRound1[i % 8]].winner;
         }
 
-        for (uint8 i = 0; i < 2; i++) {
-            winners[i + 48] = matches[regions[EAST].matchesRound3[i]].winner;
-            winners[i + 50] = matches[regions[SOUTH].matchesRound3[i]].winner;
-            winners[i + 52] = matches[regions[WEST].matchesRound3[i]].winner;
-            winners[i + 54] = matches[regions[MIDWEST].matchesRound3[i]].winner;
+        // WEST
+        for (uint8 i = 16; i < 24; i++) {
+            winners[i] = matches[regions[WEST].matchesRound1[i % 8]].winner;
         }
 
+        // MIDWEST
+        for (uint8 i = 24; i < 32; i++) {
+            winners[i] = matches[regions[MIDWEST].matchesRound1[i % 8]].winner;
+        }
+
+        // Round 2
+        // EAST
+        for (uint8 i = 32; i < 36; i++) {
+            winners[i] = matches[regions[EAST].matchesRound2[i % 4]].winner;
+        }
+
+        // SOUTH
+        for (uint8 i = 36; i < 40; i++) {
+            winners[i] = matches[regions[SOUTH].matchesRound2[i % 4]].winner;
+        }
+
+        // WEST
+        for (uint8 i = 40; i < 44; i++) {
+            winners[i] = matches[regions[WEST].matchesRound2[i % 4]].winner;
+        }
+
+        // MIDWEST
+        for (uint8 i = 44; i < 48; i++) {
+            winners[i] = matches[regions[MIDWEST].matchesRound2[i % 4]].winner;
+        }
+        
+        // Round 3
+        // EAST
+        for (uint8 i = 48; i < 50; i++) {
+            winners[i] = matches[regions[EAST].matchesRound3[i % 2]].winner;
+        }
+
+        // SOUTH
+        for (uint8 i = 50; i < 52; i++) {
+            winners[i] = matches[regions[SOUTH].matchesRound3[i % 2]].winner;
+        }
+
+        // WEST
+        for (uint8 i = 52; i < 54; i++) {
+            winners[i] = matches[regions[WEST].matchesRound3[i % 2]].winner;
+        }
+
+        // MIDWEST
+        for (uint8 i = 54; i < 56; i++) {
+            winners[i] = matches[regions[MIDWEST].matchesRound3[i % 2]].winner;
+        }
+
+        // Round 4
         winners[56] = matches[regions[EAST].matchRound4].winner;
         winners[57] = matches[regions[SOUTH].matchRound4].winner;
         winners[58] = matches[regions[WEST].matchRound4].winner;
         winners[59] = matches[regions[MIDWEST].matchRound4].winner;
 
+        // Final Four
         winners[60] = matches[finalFour.matchesRound1[0]].winner;
         winners[61] = matches[finalFour.matchesRound1[1]].winner;
         winners[62] = finalFour.winner;
