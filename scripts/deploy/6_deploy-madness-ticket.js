@@ -24,14 +24,8 @@ async function main() {
   );
 
   if (networkData.OM_ENTRY === "") {
-    // Link the library
     const OnchainMadnessEntry = await ethers.getContractFactory(
-      "OnchainMadnessEntry",
-      {
-        libraries: {
-          OnchainMadnessLib: libraryAddress,
-        },
-      }
+      "OnchainMadnessEntry"
     );
 
     const onchainMadnessEntry = await OnchainMadnessEntry.deploy(

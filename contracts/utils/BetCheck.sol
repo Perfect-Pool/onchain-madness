@@ -92,16 +92,7 @@ contract BetCheck {
         points = regionCheck(
             factory.getRegion(year, EAST),
             bets,
-            0,
-            points,
-            year,
-            _betTeamNames,
-            _betResults
-        );
-        points = regionCheck(
-            factory.getRegion(year, WEST),
-            bets,
-            15,
+            [0, 32, 48, 56],
             points,
             year,
             _betTeamNames,
@@ -110,7 +101,16 @@ contract BetCheck {
         points = regionCheck(
             factory.getRegion(year, SOUTH),
             bets,
-            30,
+            [8, 36, 50, 57],
+            points,
+            year,
+            _betTeamNames,
+            _betResults
+        );
+        points = regionCheck(
+            factory.getRegion(year, WEST),
+            bets,
+            [16, 40, 52, 58],
             points,
             year,
             _betTeamNames,
@@ -119,14 +119,14 @@ contract BetCheck {
         points = regionCheck(
             factory.getRegion(year, MIDWEST),
             bets,
-            45,
+            [24, 44, 54, 59],
             points,
             year,
             _betTeamNames,
             _betResults
         );
 
-        (_betTeamNames, _betResults, points) = finalFourCheck(
+        points = finalFourCheck(
             factory.getFinalFour(year),
             [
                 _betTeamNames[14],
@@ -148,7 +148,7 @@ contract BetCheck {
     function regionCheck(
         IOnchainMadnessFactory.Region memory region,
         uint8[63] memory bets,
-        uint8 start,
+        uint8[4] memory start,
         uint8 points,
         uint256 year,
         string[63] memory betTeamNames,
@@ -161,17 +161,17 @@ contract BetCheck {
         // Process Round 1 (8 matches)
         for (uint8 i = 0; i < 8; i++) {
             (
-                betTeamNames[start + i],
-                betResults[start + i]
+                betTeamNames[start[0] + i],
+                betResults[start[0] + i]
             ) = betResultCalculate(
                 factory.getMatch(year, region.matchesRound1[i]),
-                bets[start + i],
+                bets[start[0] + i],
                 region.teams[i * 2],
                 region.teams[i * 2 + 1],
                 year
             );
-            if (betResults[start + i] == 1) points += 1;
-            round2Teams[i] = bets[start + i] == 0
+            if (betResults[start[0] + i] == 1) points += 1;
+            round2Teams[i] = bets[start[0] + i] == 0
                 ? region.teams[i * 2]
                 : region.teams[i * 2 + 1];
         }
@@ -179,17 +179,17 @@ contract BetCheck {
         // Process Round 2 (4 matches)
         for (uint8 i = 0; i < 4; i++) {
             (
-                betTeamNames[start + 8 + i],
-                betResults[start + 8 + i]
+                betTeamNames[start[1] + i],
+                betResults[start[1] + i]
             ) = betResultCalculate(
                 factory.getMatch(year, region.matchesRound2[i]),
-                bets[start + 8 + i],
+                bets[start[1] + i],
                 round2Teams[i * 2],
                 round2Teams[i * 2 + 1],
                 year
             );
-            if (betResults[start + 8 + i] == 1) points += 1;
-            round3Teams[i] = bets[start + 8 + i] == 0
+            if (betResults[start[1] + i] == 1) points += 1;
+            round3Teams[i] = bets[start[1] + i] == 0
                 ? round2Teams[i * 2]
                 : round2Teams[i * 2 + 1];
         }
@@ -197,30 +197,30 @@ contract BetCheck {
         // Process Round 3 (2 matches)
         for (uint8 i = 0; i < 2; i++) {
             (
-                betTeamNames[start + 12 + i],
-                betResults[start + 12 + i]
+                betTeamNames[start[2] + i],
+                betResults[start[2] + i]
             ) = betResultCalculate(
                 factory.getMatch(year, region.matchesRound3[i]),
-                bets[start + 12 + i],
+                bets[start[2] + i],
                 round3Teams[i * 2],
                 round3Teams[i * 2 + 1],
                 year
             );
-            if (betResults[start + 12 + i] == 1) points += 1;
-            championshipTeams[i] = bets[start + 12 + i] == 0
+            if (betResults[start[2] + i] == 1) points += 1;
+            championshipTeams[i] = bets[start[2] + i] == 0
                 ? round3Teams[i * 2]
                 : round3Teams[i * 2 + 1];
         }
 
         // Process Championship game
-        (betTeamNames[start + 14], betResults[start + 14]) = betResultCalculate(
+        (betTeamNames[start[3]], betResults[start[3]]) = betResultCalculate(
             factory.getMatch(year, region.matchRound4),
-            bets[start + 14],
+            bets[start[3]],
             championshipTeams[0],
             championshipTeams[1],
             year
         );
-        if (betResults[start + 14] == 1) points += 1;
+        if (betResults[start[3]] == 1) points += 1;
 
         return points;
     }
@@ -233,7 +233,7 @@ contract BetCheck {
         uint8[63] memory betResults,
         uint8 points,
         uint256 year
-    ) internal view returns (string[63] memory, uint8[63] memory, uint8) {
+    ) internal view returns (uint8) {
         IOnchainMadnessFactory.Match memory gameMatch;
         string[2] memory finalTeams;
 
@@ -269,7 +269,7 @@ contract BetCheck {
 
         if (betResults[62] == 1) points += 1;
 
-        return (betTeamNames, betResults, points);
+        return points;
     }
 
     function betResultCalculate(

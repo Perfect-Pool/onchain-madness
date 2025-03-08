@@ -7,7 +7,6 @@ import "../interfaces/IOnchainMadnessFactory.sol";
 import "../interfaces/IEntryStorage.sol";
 import "../interfaces/IERC20.sol";
 import "../interfaces/IPerfectPool.sol";
-import "../libraries/OnchainMadnessLib.sol";
 
 /**
  * @title INftMetadata
@@ -385,23 +384,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     }
 
     /**
-     * @notice Gets team symbols for a token's predictions
-     * @param _tokenId Token ID to get symbols for
-     * @return Array of 63 team symbols
-     */
-    function getTeamSymbols(
-        uint256 _tokenId
-    ) public view returns (string[63] memory) {
-        return
-            IOnchainMadnessFactory(
-                IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
-            ).getTeamSymbols(
-                    entryStorage.getTokenGameYear(poolId, _tokenId),
-                    entryStorage.getNftBet(poolId, _tokenId)
-                );
-    }
-
-    /**
      * @notice Calculates claimable and claimed amounts for a token
      * @param _tokenId Token ID to check
      * @return amountToClaim Amount available to claim
@@ -456,23 +438,6 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         uint256 gameYear
     ) public view returns (uint256 players) {
         return entryStorage.getGameTokens(poolId, gameYear).length;
-    }
-
-    /**
-     * @notice Validates a bracket and returns score
-     * @param _tokenId Token ID to validate
-     * @return validator Array indicating correct/incorrect predictions
-     * @return points Total score achieved
-     */
-    function validateEntry(
-        uint256 _tokenId
-    ) public view returns (uint8[63] memory validator, uint8 points) {
-        uint8[63] memory bets = entryStorage.getNftBet(poolId, _tokenId);
-        uint8[63] memory results = IOnchainMadnessFactory(
-            IOnchainMadnessEntryFactory(nftDeployer).getGameDeployer()
-        ).getFinalResult(entryStorage.getTokenGameYear(poolId, _tokenId));
-
-        return OnchainMadnessLib.validateAndScore(bets, results);
     }
 
     /**

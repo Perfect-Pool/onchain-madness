@@ -56,6 +56,7 @@
     "iterate-tokens": "hardhat run scripts/iterations/iterateTokens.js --network",
     "create-pools": "hardhat run scripts/createPools.js --network",
     "place-bets": "hardhat run scripts/placeBets.js --network",
+    "place-perfect-bet": "hardhat run scripts/placePerfectBet.js --network",
     "check-pool": "hardhat run scripts/checkPoolData.js --network",
     "check-prize": "hardhat run scripts/checkPrize.js --network",
     "check-pending": "hardhat run scripts/check-pending.js --network"

@@ -15,10 +15,7 @@ async function main() {
   await hre.run("verify:verify", {
     address: addressEntry,
     constructorArguments: [contracts[networkName].USDC],
-    contract: "contracts/utils/OnchainMadnessEntry.sol:OnchainMadnessEntry",
-    libraries: {
-      OnchainMadnessLib: contracts[networkName].Libraries.OnchainMadnessLib,
-    },
+    contract: "contracts/utils/OnchainMadnessEntry.sol:OnchainMadnessEntry"
   });
 
   const addressEntryStorage = contracts[networkName].OM_ENTRY_STORAGE;

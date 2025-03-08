@@ -15,10 +15,6 @@ interface IOnchainMadnessEntry {
         uint256 _tokenId
     ) external view returns (uint8[63] memory validator, uint8 points);
 
-    function getTeamSymbols(
-        uint256 _tokenId
-    ) external view returns (string[63] memory);
-
     function amountPrizeClaimed(
         uint256 _tokenId
     ) external view returns (uint256 amountToClaim, uint256 amountClaimed);

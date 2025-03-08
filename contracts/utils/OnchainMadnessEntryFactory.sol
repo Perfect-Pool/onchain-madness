@@ -564,23 +564,6 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Returns the team symbols for a given NFT
-     * @notice Wrapper function that calls getTeamSymbols in the pool contract
-     * @param _poolId ID of the pool
-     * @param _tokenId ID of the NFT
-     * @return The team symbols
-     */
-    function getTeamSymbols(
-        uint256 _poolId,
-        uint256 _tokenId
-    ) public view returns (string[63] memory) {
-        return
-            OnchainMadnessEntry(getPoolAddress(_poolId)).getTeamSymbols(
-                _tokenId
-            );
-    }
-
-    /**
      * @notice Returns the amount of prize claimed for a bracket
      * @notice Wrapper function that calls amountPrizeClaimed in the pool contract. Shows how much USDC was claimed.
      * @param _poolId ID of the pool
