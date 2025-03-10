@@ -57,9 +57,9 @@ async function main() {
   const [signer] = await ethers.getSigners();
   const usdc = new ethers.Contract(networkData["USDC"], USDC_ABI, signer);
   const perfectBet = [
-    0, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0,
-    1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0,
+    0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0,
+    1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0,
+    0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0
   ];
   try {
     // Check USDC balance

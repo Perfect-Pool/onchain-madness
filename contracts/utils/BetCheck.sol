@@ -52,6 +52,7 @@ contract BetCheck {
         points = 0;
 
         // EAST
+        // Round 1
         for (uint8 i = 0; i < 8; i++) {
             (points, betResults[i]) = OnchainMadnessLib.calculateResults(
                 points,
@@ -62,46 +63,8 @@ contract BetCheck {
                 )
             );
         }
-
-        // SOUTH
-        for (uint8 i = 8; i < 16; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, SOUTH).matchesRound1[i % 8]
-                )
-            );
-        }
-
-        //WEST
-        for (uint8 i = 16; i < 24; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, WEST).matchesRound1[i % 8]
-                )
-            );
-        }
-
-        //MIDWEST
-        for (uint8 i = 24; i < 32; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, MIDWEST).matchesRound1[i % 8]
-                )
-            );
-        }
-
-        //Round 2: four matches, startin from index 32
-        // EAST
-        for (uint8 i = 32; i < 36; i++) {
+        // Round 2
+        for (uint8 i = 8; i < 12; i++) {
             (points, betResults[i]) = OnchainMadnessLib.calculateResults(
                 points,
                 bets[i],
@@ -111,43 +74,8 @@ contract BetCheck {
                 )
             );
         }
-        //SOUTH
-        for (uint8 i = 36; i < 40; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, SOUTH).matchesRound2[i % 4]
-                )
-            );
-        }
-        //WEST
-        for (uint8 i = 40; i < 44; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, WEST).matchesRound2[i % 4]
-                )
-            );
-        }
-        //MIDWEST
-        for (uint8 i = 44; i < 48; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, MIDWEST).matchesRound2[i % 4]
-                )
-            );
-        }
-
-        // Round 3: 2 matches, starting from index 48
-        //EAST
-        for (uint8 i = 48; i < 50; i++) {
+        // Round 3
+        for (uint8 i = 12; i < 14; i++) {
             (points, betResults[i]) = OnchainMadnessLib.calculateResults(
                 points,
                 bets[i],
@@ -157,60 +85,130 @@ contract BetCheck {
                 )
             );
         }
-        //SOUTH
-        for (uint8 i = 50; i < 52; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, SOUTH).matchesRound3[i % 2]
-                )
-            );
-        }
-        //WEST
-        for (uint8 i = 52; i < 54; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, WEST).matchesRound3[i % 2]
-                )
-            );
-        }
-        //MIDWEST
-        for (uint8 i = 54; i < 56; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, MIDWEST).matchesRound3[i % 2]
-                )
-            );
-        }
-
-        //Round 4
-        // EAST
-        (points, betResults[56]) = OnchainMadnessLib.calculateResults(
+        // Round 4
+        (points, betResults[14]) = OnchainMadnessLib.calculateResults(
             points,
-            bets[56],
+            bets[14],
             factory.getMatch(year, factory.getRegion(year, EAST).matchRound4)
         );
-        //SOUTH
-        (points, betResults[57]) = OnchainMadnessLib.calculateResults(
+
+        // SOUTH
+        // Round 1
+        for (uint8 i = 15; i < 23; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, SOUTH).matchesRound1[(i-15) % 8]
+                )
+            );
+        }
+        // Round 2
+        for (uint8 i = 23; i < 27; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, SOUTH).matchesRound2[(i-15) % 4]
+                )
+            );
+        }
+        // Round 3
+        for (uint8 i = 27; i < 29; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, SOUTH).matchesRound3[(i-15) % 2]
+                )
+            );
+        }
+        // Round 4
+        (points, betResults[29]) = OnchainMadnessLib.calculateResults(
             points,
-            bets[57],
+            bets[29],
             factory.getMatch(year, factory.getRegion(year, SOUTH).matchRound4)
         );
-        //WEST
-        (points, betResults[58]) = OnchainMadnessLib.calculateResults(
+
+        // WEST
+        // Round 1
+        for (uint8 i = 30; i < 38; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, WEST).matchesRound1[(i-30) % 8]
+                )
+            );
+        }
+        // Round 2
+        for (uint8 i = 38; i < 42; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, WEST).matchesRound2[(i-30) % 4]
+                )
+            );
+        }
+        // Round 3
+        for (uint8 i = 42; i < 44; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, WEST).matchesRound3[(i-30) % 2]
+                )
+            );
+        }
+        // Round 4
+        (points, betResults[44]) = OnchainMadnessLib.calculateResults(
             points,
-            bets[58],
+            bets[44],
             factory.getMatch(year, factory.getRegion(year, WEST).matchRound4)
         );
-        //MIDWEST
+
+        // MIDWEST
+        // Round 1
+        for (uint8 i = 45; i < 53; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound1[(i-45) % 8]
+                )
+            );
+        }
+        // Round 2
+        for (uint8 i = 53; i < 57; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound2[(i-45) % 4]
+                )
+            );
+        }
+        // Round 3
+        for (uint8 i = 57; i < 59; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound3[(i-45) % 2]
+                )
+            );
+        }
+        // Round 4
         (points, betResults[59]) = OnchainMadnessLib.calculateResults(
             points,
             bets[59],

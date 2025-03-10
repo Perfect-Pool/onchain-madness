@@ -738,74 +738,69 @@ contract OnchainMadness {
      */
     function getFinalResult() public view returns (uint8[63] memory) {
         uint8[63] memory winners;
-
-        // Round 1
+        
         // EAST
+        // Round 1
         for (uint8 i = 0; i < 8; i++) {
             winners[i] = matches[regions[EAST].matchesRound1[i]].winner;
         }
-
-        // SOUTH
-        for (uint8 i = 8; i < 16; i++) {
-            winners[i] = matches[regions[SOUTH].matchesRound1[i % 8]].winner;
-        }
-
-        // WEST
-        for (uint8 i = 16; i < 24; i++) {
-            winners[i] = matches[regions[WEST].matchesRound1[i % 8]].winner;
-        }
-
-        // MIDWEST
-        for (uint8 i = 24; i < 32; i++) {
-            winners[i] = matches[regions[MIDWEST].matchesRound1[i % 8]].winner;
-        }
-
         // Round 2
-        // EAST
-        for (uint8 i = 32; i < 36; i++) {
+        for (uint8 i = 8; i < 12; i++) {
             winners[i] = matches[regions[EAST].matchesRound2[i % 4]].winner;
         }
-
-        // SOUTH
-        for (uint8 i = 36; i < 40; i++) {
-            winners[i] = matches[regions[SOUTH].matchesRound2[i % 4]].winner;
-        }
-
-        // WEST
-        for (uint8 i = 40; i < 44; i++) {
-            winners[i] = matches[regions[WEST].matchesRound2[i % 4]].winner;
-        }
-
-        // MIDWEST
-        for (uint8 i = 44; i < 48; i++) {
-            winners[i] = matches[regions[MIDWEST].matchesRound2[i % 4]].winner;
-        }
-
         // Round 3
-        // EAST
-        for (uint8 i = 48; i < 50; i++) {
+        for (uint8 i = 12; i < 14; i++) {
             winners[i] = matches[regions[EAST].matchesRound3[i % 2]].winner;
         }
+        // Round 4
+        winners[14] = matches[regions[EAST].matchRound4].winner;
 
         // SOUTH
-        for (uint8 i = 50; i < 52; i++) {
-            winners[i] = matches[regions[SOUTH].matchesRound3[i % 2]].winner;
+        // Round 1
+        for (uint8 i = 15; i < 23; i++) {
+            winners[i] = matches[regions[SOUTH].matchesRound1[(i-15) % 8]].winner;
         }
+        // Round 2
+        for (uint8 i = 23; i < 27; i++) {
+            winners[i] = matches[regions[SOUTH].matchesRound2[(i-15) % 4]].winner;
+        }
+        // Round 3
+        for (uint8 i = 27; i < 29; i++) {
+            winners[i] = matches[regions[SOUTH].matchesRound3[(i-15) % 2]].winner;
+        }
+        // Round 4
+        winners[29] = matches[regions[SOUTH].matchRound4].winner;
 
         // WEST
-        for (uint8 i = 52; i < 54; i++) {
-            winners[i] = matches[regions[WEST].matchesRound3[i % 2]].winner;
+        // Round 1
+        for (uint8 i = 30; i < 38; i++) {
+            winners[i] = matches[regions[WEST].matchesRound1[(i-30) % 8]].winner;
         }
+        // Round 2
+        for (uint8 i = 38; i < 42; i++) {
+            winners[i] = matches[regions[WEST].matchesRound2[(i-30) % 4]].winner;
+        }
+        // Round 3
+        for (uint8 i = 42; i < 44; i++) {
+            winners[i] = matches[regions[WEST].matchesRound3[(i-30) % 2]].winner;
+        }
+        // Round 4
+        winners[44] = matches[regions[WEST].matchRound4].winner;
 
         // MIDWEST
-        for (uint8 i = 54; i < 56; i++) {
-            winners[i] = matches[regions[MIDWEST].matchesRound3[i % 2]].winner;
+        // Round 1
+        for (uint8 i = 45; i < 53; i++) {
+            winners[i] = matches[regions[MIDWEST].matchesRound1[(i-45) % 8]].winner;
         }
-
+        // Round 2
+        for (uint8 i = 53; i < 57; i++) {
+            winners[i] = matches[regions[MIDWEST].matchesRound2[(i-45) % 4]].winner;
+        }
+        // Round 3
+        for (uint8 i = 57; i < 59; i++) {
+            winners[i] = matches[regions[MIDWEST].matchesRound3[(i-45) % 2]].winner;
+        }
         // Round 4
-        winners[56] = matches[regions[EAST].matchRound4].winner;
-        winners[57] = matches[regions[SOUTH].matchRound4].winner;
-        winners[58] = matches[regions[WEST].matchRound4].winner;
         winners[59] = matches[regions[MIDWEST].matchRound4].winner;
 
         // Final Four
