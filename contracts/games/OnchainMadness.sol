@@ -96,13 +96,27 @@ contract OnchainMadness {
         uint8 winner;
     }
 
+    /**
+     * @dev Represents the First Four team object
+     * @param region The region it was allocated
+     * @param arrayPosition The position of the team in the region's array
+     * @param matchId The match ID it was allocated
+     * @position The position of the team in the match
+     */
+    struct FirstFourTeam {
+        bytes32 region;
+        uint8 arrayPosition;
+        uint8 matchId;
+        uint8 position;
+    }
+
     /** STATE VARIABLES **/
     mapping(bytes32 => Region) private regions;
     mapping(uint8 => Match) private matches;
     mapping(uint8 => bytes) private teams;
     mapping(bytes => uint8) private teamToId;
     mapping(bytes => uint8) private firstFourMatches;
-    mapping(bytes => uint8[2]) private matchPosition;
+    mapping(bytes => FirstFourTeam) private firstFourPosition;
 
     uint256 public year;
     uint8 public currentRound;
@@ -217,12 +231,22 @@ contract OnchainMadness {
                 matches[matchesActualIndex].away = teamIds[i];
                 matchIds[matchIndex] = matchesActualIndex;
                 if (_checkIsFfg(teamHash)) {
-                    matchPosition[teamHash] = [matchesActualIndex, 1];
+                    firstFourPosition[teamHash] = FirstFourTeam({
+                        region: regionName,
+                        arrayPosition: i,
+                        matchId: matchesActualIndex,
+                        position: 1
+                    });
                 }
                 matchIndex++;
                 matchesActualIndex++;
             } else if (_checkIsFfg(teamHash)) {
-                matchPosition[teamHash] = [matchesActualIndex, 0];
+                firstFourPosition[teamHash] = FirstFourTeam({
+                    region: regionName,
+                    arrayPosition: i,
+                    matchId: matchesActualIndex,
+                    position: 0
+                });
             }
         }
 
@@ -257,11 +281,22 @@ contract OnchainMadness {
             ? currentMatch.home
             : currentMatch.away;
 
-        Match storage bracketMatch = matches[matchPosition[bytes(matchCode)][0]];
-        if(matchPosition[bytes(matchCode)][1] == 0) {
-            bracketMatch.home = currentMatch.winner;
-        } else {
-            bracketMatch.away = currentMatch.winner;
+        if (_checkIsFfg(_matchCode)) {
+            FirstFourTeam memory firstFourTeam = firstFourPosition[
+                bytes(matchCode)
+            ];
+            Match storage bracketMatch = matches[firstFourTeam.matchId];
+            if (firstFourTeam.position == 0) {
+                bracketMatch.home = currentMatch.winner;
+                regions[firstFourTeam.region].matchesRound1[
+                    firstFourTeam.arrayPosition
+                ] = currentMatch.winner;
+            } else {
+                bracketMatch.away = currentMatch.winner;
+                regions[firstFourTeam.region].matchesRound1[
+                    firstFourTeam.arrayPosition
+                ] = currentMatch.winner;
+            }
         }
     }
 
@@ -334,9 +369,7 @@ contract OnchainMadness {
                 currentMatch.home_points = awayPoints;
                 currentMatch.away_points = homePoints;
             }
-        } else if (
-            winnerId == currentMatch.away
-        ) {
+        } else if (winnerId == currentMatch.away) {
             if (awayPoints > homePoints) {
                 currentMatch.away_points = awayPoints;
                 currentMatch.home_points = homePoints;
@@ -412,8 +445,7 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == currentMatch.home ||
-                winnerId == currentMatch.away,
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
             "OM-08"
         );
 
@@ -429,16 +461,7 @@ contract OnchainMadness {
         region.winner = winnerId;
 
         uint8 roundMatchId;
-        if (regionHash == WEST) {
-            if (finalFour.matchesRound1[0] == 0) {
-                finalFour.matchesRound1[0] = matchesActualIndex;
-                roundMatchId = matchesActualIndex;
-                matchesActualIndex++;
-            } else {
-                roundMatchId = finalFour.matchesRound1[0];
-            }
-            matches[roundMatchId].away = winnerId;
-        } else if (regionHash == EAST) {
+        if (regionHash == EAST) {
             if (finalFour.matchesRound1[0] == 0) {
                 finalFour.matchesRound1[0] = matchesActualIndex;
                 roundMatchId = matchesActualIndex;
@@ -447,6 +470,15 @@ contract OnchainMadness {
                 roundMatchId = finalFour.matchesRound1[0];
             }
             matches[roundMatchId].home = winnerId;
+        } else if (regionHash == WEST) {
+            if (finalFour.matchesRound1[0] == 0) {
+                finalFour.matchesRound1[0] = matchesActualIndex;
+                roundMatchId = matchesActualIndex;
+                matchesActualIndex++;
+            } else {
+                roundMatchId = finalFour.matchesRound1[0];
+            }
+            matches[roundMatchId].away = winnerId;
         } else if (regionHash == SOUTH) {
             if (finalFour.matchesRound1[1] == 0) {
                 finalFour.matchesRound1[1] = matchesActualIndex;
@@ -492,8 +524,7 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winners)];
         require(
-            winnerId == currentMatch.home ||
-                winnerId == currentMatch.away,
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
             "OM-08"
         );
 
@@ -541,8 +572,7 @@ contract OnchainMadness {
 
         uint8 winnerId = teamToId[bytes(winner)];
         require(
-            winnerId == currentMatch.home ||
-                winnerId == currentMatch.away,
+            winnerId == currentMatch.home || winnerId == currentMatch.away,
             "OM-08"
         );
 
@@ -709,7 +739,7 @@ contract OnchainMadness {
     function getFinalResult() public view returns (uint8[63] memory) {
         uint8[63] memory winners;
 
-        // Round 1 
+        // Round 1
         // EAST
         for (uint8 i = 0; i < 8; i++) {
             winners[i] = matches[regions[EAST].matchesRound1[i]].winner;
@@ -750,7 +780,7 @@ contract OnchainMadness {
         for (uint8 i = 44; i < 48; i++) {
             winners[i] = matches[regions[MIDWEST].matchesRound2[i % 4]].winner;
         }
-        
+
         // Round 3
         // EAST
         for (uint8 i = 48; i < 50; i++) {

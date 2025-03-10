@@ -157,19 +157,8 @@ contract BetCheck {
                 )
             );
         }
-        //MIDWEST
-        for (uint8 i = 50; i < 52; i++) {
-            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
-                points,
-                bets[i],
-                factory.getMatch(
-                    year,
-                    factory.getRegion(year, MIDWEST).matchesRound3[i % 2]
-                )
-            );
-        }
         //SOUTH
-        for (uint8 i = 52; i < 54; i++) {
+        for (uint8 i = 50; i < 52; i++) {
             (points, betResults[i]) = OnchainMadnessLib.calculateResults(
                 points,
                 bets[i],
@@ -180,13 +169,24 @@ contract BetCheck {
             );
         }
         //WEST
-        for (uint8 i = 54; i < 56; i++) {
+        for (uint8 i = 52; i < 54; i++) {
             (points, betResults[i]) = OnchainMadnessLib.calculateResults(
                 points,
                 bets[i],
                 factory.getMatch(
                     year,
                     factory.getRegion(year, WEST).matchesRound3[i % 2]
+                )
+            );
+        }
+        //MIDWEST
+        for (uint8 i = 54; i < 56; i++) {
+            (points, betResults[i]) = OnchainMadnessLib.calculateResults(
+                points,
+                bets[i],
+                factory.getMatch(
+                    year,
+                    factory.getRegion(year, MIDWEST).matchesRound3[i % 2]
                 )
             );
         }
