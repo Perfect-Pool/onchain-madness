@@ -9,6 +9,16 @@ import "../libraries/OnchainMadnessLib.sol";
 
 interface IGamesFactory {
     function isFinished(uint256 year) external view returns (bool);
+
+    function contracts(string memory key) external view returns (address);
+}
+
+interface IGameNft {
+    function increasePot(
+        uint256 year,
+        uint256 amount,
+        address poolAddress
+    ) external;
 }
 
 interface ILendingPool {
@@ -351,6 +361,11 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             require(
                 USDC.transfer(gameContracts[i], multipliedAmount),
                 "USDC transfer failed"
+            );
+            IGameNft(gameFactory.contracts("OM_ENTRY_DEPLOYER")).increasePot(
+                year,
+                multipliedAmount,
+                gameContracts[i]
             );
             delete poolWinnersQty[gameContracts[i]];
         }

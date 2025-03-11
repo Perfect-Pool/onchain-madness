@@ -6,6 +6,8 @@ interface IEntryStorage {
 
     function PPS_PER_USDC() external view returns (uint256);
 
+    function increasePot(uint256 poolId, uint256 year, uint256 amount) external;
+
     function getGame(
         uint256 poolId,
         uint256 gameYear
@@ -60,10 +62,7 @@ interface IEntryStorage {
         uint256 tokenId
     ) external view returns (uint256);
 
-    function resetPpShare(
-        address user,
-        uint256 gameYear
-    ) external;
+    function resetPpShare(address user, uint256 gameYear) external;
 
     function getPpShare(
         address user,

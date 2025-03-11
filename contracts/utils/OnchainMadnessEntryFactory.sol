@@ -52,6 +52,8 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     event GamePotIncreased(uint256 indexed _gameYear, uint256 _amount);
     /// @notice Emitted when the game deployer is changed
     event GameDeployerChanged(address _gameDeployer);
+    /// @notice Emitted when the pot is increased
+    event PotIncreased(uint256 year, uint256 amount);
 
     /** CONSTANTS **/
     /// @notice Time after tournament to start burning PPS tokens
@@ -277,9 +279,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             emit IterationFinished(_gameYear);
             yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
-                perfectPool.perfectPrize(_gameYear);
                 perfectPool.setLockWithdrawal(true);
             }
+            perfectPool.perfectPrize(_gameYear);
             return;
         }
 
@@ -292,9 +294,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
                 emit IterationFinished(_gameYear);
                 yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
                 if (!perfectPool.lockWithdrawal()) {
-                    perfectPool.perfectPrize(_gameYear);
                     perfectPool.setLockWithdrawal(true);
                 }
+                perfectPool.perfectPrize(_gameYear);
                 return;
             }
 
@@ -313,12 +315,32 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             emit IterationFinished(_gameYear);
             yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
-                perfectPool.perfectPrize(_gameYear);
                 perfectPool.setLockWithdrawal(true);
             }
+            perfectPool.perfectPrize(_gameYear);
             return;
         }
         emit ContinueIteration(_gameYear);
+    }
+
+    /**
+     * @notice Increases the pot for a specific year
+     * @dev Only the PerfectPool contract can call this function
+     * @param year The year to increase the pot for
+     * @param amount The amount to increase the pot by
+     */
+    function increasePot(uint256 year, uint256 amount, address poolAddress) external {
+        require(
+            msg.sender == gameDeployer.contracts("PERFECTPOOL"),
+            "Unauthorized"
+        );
+        IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE")).increasePot(
+            poolIds[poolAddress],
+            year,
+            amount
+        );
+
+        emit PotIncreased(year, amount);
     }
 
     /**

@@ -172,6 +172,22 @@ contract EntryStorage {
     }
 
     /**
+     * @notice Increases the pot for a specific year
+     * @dev Only the PerfectPool contract can call this function
+     * @param poolId The pool identifier
+     * @param gameYear The year of the game
+     * @param amount The amount to increase the pot by
+     */
+    function increasePot(
+        uint256 poolId,
+        uint256 gameYear,
+        uint256 amount
+    ) external onlyEntryContract {
+        Game storage game = pools[poolId].games[gameYear];
+        game.pot += amount;
+    }
+
+    /**
      * @notice Updates game data and shares in a single transaction
      * @dev Handles token registration, share distribution, and bet storage
      * @param poolId The pool identifier
