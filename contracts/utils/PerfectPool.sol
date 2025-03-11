@@ -63,6 +63,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     uint256 public withdrawalMonth;
     /// @dev The day to block withdrawal
     uint256 public withdrawalDay;
+    /// @dev The total amount of winners
+    uint256 public winnersQty;
     /// @dev Addresses of winner pools
     address[] public winnerPools;
     /// @dev The Game Factory contract
@@ -74,6 +76,8 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     mapping(address => bool) public onchainMadnessContracts;
     /// @dev Total prize amount per tournament year
     mapping(uint256 => uint256) public yearToPrize;
+    /// @dev Amount of each pool winners
+    mapping(address => uint256) public poolWinnersQty;
 
     /** EVENTS **/
     /// @dev Emitted when new USDC is deposited and tokens are minted
@@ -291,9 +295,13 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         address gameContract
     ) external nonReentrant {
         require(onchainMadnessContracts[msg.sender], "Not authorized");
-        winnerPools.push(gameContract);
+        if (poolWinnersQty[gameContract] == 0) {
+            winnerPools.push(gameContract);
+        }
+        poolWinnersQty[gameContract]++;
+        winnersQty++;
 
-        emit WinnersQtyIncreased(year, winnerPools.length);
+        emit WinnersQtyIncreased(year, winnersQty);
     }
 
     /**
@@ -325,7 +333,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
             yearToPrize[year] = dollarBalance();
         }
 
-        uint256 prizeAmount = yearToPrize[year] / winnerPools.length;
+        uint256 prizeAmount = yearToPrize[year] / winnersQty;
         address[] memory gameContracts = winnerPools;
 
         if (aUSDCDeposit) {
@@ -334,16 +342,20 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
 
         for (uint256 i = 0; i < gameContracts.length; i++) {
             // to avoid overflows
-            if (dollarBalance() < prizeAmount) {
-                prizeAmount = dollarBalance();
+            uint256 multipliedAmount = prizeAmount *
+                poolWinnersQty[gameContracts[i]];
+            if (dollarBalance() < multipliedAmount) {
+                multipliedAmount = dollarBalance();
             }
 
             require(
-                USDC.transfer(gameContracts[i], prizeAmount),
+                USDC.transfer(gameContracts[i], multipliedAmount),
                 "USDC transfer failed"
             );
+            delete poolWinnersQty[gameContracts[i]];
         }
         winnerPools = new address[](0);
+        winnersQty = 0;
 
         emit PerfectPrizeAwarded(gameContracts, yearToPrize[year]);
     }

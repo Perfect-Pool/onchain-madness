@@ -277,6 +277,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             emit IterationFinished(_gameYear);
             yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
+                perfectPool.perfectPrize(_gameYear);
                 perfectPool.setLockWithdrawal(true);
             }
             return;
@@ -286,11 +287,12 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         bool hasMoreTokens = false;
         OnchainMadnessEntry pool = OnchainMadnessEntry(pools[_currentPoolId]);
 
-        while (processedIterations < 10) {
+        while (processedIterations < 8) {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
                 yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
                 if (!perfectPool.lockWithdrawal()) {
+                    perfectPool.perfectPrize(_gameYear);
                     perfectPool.setLockWithdrawal(true);
                 }
                 return;
@@ -311,6 +313,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             emit IterationFinished(_gameYear);
             yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
+                perfectPool.perfectPrize(_gameYear);
                 perfectPool.setLockWithdrawal(true);
             }
             return;
