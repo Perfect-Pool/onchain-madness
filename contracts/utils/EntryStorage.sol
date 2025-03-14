@@ -43,7 +43,6 @@ contract EntryStorage {
         bool claimEnabled;
         mapping(uint256 => uint256) scoreBetQty;
         uint256[] tokens;
-        uint256 tokensIterationIndex;
     }
 
     /**
@@ -59,6 +58,8 @@ contract EntryStorage {
         mapping(uint256 => uint256) tokenToGameYear;
         mapping(uint256 => uint8[63]) nftBet;
         mapping(uint256 => uint256) tokenClaimed;
+        uint256[] tokens;
+        uint256 tokensIterationIndex;
     }
 
     /// @dev Mapping of pool ID to its storage data
@@ -182,6 +183,7 @@ contract EntryStorage {
         // // Set token data
         pools[poolId].tokenToGameYear[tokenId] = gameYear;
         game.tokens.push(tokenId);
+        pools[poolId].tokens.push(tokenId);
 
         uint256 share = shareAmount * PPS_PER_USDC * 10 ** 12;
         uint256 treasuryShare = share / 2;
@@ -426,17 +428,17 @@ contract EntryStorage {
         onlyEntryContract
         returns (uint256 currentTokenId, bool hasNext)
     {
-        Game storage game = pools[poolId].games[gameYear];
+        PoolStorage storage pool = pools[poolId];
 
         // Get current token
-        if (game.tokensIterationIndex >= game.tokens.length) {
+        if (pool.tokensIterationIndex >= pool.tokens.length) {
             return (0, false);
         }
-        currentTokenId = game.tokens[game.tokensIterationIndex];
+        currentTokenId = pool.tokens[pool.tokensIterationIndex];
 
         // Update iteration state
-        game.tokensIterationIndex++;
-        game.claimEnabled = game.tokensIterationIndex >= game.tokens.length;
+        pool.tokensIterationIndex++;
+        pool.games[gameYear].claimEnabled = pool.tokensIterationIndex >= pool.tokens.length;
 
         return (currentTokenId, true);
     }
@@ -445,14 +447,12 @@ contract EntryStorage {
      * @notice Checks if there are more tokens to process for a game year
      * @dev View function that checks the current token iteration state without modifying it
      * @param poolId The pool identifier
-     * @param gameYear The game year
      * @return hasNext Whether there are more tokens to process
      */
     function hasMoreTokens(
-        uint256 poolId,
-        uint256 gameYear
+        uint256 poolId
     ) external view returns (bool hasNext) {
-        Game storage game = pools[poolId].games[gameYear];
-        return game.tokensIterationIndex < game.tokens.length;
+        PoolStorage storage pool = pools[poolId];
+        return pool.tokensIterationIndex < pool.tokens.length;
     }
 }

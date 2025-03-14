@@ -150,7 +150,7 @@ contract OnchainMadnessFactory is Ownable {
         executor = _executor;
         IS_MOCKED = _isMocked;
         if (IS_MOCKED) {
-            mockedYear = 2022;
+            mockedYear = 2024;
             mockedMonth = 3;
             mockedDay = 1;
         }

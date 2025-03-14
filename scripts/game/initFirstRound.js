@@ -102,7 +102,11 @@ async function main() {
 
   // Fetch current tournament data from Sports Radar API
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`);
+    const response = await axios.get(
+      TOURNAMENT_YEAR === "2024"
+        ? process.env.SPORTSRADAR_URL_2024
+        : process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`
+    );
     const firstRoundBrackets = response.data.rounds[1].bracketed;
 
     // Track earliest game date
@@ -113,15 +117,17 @@ async function main() {
       const regionName = REGION_NAME_MAP[bracket.bracket.name];
       const regionIndex = Object.values(REGION_NAME_MAP).indexOf(regionName);
       const games = bracket.games;
-      
+
       // Check if any team is still TBD in this region
-      const hasTBDTeams = games.some(game => 
-        game.home?.alias === "TBD" || game.away?.alias === "TBD"
+      const hasTBDTeams = games.some(
+        (game) => game.home?.alias === "TBD" || game.away?.alias === "TBD"
       );
-      
+
       // Skip region initialization if any teams are still TBD
       if (hasTBDTeams) {
-        console.log(`Skipping initialization for ${regionName} - some teams are still TBD`);
+        console.log(
+          `Skipping initialization for ${regionName} - some teams are still TBD`
+        );
         continue;
       }
 

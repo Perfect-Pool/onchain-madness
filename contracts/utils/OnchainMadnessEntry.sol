@@ -447,13 +447,10 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
     /**
      * @notice Checks if there are more tokens to process for a given year
      * @dev View function that checks the current token iteration state
-     * @param _gameYear Tournament year to check
      * @return True if there are more tokens to process, false otherwise
      */
-    function hasTokensToIterate(
-        uint256 _gameYear
-    ) external view returns (bool) {
-        return entryStorage.hasMoreTokens(poolId, _gameYear);
+    function hasTokensToIterate() external view returns (bool) {
+        return entryStorage.hasMoreTokens(poolId);
     }
 
     /**
