@@ -117,6 +117,7 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
         string calldata _pin,
         string calldata _poolName
     ) public {
+        require(nftDeployer == address(0), "Already initialized");
         nftDeployer = _nftDeployer;
         IOnchainMadnessFactory gameDeployer = IOnchainMadnessFactory(
             IOnchainMadnessEntryFactory(_nftDeployer).getGameDeployer()
@@ -296,7 +297,10 @@ contract OnchainMadnessEntry is ERC721, ReentrancyGuard {
      * @param _gameYear Tournament year to increase pot for
      * @param _amount Amount of USDC to add to the pot
      */
-    function increaseGamePot(uint256 _gameYear, uint256 _amount) public {
+    function increaseGamePot(
+        uint256 _gameYear,
+        uint256 _amount
+    ) public {
         USDC.transferFrom(msg.sender, address(this), _amount);
 
         (uint256 pot, , uint256 potClaimed, bool claimEnabled) = entryStorage

@@ -149,8 +149,8 @@ contract OnchainMadnessFactory is Ownable {
         implementation = _implementation;
         executor = _executor;
         IS_MOCKED = _isMocked;
-        if(IS_MOCKED) {
-            mockedYear = 2024;
+        if (IS_MOCKED) {
+            mockedYear = 2022;
             mockedMonth = 3;
             mockedDay = 1;
         }
@@ -170,7 +170,11 @@ contract OnchainMadnessFactory is Ownable {
      * @param _month The month of the mocked date
      * @param _day The day of the mocked date
      */
-    function setMockedDate(uint256 _year, uint256 _month, uint256 _day) public onlyOwner {
+    function setMockedDate(
+        uint256 _year,
+        uint256 _month,
+        uint256 _day
+    ) public onlyOwner {
         require(IS_MOCKED, "OMF-00");
         mockedYear = _year;
         mockedMonth = _month;
@@ -184,8 +188,12 @@ contract OnchainMadnessFactory is Ownable {
      */
     function createOnchainMadness(
         uint256 year
-    ) public onlyExecutor returns (address) {
+    ) public onlyOwner returns (address) {
         require(tournaments[year] == address(0), "OMF-02");
+        (uint256 currentYear, , ) = getCurrentDate();
+        require(year == currentYear, "OMF-03");
+        require(!paused, "Contract is paused");
+
         address clone = Clones.clone(implementation);
         OnchainMadness(clone).initialize(year, address(this));
         emit OnchainMadnessCreated(clone, year);
@@ -208,7 +216,7 @@ contract OnchainMadnessFactory is Ownable {
      * @dev Resets the address of the OnchainMadness contract for a specific year
      * @param year The year of the tournament
      */
-    function resetGame(uint256 year) public onlyExecutor {
+    function resetGame(uint256 year) public onlyOwner {
         tournaments[year] = address(0);
         IPerfectPool(contracts("PERFECTPOOL")).resetData(year);
 
@@ -619,7 +627,10 @@ contract OnchainMadnessFactory is Ownable {
      * @param _team The name of the team
      * @return The ID of the team
      */
-    function getTeamId(uint256 year, string memory _team) external view returns (uint8) {
+    function getTeamId(
+        uint256 year,
+        string memory _team
+    ) external view returns (uint8) {
         return OnchainMadness(tournaments[year]).getTeamId(_team);
     }
 
@@ -644,7 +655,13 @@ contract OnchainMadnessFactory is Ownable {
      * @return The current timestamp
      */
     function getCurrentTimestamp() public view returns (uint256) {
-        if (IS_MOCKED) return OnchainMadnessLib.dateToTimestamp(mockedYear, mockedMonth, mockedDay);
+        if (IS_MOCKED)
+            return
+                OnchainMadnessLib.dateToTimestamp(
+                    mockedYear,
+                    mockedMonth,
+                    mockedDay
+                );
         return block.timestamp;
     }
 }

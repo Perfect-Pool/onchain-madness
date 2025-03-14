@@ -120,35 +120,6 @@ contract EntryStorage {
         gameDeployer = IOnchainMadnessFactory(_factory);
     }
 
-    /** GAME FUNCTIONS **/
-
-    /**
-     * @notice Retrieves game data for a specific year and pool
-     * @dev Returns current state of the game including pot and score information
-     * @param poolId The pool identifier
-     * @param gameYear The year of the game
-     * @return pot Total amount in prize pool
-     * @return maxScore Highest score achieved
-     * @return potClaimed Amount claimed from pot
-     * @return claimEnabled Whether claiming is enabled
-     */
-    function getGame(
-        uint256 poolId,
-        uint256 gameYear
-    )
-        external
-        view
-        returns (
-            uint256 pot,
-            uint8 maxScore,
-            uint256 potClaimed,
-            bool claimEnabled
-        )
-    {
-        Game storage game = pools[poolId].games[gameYear];
-        return (game.pot, game.maxScore, game.potClaimed, game.claimEnabled);
-    }
-
     /**
      * @notice Updates game data for a specific year and pool
      * @dev Allows modification of all game parameters
@@ -240,19 +211,6 @@ contract EntryStorage {
     }
 
     /**
-     * @notice Retrieves the game year for a token
-     * @param poolId The pool identifier
-     * @param tokenId Token to query
-     * @return The game year associated with the token
-     */
-    function getTokenGameYear(
-        uint256 poolId,
-        uint256 tokenId
-    ) external view returns (uint256) {
-        return pools[poolId].tokenToGameYear[tokenId];
-    }
-
-    /**
      * @notice Stores bet selections for a token
      * @param poolId The pool identifier
      * @param tokenId Token to store bets for
@@ -264,19 +222,6 @@ contract EntryStorage {
         uint8[63] memory bets
     ) external onlyEntryContract {
         pools[poolId].nftBet[tokenId] = bets;
-    }
-
-    /**
-     * @notice Retrieves bet selections for a token
-     * @param poolId The pool identifier
-     * @param tokenId Token to query
-     * @return Array of 63 bet selections
-     */
-    function getNftBet(
-        uint256 poolId,
-        uint256 tokenId
-    ) external view returns (uint8[63] memory) {
-        return pools[poolId].nftBet[tokenId];
     }
 
     /**
@@ -294,19 +239,6 @@ contract EntryStorage {
     }
 
     /**
-     * @notice Retrieves amount claimed by a token
-     * @param poolId The pool identifier
-     * @param tokenId Token to query
-     * @return Amount claimed by the token
-     */
-    function getTokenClaimed(
-        uint256 poolId,
-        uint256 tokenId
-    ) external view returns (uint256) {
-        return pools[poolId].tokenClaimed[tokenId];
-    }
-
-    /**
      * @notice To set the Perfect Pool share for an address as burned
      * @param user Address to set share for
      * @param gameYear The game year
@@ -316,21 +248,6 @@ contract EntryStorage {
         uint256 gameYear
     ) external onlyEntryContract {
         ppShare[gameYear][user] = 0;
-    }
-
-    /**
-     * @notice Retrieves Perfect Pool share for an address
-     * @param user Address to query
-     * @param gameYear The game year
-     * @return Share amount for the address
-     */
-    function getPpShare(
-        address user,
-        uint256 gameYear
-    ) external view returns (uint256) {
-        (uint256 currentYear, , ) = gameDeployer.getCurrentDate();
-        if (currentYear != gameYear) return 0;
-        return ppShare[gameYear][user];
     }
 
     /**
@@ -350,6 +267,122 @@ contract EntryStorage {
     }
 
     /**
+     * @notice Adds a token to a game
+     * @param poolId The pool identifier
+     * @param gameYear The game year
+     * @param tokenId Token to add
+     */
+    function addGameToken(
+        uint256 poolId,
+        uint256 gameYear,
+        uint256 tokenId
+    ) external onlyEntryContract {
+        pools[poolId].games[gameYear].tokens.push(tokenId);
+    }
+
+    /**
+     * @notice Updates score data after validation
+     * @param poolId The pool identifier
+     * @param gameYear The game year
+     * @param score Validated score to update
+     */
+    function updateScore(
+        uint256 poolId,
+        uint256 gameYear,
+        uint8 score
+    ) external onlyEntryContract {
+        Game storage game = pools[poolId].games[gameYear];
+
+        if (score > game.maxScore) {
+            game.maxScore = score;
+        }
+        game.scoreBetQty[score]++;
+    }
+
+    /** VIEW FUNCTIONS **/
+
+    /**
+     * @notice Retrieves game data for a specific year and pool
+     * @dev Returns current state of the game including pot and score information
+     * @param poolId The pool identifier
+     * @param gameYear The year of the game
+     * @return pot Total amount in prize pool
+     * @return maxScore Highest score achieved
+     * @return potClaimed Amount claimed from pot
+     * @return claimEnabled Whether claiming is enabled
+     */
+    function getGame(
+        uint256 poolId,
+        uint256 gameYear
+    )
+        external
+        view
+        returns (
+            uint256 pot,
+            uint8 maxScore,
+            uint256 potClaimed,
+            bool claimEnabled
+        )
+    {
+        Game storage game = pools[poolId].games[gameYear];
+        return (game.pot, game.maxScore, game.potClaimed, game.claimEnabled);
+    }
+
+    /**
+     * @notice Retrieves the game year for a token
+     * @param poolId The pool identifier
+     * @param tokenId Token to query
+     * @return The game year associated with the token
+     */
+    function getTokenGameYear(
+        uint256 poolId,
+        uint256 tokenId
+    ) external view returns (uint256) {
+        return pools[poolId].tokenToGameYear[tokenId];
+    }
+
+    /**
+     * @notice Retrieves bet selections for a token
+     * @param poolId The pool identifier
+     * @param tokenId Token to query
+     * @return Array of 63 bet selections
+     */
+    function getNftBet(
+        uint256 poolId,
+        uint256 tokenId
+    ) external view returns (uint8[63] memory) {
+        return pools[poolId].nftBet[tokenId];
+    }
+
+    /**
+     * @notice Retrieves amount claimed by a token
+     * @param poolId The pool identifier
+     * @param tokenId Token to query
+     * @return Amount claimed by the token
+     */
+    function getTokenClaimed(
+        uint256 poolId,
+        uint256 tokenId
+    ) external view returns (uint256) {
+        return pools[poolId].tokenClaimed[tokenId];
+    }
+
+    /**
+     * @notice Retrieves Perfect Pool share for an address
+     * @param user Address to query
+     * @param gameYear The game year
+     * @return Share amount for the address
+     */
+    function getPpShare(
+        address user,
+        uint256 gameYear
+    ) external view returns (uint256) {
+        (uint256 currentYear, , ) = gameDeployer.getCurrentDate();
+        if (currentYear > gameYear) return 0;
+        return ppShare[gameYear][user];
+    }
+
+    /**
      * @notice Retrieves number of bets for a score
      * @param poolId The pool identifier
      * @param gameYear The game year
@@ -363,20 +396,6 @@ contract EntryStorage {
     ) external view returns (uint256) {
         Game storage game = pools[poolId].games[gameYear];
         return game.maxScore != score ? 0 : game.scoreBetQty[score];
-    }
-
-    /**
-     * @notice Adds a token to a game
-     * @param poolId The pool identifier
-     * @param gameYear The game year
-     * @param tokenId Token to add
-     */
-    function addGameToken(
-        uint256 poolId,
-        uint256 gameYear,
-        uint256 tokenId
-    ) external onlyEntryContract {
-        pools[poolId].games[gameYear].tokens.push(tokenId);
     }
 
     /**
@@ -435,24 +454,5 @@ contract EntryStorage {
     ) external view returns (bool hasNext) {
         Game storage game = pools[poolId].games[gameYear];
         return game.tokensIterationIndex < game.tokens.length;
-    }
-
-    /**
-     * @notice Updates score data after validation
-     * @param poolId The pool identifier
-     * @param gameYear The game year
-     * @param score Validated score to update
-     */
-    function updateScore(
-        uint256 poolId,
-        uint256 gameYear,
-        uint8 score
-    ) external onlyEntryContract {
-        Game storage game = pools[poolId].games[gameYear];
-
-        if (score > game.maxScore) {
-            game.maxScore = score;
-        }
-        game.scoreBetQty[score]++;
     }
 }

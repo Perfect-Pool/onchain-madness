@@ -266,7 +266,7 @@
     "outputs": [
       {
         "internalType": "uint8[63]",
-        "name": "validator",
+        "name": "betResults",
         "type": "uint8[63]"
       },
       {
@@ -276,19 +276,6 @@
       }
     ],
     "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_player",
-        "type": "address"
-      }
-    ],
-    "name": "claimPPShare",
-    "outputs": [],
-    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -333,6 +320,13 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "dismissPot",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -409,16 +403,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_tokenId",
+        "name": "_gameYear",
         "type": "uint256"
       }
     ],
-    "name": "getTeamSymbols",
+    "name": "hasTokensToIterate",
     "outputs": [
       {
-        "internalType": "string[63]",
+        "internalType": "bool",
         "name": "",
-        "type": "string[63]"
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -888,21 +882,16 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "_tokenId",
+        "name": "",
         "type": "uint256"
       }
     ],
-    "name": "validateEntry",
+    "name": "yearToPotDismissed",
     "outputs": [
       {
-        "internalType": "uint8[63]",
-        "name": "validator",
-        "type": "uint8[63]"
-      },
-      {
-        "internalType": "uint8",
-        "name": "points",
-        "type": "uint8"
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",

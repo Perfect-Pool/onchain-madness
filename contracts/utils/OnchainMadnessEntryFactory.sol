@@ -200,23 +200,6 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Verifies the shares for a player
-     * @dev Checks the amount of PP tokens available for the player to claim
-     * @param _player Address to check
-     * @param _gameYear Tournament year to check
-     * @return Amount of PP tokens available for the player
-     */
-    function verifyShares(
-        address _player,
-        uint256 _gameYear
-    ) public view returns (uint256) {
-        return
-            IEntryStorage(
-                IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE"))
-            ).getPpShare(_player, _gameYear);
-    }
-
-    /**
      * @notice Mints a new NFT representing a bracket prediction
      * @notice Wrapper function that calls safeMint in the pool contract. Validates prediction against actual results.
      * @param _poolId ID of the pool
@@ -344,18 +327,6 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Checks if the tokens needs to be burned
-     * @param _gameYear The year to check
-     * @return True if the tokens need to be burned, false otherwise
-     */
-    function needsToBeBurned(uint256 _gameYear) public view returns (bool) {
-        return
-            yearToPPSBurnDate[_gameYear] > 0 &&
-            !yearToPPSBurned[_gameYear] &&
-            gameDeployer.getCurrentTimestamp() > yearToPPSBurnDate[_gameYear]; 
-    }
-
-    /**
      * @notice Iterates through the pools to burn PPS tokens for a given year
      * Checks if the burn date has passed and the tokens have not already been burned.
      * If burn date is still 0, denies the burn.
@@ -378,17 +349,6 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
             perfectPool.setLockWithdrawal(false);
             yearToPPSBurned[_gameYear] = true;
         }
-    }
-
-    /**
-     * @notice Checks if the prize can be dismissed
-     * @param _gameYear The year to check
-     * @return True if the prize can be dismissed, false otherwise
-     */
-    function needsToBeDismissed(uint256 _gameYear) public view returns (bool) {
-        (uint256 currentYear,,) = gameDeployer.getCurrentDate();
-        return
-            currentYear > _gameYear; 
     }
 
     /**
@@ -488,23 +448,26 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
-     * @notice Increases the prize pool for a specific game
-     * @notice Wrapper function that calls increaseGamePot in the pool contract. Updates the total prize pool.
-     * @param _poolId ID of the pool
-     * @param _gameYear Tournament year to increase pot for
-     * @param _amount Amount of USDC to add to the pot
+     * @notice Checks if the prize can be dismissed
+     * @param _gameYear The year to check
+     * @return True if the prize can be dismissed, false otherwise
      */
-    function increaseGamePot(
-        uint256 _poolId,
-        uint256 _gameYear,
-        uint256 _amount
-    ) public whenNotPaused nonReentrant {
-        OnchainMadnessEntry(getPoolAddress(_poolId)).increaseGamePot(
-            _gameYear,
-            _amount
-        );
+    function needsToBeDismissed(uint256 _gameYear) public view returns (bool) {
+        (uint256 currentYear,,) = gameDeployer.getCurrentDate();
+        return
+            currentYear > _gameYear; 
+    }
 
-        emit GamePotIncreased(_gameYear, _amount);
+    /**
+     * @notice Checks if the tokens needs to be burned
+     * @param _gameYear The year to check
+     * @return True if the tokens need to be burned, false otherwise
+     */
+    function needsToBeBurned(uint256 _gameYear) public view returns (bool) {
+        return
+            yearToPPSBurnDate[_gameYear] > 0 &&
+            !yearToPPSBurned[_gameYear] &&
+            gameDeployer.getCurrentTimestamp() > yearToPPSBurnDate[_gameYear]; 
     }
 
     /**
@@ -701,6 +664,23 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         string calldata _poolName
     ) public view returns (bool) {
         return poolNames[keccak256(bytes(_poolName))];
+    }
+
+    /**
+     * @notice Verifies the shares for a player
+     * @dev Checks the amount of PP tokens available for the player to claim
+     * @param _player Address to check
+     * @param _gameYear Tournament year to check
+     * @return Amount of PP tokens available for the player
+     */
+    function verifyShares(
+        address _player,
+        uint256 _gameYear
+    ) public view returns (uint256) {
+        return
+            IEntryStorage(
+                IEntryStorage(gameDeployer.contracts("OM_ENTRY_STORAGE"))
+            ).getPpShare(_player, _gameYear);
     }
 
     /**

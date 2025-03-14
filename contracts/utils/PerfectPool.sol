@@ -115,8 +115,13 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
 
     /** MODIFIERS **/
     modifier onlyGameContract() {
+        require(onchainMadnessContracts[msg.sender], "Not authorized");
+        _;
+    }
+
+    modifier gameContractOrOwner() {
         require(
-            onchainMadnessContracts[msg.sender] || msg.sender == owner(),
+            onchainMadnessContracts[msg.sender] || owner() == msg.sender,
             "Not authorized"
         );
         _;
@@ -151,14 +156,6 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
         lendingPool = ILendingPool(_lendingPool);
         withdrawalMonth = 2;
         withdrawalDay = 28;
-    }
-
-    /**
-     * @notice Shows the USDC added to aUSDC balance
-     * @return The balance of the USDC/aUSDC token contract
-     */
-    function dollarBalance() public view returns (uint256) {
-        return USDC.balanceOf(address(this)) + aUSDC.balanceOf(address(this));
     }
 
     /**
@@ -307,8 +304,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     function increaseWinnersQty(
         uint256 year,
         address gameContract
-    ) external nonReentrant {
-        require(onchainMadnessContracts[msg.sender], "Not authorized");
+    ) external nonReentrant onlyGameContract {
         if (poolWinnersQty[gameContract] == 0) {
             winnerPools.push(gameContract);
         }
@@ -324,9 +320,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * Clears winner count and prize amount for the specified year
      * @param year The tournament year to reset
      */
-    function resetData(uint256 year) external nonReentrant {
-        require(onchainMadnessContracts[msg.sender], "Not authorized");
-
+    function resetData(uint256 year) external nonReentrant onlyGameContract {
         winnerPools = new address[](0);
         yearToPrize[year] = 0;
     }
@@ -338,8 +332,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * or the remaining balance if insufficient funds
      * @param year The tournament year for prize distribution
      */
-    function perfectPrize(uint256 year) external nonReentrant {
-        require(onchainMadnessContracts[msg.sender], "Not authorized");
+    function perfectPrize(uint256 year) external nonReentrant onlyGameContract {
         if (winnerPools.length == 0) return;
 
         // if the prize has not been claimed yet
@@ -380,6 +373,16 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     }
 
     /**
+     * @notice Set date to block withdrawal
+     * @param month Month to block withdrawal
+     * @param day Day to block withdrawal
+     */
+    function setWithdrawalDate(uint256 month, uint256 day) external onlyOwner {
+        withdrawalMonth = month;
+        withdrawalDay = day;
+    }
+
+    /**
      * @notice Controls minting permission requirements
      * @dev When locked, only authorized addresses can mint tokens
      * @param _lockPermit True to require authorization, false to allow anyone
@@ -393,7 +396,9 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * @dev Allows owner to enable/disable USDC withdrawals
      * @param _lockWithdrawal True to disable withdrawals, false to enable
      */
-    function setLockWithdrawal(bool _lockWithdrawal) external onlyGameContract {
+    function setLockWithdrawal(
+        bool _lockWithdrawal
+    ) external gameContractOrOwner {
         lockWithdrawal = _lockWithdrawal;
     }
 
@@ -424,7 +429,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     function setAuthorizedMinter(
         address minter,
         bool authorized
-    ) external onlyGameContract {
+    ) external gameContractOrOwner {
         authorizedMinters[minter] = authorized;
     }
 
@@ -437,8 +442,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     function setOnchainMadnessContract(
         address contractAddress,
         bool authorized
-    ) external {
-        require(onchainMadnessContracts[msg.sender], "Not authorized");
+    ) external onlyGameContract {
         onchainMadnessContracts[contractAddress] = authorized;
     }
 
@@ -466,12 +470,10 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
     }
 
     /**
-     * @notice Set date to block withdrawal
-     * @param month Month to block withdrawal
-     * @param day Day to block withdrawal
+     * @notice Shows the USDC added to aUSDC balance
+     * @return The balance of the USDC/aUSDC token contract
      */
-    function setWithdrawalDate(uint256 month, uint256 day) external onlyOwner {
-        withdrawalMonth = month;
-        withdrawalDay = day;
+    function dollarBalance() public view returns (uint256) {
+        return USDC.balanceOf(address(this)) + aUSDC.balanceOf(address(this));
     }
 }

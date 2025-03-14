@@ -110,7 +110,7 @@
       },
       {
         "internalType": "string",
-        "name": "winners",
+        "name": "winner",
         "type": "string"
       },
       {
@@ -175,9 +175,9 @@
         "type": "uint256"
       },
       {
-        "internalType": "uint8",
-        "name": "_winner",
-        "type": "uint8"
+        "internalType": "string",
+        "name": "winner",
+        "type": "string"
       }
     ],
     "name": "determineFirstFourWinner",
@@ -281,14 +281,68 @@
       {
         "components": [
           {
-            "internalType": "uint8[2]",
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "home",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "away",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "winner",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "home_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "away_points",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OnchainMadness.Match[2]",
             "name": "matchesRound1",
-            "type": "uint8[2]"
+            "type": "tuple[2]"
           },
           {
-            "internalType": "uint8",
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "home",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "away",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "winner",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "home_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "away_points",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OnchainMadness.Match",
             "name": "matchFinal",
-            "type": "uint8"
+            "type": "tuple"
           },
           {
             "internalType": "uint8",
@@ -346,52 +400,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint8",
-        "name": "_matchId",
-        "type": "uint8"
-      }
-    ],
-    "name": "getMatch",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint8",
-            "name": "home",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "away",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "winner",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "home_points",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "away_points",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct OnchainMadness.Match",
-        "name": "",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "bytes32",
         "name": "_regionName",
         "type": "bytes32"
@@ -407,24 +415,132 @@
             "type": "uint8[16]"
           },
           {
-            "internalType": "uint8[8]",
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "home",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "away",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "winner",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "home_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "away_points",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OnchainMadness.Match[8]",
             "name": "matchesRound1",
-            "type": "uint8[8]"
+            "type": "tuple[8]"
           },
           {
-            "internalType": "uint8[4]",
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "home",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "away",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "winner",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "home_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "away_points",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OnchainMadness.Match[4]",
             "name": "matchesRound2",
-            "type": "uint8[4]"
+            "type": "tuple[4]"
           },
           {
-            "internalType": "uint8[2]",
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "home",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "away",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "winner",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "home_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "away_points",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OnchainMadness.Match[2]",
             "name": "matchesRound3",
-            "type": "uint8[2]"
+            "type": "tuple[2]"
           },
           {
-            "internalType": "uint8",
+            "components": [
+              {
+                "internalType": "uint8",
+                "name": "home",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "away",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint8",
+                "name": "winner",
+                "type": "uint8"
+              },
+              {
+                "internalType": "uint256",
+                "name": "home_points",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "away_points",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct OnchainMadness.Match",
             "name": "matchRound4",
-            "type": "uint8"
+            "type": "tuple"
           },
           {
             "internalType": "uint8",
@@ -519,6 +635,19 @@
   {
     "inputs": [
       {
+        "internalType": "string[4]",
+        "name": "teamsRound1",
+        "type": "string[4]"
+      }
+    ],
+    "name": "initFinalFour",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "string",
         "name": "_matchCode",
         "type": "string"
@@ -573,19 +702,6 @@
     "name": "initialize",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "matchesActualIndex",
-    "outputs": [
-      {
-        "internalType": "uint8",
-        "name": "",
-        "type": "uint8"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {

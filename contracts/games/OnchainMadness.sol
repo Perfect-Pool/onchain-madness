@@ -140,25 +140,13 @@ contract OnchainMadness {
      * @param _gameContract The address of the factory contract
      */
     function initialize(uint256 _year, address _gameContract) external {
+        require(gameContract == address(0), "OM-00");
         year = _year;
         gameContract = _gameContract;
 
         playersActualIndex = 1;
 
         status = Status.BetsOn;
-    }
-
-    /**
-     * @dev Checks if a match code belongs to the First Four
-     * @param matchCode The code of the match
-     * @return True if the match is part of the First Four, false otherwise
-     */
-    function _checkIsFfg(bytes memory matchCode) internal pure returns (bool) {
-        return
-            keccak256(matchCode) == keccak256(bytes("FFG1")) ||
-            keccak256(matchCode) == keccak256(bytes("FFG2")) ||
-            keccak256(matchCode) == keccak256(bytes("FFG3")) ||
-            keccak256(matchCode) == keccak256(bytes("FFG4"));
     }
 
     /**
@@ -827,5 +815,18 @@ contract OnchainMadness {
      */
     function getFinalFour() external view returns (FinalFour memory) {
         return finalFour;
+    }
+
+    /**
+     * @dev Checks if a match code belongs to the First Four
+     * @param matchCode The code of the match
+     * @return True if the match is part of the First Four, false otherwise
+     */
+    function _checkIsFfg(bytes memory matchCode) internal pure returns (bool) {
+        return
+            keccak256(matchCode) == keccak256(bytes("FFG1")) ||
+            keccak256(matchCode) == keccak256(bytes("FFG2")) ||
+            keccak256(matchCode) == keccak256(bytes("FFG3")) ||
+            keccak256(matchCode) == keccak256(bytes("FFG4"));
     }
 }
