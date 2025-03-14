@@ -98,7 +98,7 @@ contract NftMetadata {
                                 _gameYear.toString(),
                                 '"},{"trait_type":"Points","value":"',
                                 points.toString(),
-                                '"},]}'
+                                '"}]}'
                             )
                         )
                     )

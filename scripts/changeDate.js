@@ -1,26 +1,27 @@
 /**
- * @title Championship Creation Script
- * @dev This script interacts with the OnchainMadnessFactory contract
- * to create the Championship game of the NCAA Tournament.
+ * @title Close Bets Script
+ * @dev This script closes the betting period for the first round of the NCAA Tournament.
  *
  * Functionality:
- * - Resets the Championship game
- * - Creates the Championship game
+ * - Closes betting period when games are about to start
+ *
  */
 
-const axios = require("axios");
 const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
+const MOCKED_YEAR = 2023;
+const MOCKED_MONTH = 3;
+const MOCKED_DAY = 1;
+
 async function main() {
   // Get contract data
-  const variablesPath = path.join(__dirname, "..", "..", "contracts.json");
+  const variablesPath = path.join(__dirname, "..", "contracts.json");
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
-  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
@@ -34,20 +35,12 @@ async function main() {
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   try {
-    console.log("Resetting Championship Game...");
-    const tx = await contract.resetGame(TOURNAMENT_YEAR);
+    console.log(`\nSetting mocked date to ${MOCKED_YEAR}-${MOCKED_MONTH}-${MOCKED_DAY}...`);
+    const tx = await contract.setMockedDate(MOCKED_YEAR, MOCKED_MONTH, MOCKED_DAY);
     await tx.wait();
+    console.log("Date changed successfully!");
   } catch (error) {
-    console.log("There is no Championship Game to reset.");
-  }
-
-  try {
-    console.log("Creating Championship Game...");
-    const tx = await contract.createOnchainMadness(TOURNAMENT_YEAR);
-    await tx.wait();
-  } catch (error) {
-    console.log("There was an error creating the Championship Game:");
-    console.log(error);
+    console.log("Date already changed.");
   }
 }
 

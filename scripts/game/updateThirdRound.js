@@ -2,14 +2,14 @@
  * @title Third Round (Sweet 16) Games Update Script
  * @dev This script interacts with the Sports Radar API and OnchainMadnessFactory contract
  * to manage the Third Round (Sweet 16) games of the NCAA Tournament.
- * 
+ *
  * Functionality:
  * - Fetches current tournament data from Sports Radar API
  * - Processes games for each region (WEST, MIDWEST, SOUTH, EAST)
  * - Updates game results when games are completed
  * - Advances to next round when all games are decided
  * - Displays comprehensive state of all regions and their games
- * 
+ *
  * Regions:
  * - Each region contains 2 Sweet 16 games
  * - Games are numbered 1-2 within each region
@@ -22,29 +22,41 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const TOURNAMENT_YEAR = 2024;
-
 // Map to convert from API region names to contract region names
 const REGION_NAME_MAP = {
   "West Regional": "WEST",
   "Midwest Regional": "MIDWEST",
   "South Regional": "SOUTH",
-  "East Regional": "EAST"
+  "East Regional": "EAST",
 };
 
 async function decodeRegionData(regionBytes) {
   const abiCoder = new ethers.utils.AbiCoder();
-  const [teams, matchesRound1, matchesRound2, matchesRound3, matchRound4, winner] = abiCoder.decode(
-    ['string[16]', 'bytes[8]', 'bytes[4]', 'bytes[2]', 'bytes', 'string'],
+  const [
+    teams,
+    matchesRound1,
+    matchesRound2,
+    matchesRound3,
+    matchRound4,
+    winner,
+  ] = abiCoder.decode(
+    ["string[16]", "bytes[8]", "bytes[4]", "bytes[2]", "bytes", "string"],
     regionBytes
   );
-  return { teams, matchesRound1, matchesRound2, matchesRound3, matchRound4, winner };
+  return {
+    teams,
+    matchesRound1,
+    matchesRound2,
+    matchesRound3,
+    matchRound4,
+    winner,
+  };
 }
 
 async function decodeMatchData(matchBytes) {
   const abiCoder = new ethers.utils.AbiCoder();
   const [home, away, homePoints, awayPoints, winner] = abiCoder.decode(
-    ['string', 'string', 'uint256', 'uint256', 'string'],
+    ["string", "string", "uint256", "uint256", "string"],
     matchBytes
   );
   return { home, away, homePoints, awayPoints, winner };
@@ -56,12 +68,17 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory");
+  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+    libraries: {
+      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+    },
+  });
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   // Get initial regions data
@@ -77,7 +94,11 @@ async function main() {
       await Promise.all(
         decoded.matchesRound3.map(async (match, i) => {
           const matchData = await decodeMatchData(match);
-          console.log(`Game ${i + 1}: ${matchData.home} vs ${matchData.away}${matchData.winner ? ` - Winner: ${matchData.winner}` : ""}`);
+          console.log(
+            `Game ${i + 1}: ${matchData.home} vs ${matchData.away}${
+              matchData.winner ? ` - Winner: ${matchData.winner}` : ""
+            }`
+          );
         })
       );
       return decoded;
@@ -85,7 +106,9 @@ async function main() {
   );
 
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(
+      process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`
+    );
     const thirdRoundBrackets = response.data.rounds[3].bracketed;
 
     // Process each region
@@ -104,23 +127,32 @@ async function main() {
       // Update match results
       console.log(`\nChecking ${regionName} games for updates...`);
       let decidedGames = 0;
-      
+
       for (let i = 0; i < games.length; i++) {
         const game = games[i];
         if (game.status === "closed") {
           decidedGames++;
-          const matchData = await decodeMatchData(decodedRegions[regionIndex].matchesRound3[i]);
-          
+          const matchData = await decodeMatchData(
+            decodedRegions[regionIndex].matchesRound3[i]
+          );
+
           if (matchData.winner === "") {
             const homePoints = parseInt(game.home_points);
             const awayPoints = parseInt(game.away_points);
-            const winner = game.home_points > game.away_points ? game.home.alias : game.away.alias;
+            const winner =
+              game.home_points > game.away_points
+                ? game.home.alias
+                : game.away.alias;
 
             console.log(
-              `Updating Game ${i + 1}: ${game.home.alias} ${homePoints} - ${awayPoints} ${game.away.alias}, Winner: ${winner}`
+              `Updating Game ${i + 1}: ${
+                game.home.alias
+              } ${homePoints} - ${awayPoints} ${
+                game.away.alias
+              }, Winner: ${winner}`
             );
-            
-            try{
+
+            try {
               const tx = await contract.determineMatchWinner(
                 TOURNAMENT_YEAR,
                 regionName,
@@ -145,7 +177,9 @@ async function main() {
     }
 
     // Check if all regions have all games decided
-    const updatedRegionsData = await contract.getAllRegionsData(TOURNAMENT_YEAR);
+    const updatedRegionsData = await contract.getAllRegionsData(
+      TOURNAMENT_YEAR
+    );
     const allRegionsDecided = await Promise.all(
       updatedRegionsData.map(async (regionData) => {
         const decoded = await decodeRegionData(regionData);
@@ -156,16 +190,20 @@ async function main() {
             return matchData.winner !== "";
           })
         );
-        return matchResults.every(hasWinner => hasWinner);
+        return matchResults.every((hasWinner) => hasWinner);
       })
     );
 
-    if (allRegionsDecided.every(regionDecided => regionDecided)) {
-      console.log("\nAll Sweet 16 games are decided. Advancing to Elite Eight...");
+    if (allRegionsDecided.every((regionDecided) => regionDecided)) {
+      console.log(
+        "\nAll Sweet 16 games are decided. Advancing to Elite Eight..."
+      );
       const tx = await contract.advanceRound(TOURNAMENT_YEAR);
       await tx.wait();
     } else {
-      console.log("\nNot all games are decided yet. Waiting for more results...");
+      console.log(
+        "\nNot all games are decided yet. Waiting for more results..."
+      );
     }
 
     // Print final state
@@ -181,12 +219,15 @@ async function main() {
         await Promise.all(
           decoded.matchesRound3.map(async (match, i) => {
             const matchData = await decodeMatchData(match);
-            console.log(`Game ${i + 1}: ${matchData.home} vs ${matchData.away}${matchData.winner ? ` - Winner: ${matchData.winner}` : ""}`);
+            console.log(
+              `Game ${i + 1}: ${matchData.home} vs ${matchData.away}${
+                matchData.winner ? ` - Winner: ${matchData.winner}` : ""
+              }`
+            );
           })
         );
       })
     );
-
   } catch (error) {
     console.error("Error:");
     console.error(error.response ? error.response.data : error.message);

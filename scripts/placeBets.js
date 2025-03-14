@@ -17,8 +17,7 @@ const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 
-const TOURNAMENT_YEAR = 2024;
-const POOL = 1;
+const POOL = 0;
 const BET_AMOUNT = ethers.utils.parseUnits("20", 6); // 20 USDC (6 decimals)
 
 // Minimal USDC ABI for the functions we need
@@ -43,6 +42,7 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Entry Factory address: ${networkData["OM_ENTRY_DEPLOYER"]}`);

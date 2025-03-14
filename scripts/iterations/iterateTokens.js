@@ -17,14 +17,13 @@ const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 
-const TOURNAMENT_YEAR = 2024;
-
 async function main() {
   // Get contract data
   const variablesPath = path.join(__dirname, "..", "..", "contracts.json");
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Entry Factory address: ${networkData["OM_ENTRY_DEPLOYER"]}`);

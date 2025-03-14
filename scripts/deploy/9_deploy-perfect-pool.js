@@ -34,12 +34,15 @@ async function main() {
     networkData.LendingPool = fakeLending.address;
     networkData.aUSDC = aUSDCAddress;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-    
+
     // Wait a bit for the network to sync
     await new Promise((resolve) => setTimeout(resolve, 2000));
   } else {
     console.log(`LendingPool already deployed at ${networkData.LendingPool}`);
-    fakeLending = await ethers.getContractAt("FakeLending", networkData.LendingPool);
+    fakeLending = await ethers.getContractAt(
+      "FakeLending",
+      networkData.LendingPool
+    );
   }
 
   // Get aUSDC address if needed
@@ -51,7 +54,7 @@ async function main() {
     // Update the network data
     networkData.aUSDC = aUSDCAddress;
     fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-    
+
     // Wait a bit for the network to sync
     await new Promise((resolve) => setTimeout(resolve, 2000));
   }
@@ -60,11 +63,7 @@ async function main() {
   const name = "PERFECTPOOL";
   if (networkData.PERFECTPOOL === "") {
     console.log(`Deploying PerfectPool...`);
-    const PerfectPool = await ethers.getContractFactory("PerfectPool", {
-      libraries: {
-        OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
-      },
-    });
+    const PerfectPool = await ethers.getContractFactory("PerfectPool");
     const perfectPool = await PerfectPool.deploy(
       networkData.USDC,
       networkData.aUSDC,

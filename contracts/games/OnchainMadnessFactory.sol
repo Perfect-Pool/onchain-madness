@@ -4,6 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./OnchainMadness.sol";
+import "../libraries/OnchainMadnessLib.sol";
 
 interface IPerfectPool {
     function resetData(uint256 year) external;
@@ -26,9 +27,9 @@ contract OnchainMadnessFactory is Ownable {
      * @dev Emitted when a First Four match is decided
      * @param year The year of the tournament
      * @param matchCode The code of the First Four match (FFG1-FFG4)
-     * @param _winner Winner of the match (1 for home, 2 for away)
+     * @param winner Name of the winning team
      */
-    event FirstFourMatchDecided(uint256 year, string matchCode, uint8 _winner);
+    event FirstFourMatchDecided(uint256 year, string matchCode, string winner);
 
     /**
      * @dev Emitted when a match is decided
@@ -103,6 +104,12 @@ contract OnchainMadnessFactory is Ownable {
         Finished
     }
 
+    /** VARIABLES FOR MOCKED CONTRACT **/
+    bool public immutable IS_MOCKED;
+    uint256 mockedYear;
+    uint256 mockedMonth;
+    uint256 mockedDay;
+
     /** STATE VARIABLES **/
     /**
      * @dev Address of the OnchainMadness implementation contract
@@ -136,10 +143,17 @@ contract OnchainMadnessFactory is Ownable {
      */
     constructor(
         address _implementation,
-        address _executor
+        address _executor,
+        bool _isMocked
     ) Ownable(msg.sender) {
         implementation = _implementation;
         executor = _executor;
+        IS_MOCKED = _isMocked;
+        if(IS_MOCKED) {
+            mockedYear = 2024;
+            mockedMonth = 3;
+            mockedDay = 1;
+        }
     }
 
     /**
@@ -148,6 +162,19 @@ contract OnchainMadnessFactory is Ownable {
     modifier onlyExecutor() {
         require(msg.sender == executor, "OMF-01");
         _;
+    }
+
+    /**
+     * @dev Set mocked date
+     * @param _year The year of the mocked date
+     * @param _month The month of the mocked date
+     * @param _day The day of the mocked date
+     */
+    function setMockedDate(uint256 _year, uint256 _month, uint256 _day) public onlyOwner {
+        require(IS_MOCKED, "OMF-00");
+        mockedYear = _year;
+        mockedMonth = _month;
+        mockedDay = _day;
     }
 
     /**
@@ -239,23 +266,23 @@ contract OnchainMadnessFactory is Ownable {
      * @param matchCode The code of the First Four match (FFG1-FFG4)
      * @param _homePoints Points scored by the home team
      * @param _awayPoints Points scored by the away team
-     * @param _winner Winner of the match (1 for home, 2 for away)
+     * @param winner Name of the winning team
      */
     function determineFirstFourWinner(
         uint256 year,
         string memory matchCode,
         uint256 _homePoints,
         uint256 _awayPoints,
-        uint8 _winner
+        string memory winner
     ) external onlyExecutor {
         require(!paused, "Contract is paused");
         OnchainMadness(tournaments[year]).determineFirstFourWinner(
             matchCode,
             _homePoints,
             _awayPoints,
-            _winner
+            winner
         );
-        emit FirstFourMatchDecided(year, matchCode, _winner);
+        emit FirstFourMatchDecided(year, matchCode, winner);
     }
 
     /**
@@ -310,6 +337,19 @@ contract OnchainMadnessFactory is Ownable {
             awayPoints
         );
         emit MatchDecided(year, regionName, matchIndex, winner);
+    }
+
+    /**
+     * @dev Initializes the Final Four matches
+     * @param year The year of the tournament
+     * @param teamsRound1 Array of team names for the first round of Final Four
+     */
+    function initFinalFour(
+        uint256 year,
+        string[4] memory teamsRound1
+    ) external onlyExecutor {
+        require(!paused, "Contract is paused");
+        OnchainMadness(tournaments[year]).initFinalFour(teamsRound1);
     }
 
     /**
@@ -551,18 +591,6 @@ contract OnchainMadnessFactory is Ownable {
     }
 
     /**
-     * @dev Get a match data based on its ID
-     * @param _matchId The ID of the match
-     * @return The data of the match as Match memory
-     */
-    function getMatch(
-        uint256 year,
-        uint8 _matchId
-    ) external view returns (OnchainMadness.Match memory) {
-        return OnchainMadness(tournaments[year]).getMatch(_matchId);
-    }
-
-    /**
      * @dev Get the Final Four data
      * @return The data of the Final Four as FinalFour memory
      */
@@ -583,5 +611,40 @@ contract OnchainMadnessFactory is Ownable {
         uint8 _teamId
     ) external view returns (string memory) {
         return OnchainMadness(tournaments[year]).getTeamName(_teamId);
+    }
+
+    /**
+     * @dev Get the ID of a team based on its name
+     * @param year The year of the tournament
+     * @param _team The name of the team
+     * @return The ID of the team
+     */
+    function getTeamId(uint256 year, string memory _team) external view returns (uint8) {
+        return OnchainMadness(tournaments[year]).getTeamId(_team);
+    }
+
+    /**
+     * @notice Get the current day. If its mocked, returns the mocked date
+     * @dev Uses timestamp to calculate current day, optimized for gas
+     * @return year The current year (e.g., 2024)
+     * @return month The current month (e.g., 1-12)
+     * @return day The current day (e.g., 1-31)
+     */
+    function getCurrentDate()
+        public
+        view
+        returns (uint256 year, uint256 month, uint256 day)
+    {
+        if (IS_MOCKED) return (mockedYear, mockedMonth, mockedDay);
+        return OnchainMadnessLib.getCurrentDate();
+    }
+
+    /**
+     * @notice Get the current timestamp. If its mocked, returns the mocked timestamp
+     * @return The current timestamp
+     */
+    function getCurrentTimestamp() public view returns (uint256) {
+        if (IS_MOCKED) return OnchainMadnessLib.dateToTimestamp(mockedYear, mockedMonth, mockedDay);
+        return block.timestamp;
     }
 }

@@ -9,13 +9,14 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName]["OM_DEPLOYER"];
+  const YEAR = data[networkName]["year"];
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData}`);
 
   // Make the GET request to SPORTSRADAR_URL
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${YEAR}`);
     console.log('Response from SportsRadar:');
     console.log(JSON.stringify(response.data.rounds, null, 2));
   } catch (error) {

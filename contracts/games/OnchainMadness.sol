@@ -77,10 +77,10 @@ contract OnchainMadness {
      */
     struct Region {
         uint8[16] teams;
-        uint8[8] matchesRound1;
-        uint8[4] matchesRound2;
-        uint8[2] matchesRound3;
-        uint8 matchRound4;
+        Match[8] matchesRound1;
+        Match[4] matchesRound2;
+        Match[2] matchesRound3;
+        Match matchRound4;
         uint8 winner;
     }
 
@@ -91,8 +91,8 @@ contract OnchainMadness {
      * @param winner ID of the tournament winner
      */
     struct FinalFour {
-        uint8[2] matchesRound1;
-        uint8 matchFinal;
+        Match[2] matchesRound1;
+        Match matchFinal;
         uint8 winner;
     }
 
@@ -112,16 +112,14 @@ contract OnchainMadness {
 
     /** STATE VARIABLES **/
     mapping(bytes32 => Region) private regions;
-    mapping(uint8 => Match) private matches;
     mapping(uint8 => bytes) private teams;
     mapping(bytes => uint8) private teamToId;
-    mapping(bytes => uint8) private firstFourMatches;
+    mapping(bytes => Match) private firstFourMatches;
     mapping(bytes => FirstFourTeam) private firstFourPosition;
 
     uint256 public year;
     uint8 public currentRound;
     uint8 public playersActualIndex;
-    uint8 public matchesActualIndex;
 
     Status public status;
     FinalFour private finalFour;
@@ -146,7 +144,6 @@ contract OnchainMadness {
         gameContract = _gameContract;
 
         playersActualIndex = 1;
-        matchesActualIndex = 1;
 
         status = Status.BetsOn;
     }
@@ -175,24 +172,29 @@ contract OnchainMadness {
         string memory _home,
         string memory _away
     ) external onlyGameContract {
-        require(bytes(_home).length > 0 && bytes(_away).length > 0, "OM-02");
+        require(
+            bytes(_home).length > 0 &&
+                bytes(_away).length > 0 &&
+                _checkIsFfg(bytes(_matchCode)),
+            "OM-02"
+        );
         bytes memory matchCode = bytes(_matchCode);
         bytes memory teamHomeHash = bytes(_home);
         bytes memory teamAwayHash = bytes(_away);
 
+        Match storage ffMatch = firstFourMatches[matchCode];
+        require(ffMatch.home == 0 && ffMatch.away == 0, "OM-07");
+
         uint8 newId = playersActualIndex;
         teams[newId] = teamHomeHash;
         teamToId[teamHomeHash] = newId;
-        matches[matchesActualIndex].home = newId;
+        ffMatch.home = newId;
         newId++;
 
         teams[newId] = teamAwayHash;
         teamToId[teamAwayHash] = newId;
-        matches[matchesActualIndex].away = newId;
+        ffMatch.away = newId;
         newId++;
-
-        firstFourMatches[matchCode] = matchesActualIndex;
-        matchesActualIndex++;
 
         playersActualIndex = newId;
     }
@@ -208,7 +210,6 @@ contract OnchainMadness {
     ) external onlyGameContract {
         bytes32 regionName = keccak256(bytes(_regionName));
         uint8[16] memory teamIds;
-        uint8[8] memory matchIds;
         uint8 matchIndex = 0;
         uint8 newId = playersActualIndex;
 
@@ -227,32 +228,55 @@ contract OnchainMadness {
             teamIds[i] = teamId;
 
             if (i % 2 == 1) {
-                matches[matchesActualIndex].home = teamIds[i - 1];
-                matches[matchesActualIndex].away = teamIds[i];
-                matchIds[matchIndex] = matchesActualIndex;
+                regions[regionName].matchesRound1[matchIndex].home = teamIds[
+                    i - 1
+                ];
+                regions[regionName].matchesRound1[matchIndex].away = teamIds[i];
                 if (_checkIsFfg(teamHash)) {
                     firstFourPosition[teamHash] = FirstFourTeam({
                         region: regionName,
                         arrayPosition: i,
-                        matchId: matchesActualIndex,
+                        matchId: matchIndex,
                         position: 1
                     });
                 }
                 matchIndex++;
-                matchesActualIndex++;
             } else if (_checkIsFfg(teamHash)) {
                 firstFourPosition[teamHash] = FirstFourTeam({
                     region: regionName,
                     arrayPosition: i,
-                    matchId: matchesActualIndex,
+                    matchId: matchIndex,
                     position: 0
                 });
             }
         }
 
         regions[regionName].teams = teamIds;
-        regions[regionName].matchesRound1 = matchIds;
         playersActualIndex = newId;
+    }
+
+    /**
+     * @dev Initializes the Final Four matches
+     * @param teamsRound1 Array of team names for the first round of Final Four
+     */
+    function initFinalFour(
+        string[4] memory teamsRound1
+    ) external onlyGameContract {
+        require(currentRound == 5, "OM-05");
+        require(teamsRound1.length == 4, "OM-09");
+
+        for (uint8 i = 0; i < 4; i++) {
+            require(bytes(teamsRound1[i]).length > 0, "OM-02");
+            require(teamToId[bytes(teamsRound1[i])] != 0, "OM-03");
+        }
+
+        Match storage match1 = finalFour.matchesRound1[0];
+        match1.home = teamToId[bytes(teamsRound1[0])];
+        match1.away = teamToId[bytes(teamsRound1[1])];
+
+        Match storage match2 = finalFour.matchesRound1[1];
+        match2.home = teamToId[bytes(teamsRound1[2])];
+        match2.away = teamToId[bytes(teamsRound1[3])];
     }
 
     /**
@@ -260,44 +284,55 @@ contract OnchainMadness {
      * @param matchCode The code of the First Four match (FFG1-FFG4)
      * @param _homePoints Points scored by the home team
      * @param _awayPoints Points scored by the away team
-     * @param _winner Winner of the match (1 for home, 2 for away)
+     * @param winner Name of the winning team
      */
     function determineFirstFourWinner(
         string memory matchCode,
         uint256 _homePoints,
         uint256 _awayPoints,
-        uint8 _winner
+        string memory winner
     ) external onlyGameContract {
         bytes memory _matchCode = bytes(matchCode);
-        Match storage currentMatch = matches[firstFourMatches[_matchCode]];
+        Match storage currentMatch = firstFourMatches[_matchCode];
 
         if (currentMatch.winner != 0) {
             return;
         }
 
-        currentMatch.home_points = _homePoints;
-        currentMatch.away_points = _awayPoints;
-        currentMatch.winner = _winner == 1
-            ? currentMatch.home
-            : currentMatch.away;
+        uint8 winnerId = teamToId[bytes(winner)];
 
-        if (_checkIsFfg(_matchCode)) {
-            FirstFourTeam memory firstFourTeam = firstFourPosition[
-                bytes(matchCode)
-            ];
-            Match storage bracketMatch = matches[firstFourTeam.matchId];
-            if (firstFourTeam.position == 0) {
-                bracketMatch.home = currentMatch.winner;
-                regions[firstFourTeam.region].matchesRound1[
-                    firstFourTeam.arrayPosition
-                ] = currentMatch.winner;
+        if (winnerId == currentMatch.home) {
+            if (_homePoints > _awayPoints) {
+                currentMatch.home_points = _homePoints;
+                currentMatch.away_points = _awayPoints;
             } else {
-                bracketMatch.away = currentMatch.winner;
-                regions[firstFourTeam.region].matchesRound1[
-                    firstFourTeam.arrayPosition
-                ] = currentMatch.winner;
+                currentMatch.home_points = _awayPoints;
+                currentMatch.away_points = _homePoints;
             }
+        } else if (winnerId == currentMatch.away) {
+            if (_awayPoints > _homePoints) {
+                currentMatch.away_points = _awayPoints;
+                currentMatch.home_points = _homePoints;
+            } else {
+                currentMatch.away_points = _homePoints;
+                currentMatch.home_points = _awayPoints;
+            }
+        } else revert("OM-08");
+        currentMatch.winner = winnerId;
+
+        FirstFourTeam memory firstFourTeam = firstFourPosition[_matchCode];
+
+        Match storage bracketMatch = regions[firstFourTeam.region]
+            .matchesRound1[firstFourTeam.matchId];
+        if (firstFourTeam.position == 0) {
+            bracketMatch.home = currentMatch.winner;
+        } else {
+            bracketMatch.away = currentMatch.winner;
         }
+
+        regions[firstFourTeam.region].teams[
+            firstFourTeam.arrayPosition
+        ] = currentMatch.winner;
     }
 
     /**
@@ -344,20 +379,18 @@ contract OnchainMadness {
         bytes32 regionHash = keccak256(bytes(regionName));
         Region storage region = regions[regionHash];
 
-        uint8 matchId;
+        Match storage currentMatch;
         if (round == 1) {
-            matchId = region.matchesRound1[matchIndex];
+            currentMatch = region.matchesRound1[matchIndex];
         } else if (round == 2) {
-            matchId = region.matchesRound2[matchIndex];
+            currentMatch = region.matchesRound2[matchIndex];
         } else if (round == 3) {
-            matchId = region.matchesRound3[matchIndex];
+            currentMatch = region.matchesRound3[matchIndex];
         } else if (round == 4) {
-            matchId = region.matchRound4;
+            currentMatch = region.matchRound4;
         } else {
             revert("OM-05");
         }
-
-        Match storage currentMatch = matches[matchId];
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
@@ -383,32 +416,13 @@ contract OnchainMadness {
         // Set up next round match
         if (round < 4) {
             uint8 nextRoundMatchIndex = matchIndex / 2;
-            uint8 nextMatchId;
-
-            if (round == 1) {
-                if (region.matchesRound2[nextRoundMatchIndex] == 0) {
-                    nextMatchId = matchesActualIndex++;
-                    region.matchesRound2[nextRoundMatchIndex] = nextMatchId;
-                } else {
-                    nextMatchId = region.matchesRound2[nextRoundMatchIndex];
-                }
-            } else if (round == 2) {
-                if (region.matchesRound3[nextRoundMatchIndex] == 0) {
-                    nextMatchId = matchesActualIndex++;
-                    region.matchesRound3[nextRoundMatchIndex] = nextMatchId;
-                } else {
-                    nextMatchId = region.matchesRound3[nextRoundMatchIndex];
-                }
+            Match storage nextMatch = region.matchesRound2[nextRoundMatchIndex];
+            if (round == 2) {
+                nextMatch = region.matchesRound3[nextRoundMatchIndex];
             } else if (round == 3) {
-                if (region.matchRound4 == 0) {
-                    nextMatchId = matchesActualIndex++;
-                    region.matchRound4 = nextMatchId;
-                } else {
-                    nextMatchId = region.matchRound4;
-                }
+                nextMatch = region.matchRound4;
             }
 
-            Match storage nextMatch = matches[nextMatchId];
             if (matchIndex % 2 == 0) {
                 nextMatch.home = winnerId;
             } else {
@@ -440,117 +454,79 @@ contract OnchainMadness {
 
         bytes32 regionHash = keccak256(bytes(regionName));
         Region storage region = regions[regionHash];
-        Match storage currentMatch = matches[region.matchRound4];
+        Match storage currentMatch = region.matchRound4;
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
-            "OM-08"
-        );
 
         // Store match points
-        if (homePoints > awayPoints) {
-            currentMatch.home_points = homePoints;
-            currentMatch.away_points = awayPoints;
-        } else {
-            currentMatch.home_points = awayPoints;
-            currentMatch.away_points = homePoints;
-        }
+        if (winnerId == currentMatch.home) {
+            if (homePoints > awayPoints) {
+                currentMatch.home_points = homePoints;
+                currentMatch.away_points = awayPoints;
+            } else {
+                currentMatch.home_points = awayPoints;
+                currentMatch.away_points = homePoints;
+            }
+        } else if (winnerId == currentMatch.away) {
+            if (awayPoints > homePoints) {
+                currentMatch.away_points = awayPoints;
+                currentMatch.home_points = homePoints;
+            } else {
+                currentMatch.away_points = homePoints;
+                currentMatch.home_points = awayPoints;
+            }
+        } else revert("OM-08");
         currentMatch.winner = winnerId;
         region.winner = winnerId;
-
-        uint8 roundMatchId;
-        if (regionHash == EAST) {
-            if (finalFour.matchesRound1[0] == 0) {
-                finalFour.matchesRound1[0] = matchesActualIndex;
-                roundMatchId = matchesActualIndex;
-                matchesActualIndex++;
-            } else {
-                roundMatchId = finalFour.matchesRound1[0];
-            }
-            matches[roundMatchId].home = winnerId;
-        } else if (regionHash == WEST) {
-            if (finalFour.matchesRound1[0] == 0) {
-                finalFour.matchesRound1[0] = matchesActualIndex;
-                roundMatchId = matchesActualIndex;
-                matchesActualIndex++;
-            } else {
-                roundMatchId = finalFour.matchesRound1[0];
-            }
-            matches[roundMatchId].away = winnerId;
-        } else if (regionHash == SOUTH) {
-            if (finalFour.matchesRound1[1] == 0) {
-                finalFour.matchesRound1[1] = matchesActualIndex;
-                roundMatchId = matchesActualIndex;
-                matchesActualIndex++;
-            } else {
-                roundMatchId = finalFour.matchesRound1[1];
-            }
-            matches[roundMatchId].home = winnerId;
-        } else if (regionHash == MIDWEST) {
-            if (finalFour.matchesRound1[1] == 0) {
-                finalFour.matchesRound1[1] = matchesActualIndex;
-                roundMatchId = matchesActualIndex;
-                matchesActualIndex++;
-            } else {
-                roundMatchId = finalFour.matchesRound1[1];
-            }
-            matches[roundMatchId].away = winnerId;
-        }
     }
 
     /**
      * @dev Records the result of a Final Four match and sets up championship match
      * Championship match is created when both Final Four matches are complete
      * @param gameIndex Index of the Final Four match (0 or 1)
-     * @param winners The name of the winning team
+     * @param winner The name of the winning team
      * @param homePoints Points scored by home team
      * @param awayPoints Points scored by away team
      */
     function determineFinalFourWinner(
         uint8 gameIndex,
-        string memory winners,
+        string memory winner,
         uint256 homePoints,
         uint256 awayPoints
     ) external onlyGameContract {
         require(currentRound == 5, "OM-05");
         require(gameIndex < 2, "OM-09");
 
-        Match storage currentMatch = matches[
-            finalFour.matchesRound1[gameIndex]
-        ];
+        Match storage currentMatch = finalFour.matchesRound1[gameIndex];
         require(currentMatch.winner == 0, "OM-07");
 
-        uint8 winnerId = teamToId[bytes(winners)];
-        require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
-            "OM-08"
-        );
+        uint8 winnerId = teamToId[bytes(winner)];
 
-        // Store match points
-        if (homePoints > awayPoints) {
-            currentMatch.home_points = homePoints;
-            currentMatch.away_points = awayPoints;
-        } else {
-            currentMatch.home_points = awayPoints;
-            currentMatch.away_points = homePoints;
-        }
+        if (winnerId == currentMatch.home) {
+            if (homePoints > awayPoints) {
+                currentMatch.home_points = homePoints;
+                currentMatch.away_points = awayPoints;
+            } else {
+                currentMatch.home_points = awayPoints;
+                currentMatch.away_points = homePoints;
+            }
+        } else if (winnerId == currentMatch.away) {
+            if (awayPoints > homePoints) {
+                currentMatch.away_points = awayPoints;
+                currentMatch.home_points = homePoints;
+            } else {
+                currentMatch.away_points = homePoints;
+                currentMatch.home_points = awayPoints;
+            }
+        } else revert("OM-08");
+
         currentMatch.winner = winnerId;
 
-        // Create championship match once both Final Four matches are complete
-        if (
-            matches[finalFour.matchesRound1[0]].winner != 0 &&
-            matches[finalFour.matchesRound1[1]].winner != 0
-        ) {
-            matches[matchesActualIndex].home = matches[
-                finalFour.matchesRound1[0]
-            ].winner;
-            matches[matchesActualIndex].away = matches[
-                finalFour.matchesRound1[1]
-            ].winner;
-            finalFour.matchFinal = matchesActualIndex;
-            matchesActualIndex++;
+        if (gameIndex == 0) {
+            finalFour.matchFinal.home = winnerId;
+        } else {
+            finalFour.matchFinal.away = winnerId;
         }
     }
 
@@ -567,23 +543,27 @@ contract OnchainMadness {
     ) external onlyGameContract {
         require(currentRound == 6, "OM-05");
 
-        Match storage currentMatch = matches[finalFour.matchFinal];
+        Match storage currentMatch = finalFour.matchFinal;
         require(currentMatch.winner == 0, "OM-07");
 
         uint8 winnerId = teamToId[bytes(winner)];
-        require(
-            winnerId == currentMatch.home || winnerId == currentMatch.away,
-            "OM-08"
-        );
-
-        // Store match points
-        if (homePoints > awayPoints) {
-            currentMatch.home_points = homePoints;
-            currentMatch.away_points = awayPoints;
-        } else {
-            currentMatch.home_points = awayPoints;
-            currentMatch.away_points = homePoints;
-        }
+        if (winnerId == currentMatch.home) {
+            if (homePoints > awayPoints) {
+                currentMatch.home_points = homePoints;
+                currentMatch.away_points = awayPoints;
+            } else {
+                currentMatch.home_points = awayPoints;
+                currentMatch.away_points = homePoints;
+            }
+        } else if (winnerId == currentMatch.away) {
+            if (awayPoints > homePoints) {
+                currentMatch.away_points = awayPoints;
+                currentMatch.home_points = homePoints;
+            } else {
+                currentMatch.away_points = homePoints;
+                currentMatch.home_points = awayPoints;
+            }
+        } else revert("OM-08");
         currentMatch.winner = winnerId;
         finalFour.winner = winnerId;
 
@@ -592,18 +572,20 @@ contract OnchainMadness {
 
     /**
      * @dev Get the match data for a specific match
-     * @param matchId The ID of the match
+     * @param gameMatch The match data
      * @return The match data in bytes format
      */
-    function getMatchData(uint8 matchId) internal view returns (bytes memory) {
+    function getMatchData(
+        Match memory gameMatch
+    ) internal view returns (bytes memory) {
         //string home, string away, uint256 home_points, uint256 away_points, string winner
         return
             abi.encode(
-                getTeamName(matches[matchId].home),
-                getTeamName(matches[matchId].away),
-                matches[matchId].home_points,
-                matches[matchId].away_points,
-                getTeamName(matches[matchId].winner)
+                getTeamName(gameMatch.home),
+                getTeamName(gameMatch.away),
+                gameMatch.home_points,
+                gameMatch.away_points,
+                getTeamName(gameMatch.winner)
             );
     }
 
@@ -738,74 +720,74 @@ contract OnchainMadness {
      */
     function getFinalResult() public view returns (uint8[63] memory) {
         uint8[63] memory winners;
-        
+
         // EAST
         // Round 1
         for (uint8 i = 0; i < 8; i++) {
-            winners[i] = matches[regions[EAST].matchesRound1[i]].winner;
+            winners[i] = regions[EAST].matchesRound1[i].winner;
         }
         // Round 2
         for (uint8 i = 8; i < 12; i++) {
-            winners[i] = matches[regions[EAST].matchesRound2[i % 4]].winner;
+            winners[i] = regions[EAST].matchesRound2[i % 4].winner;
         }
         // Round 3
         for (uint8 i = 12; i < 14; i++) {
-            winners[i] = matches[regions[EAST].matchesRound3[i % 2]].winner;
+            winners[i] = regions[EAST].matchesRound3[i % 2].winner;
         }
         // Round 4
-        winners[14] = matches[regions[EAST].matchRound4].winner;
+        winners[14] = regions[EAST].matchRound4.winner;
 
         // SOUTH
         // Round 1
         for (uint8 i = 15; i < 23; i++) {
-            winners[i] = matches[regions[SOUTH].matchesRound1[(i-15) % 8]].winner;
+            winners[i] = regions[SOUTH].matchesRound1[(i - 15) % 8].winner;
         }
         // Round 2
         for (uint8 i = 23; i < 27; i++) {
-            winners[i] = matches[regions[SOUTH].matchesRound2[(i-15) % 4]].winner;
+            winners[i] = regions[SOUTH].matchesRound2[(i - 15) % 4].winner;
         }
         // Round 3
         for (uint8 i = 27; i < 29; i++) {
-            winners[i] = matches[regions[SOUTH].matchesRound3[(i-15) % 2]].winner;
+            winners[i] = regions[SOUTH].matchesRound3[(i - 15) % 2].winner;
         }
         // Round 4
-        winners[29] = matches[regions[SOUTH].matchRound4].winner;
+        winners[29] = regions[SOUTH].matchRound4.winner;
 
         // WEST
         // Round 1
         for (uint8 i = 30; i < 38; i++) {
-            winners[i] = matches[regions[WEST].matchesRound1[(i-30) % 8]].winner;
+            winners[i] = regions[WEST].matchesRound1[(i - 30) % 8].winner;
         }
         // Round 2
         for (uint8 i = 38; i < 42; i++) {
-            winners[i] = matches[regions[WEST].matchesRound2[(i-30) % 4]].winner;
+            winners[i] = regions[WEST].matchesRound2[(i - 30) % 4].winner;
         }
         // Round 3
         for (uint8 i = 42; i < 44; i++) {
-            winners[i] = matches[regions[WEST].matchesRound3[(i-30) % 2]].winner;
+            winners[i] = regions[WEST].matchesRound3[(i - 30) % 2].winner;
         }
         // Round 4
-        winners[44] = matches[regions[WEST].matchRound4].winner;
+        winners[44] = regions[WEST].matchRound4.winner;
 
         // MIDWEST
         // Round 1
         for (uint8 i = 45; i < 53; i++) {
-            winners[i] = matches[regions[MIDWEST].matchesRound1[(i-45) % 8]].winner;
+            winners[i] = regions[MIDWEST].matchesRound1[(i - 45) % 8].winner;
         }
         // Round 2
         for (uint8 i = 53; i < 57; i++) {
-            winners[i] = matches[regions[MIDWEST].matchesRound2[(i-45) % 4]].winner;
+            winners[i] = regions[MIDWEST].matchesRound2[(i - 45) % 4].winner;
         }
         // Round 3
         for (uint8 i = 57; i < 59; i++) {
-            winners[i] = matches[regions[MIDWEST].matchesRound3[(i-45) % 2]].winner;
+            winners[i] = regions[MIDWEST].matchesRound3[(i - 45) % 2].winner;
         }
         // Round 4
-        winners[59] = matches[regions[MIDWEST].matchRound4].winner;
+        winners[59] = regions[MIDWEST].matchRound4.winner;
 
         // Final Four
-        winners[60] = matches[finalFour.matchesRound1[0]].winner;
-        winners[61] = matches[finalFour.matchesRound1[1]].winner;
+        winners[60] = finalFour.matchesRound1[0].winner;
+        winners[61] = finalFour.matchesRound1[1].winner;
         winners[62] = finalFour.winner;
 
         return winners;
@@ -837,15 +819,6 @@ contract OnchainMadness {
         bytes32 _regionName
     ) external view returns (Region memory) {
         return regions[_regionName];
-    }
-
-    /**
-     * @dev Get a match data based on its ID
-     * @param _matchId The ID of the match
-     * @return The data of the match as Match memory
-     */
-    function getMatch(uint8 _matchId) external view returns (Match memory) {
-        return matches[_matchId];
     }
 
     /**

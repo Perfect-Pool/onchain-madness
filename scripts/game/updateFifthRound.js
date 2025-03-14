@@ -17,8 +17,6 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const TOURNAMENT_YEAR = 2024;
-
 async function decodeFinalFourData(finalFourBytes) {
   const abiCoder = new ethers.utils.AbiCoder();
   const [matchesRound1, matchFinal, winner] = abiCoder.decode(
@@ -43,12 +41,17 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory");
+  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+    libraries: {
+      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+    },
+  });
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   // Get initial Final Four data
@@ -64,11 +67,10 @@ async function main() {
   }
 
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`);
     const finalFourGames = response.data.rounds[5].games;
 
     // Process both semifinal games
-    let decidedGames = 0;
     for (let i = 0; i < finalFourGames.length; i++) {
       const game = finalFourGames[i];
       
@@ -77,7 +79,6 @@ async function main() {
         console.log(`\nChecking Final Four Semifinal Game ${gameIndex + 1}...`);
         
         if (game.status === "closed") {
-          decidedGames++;
           const matchData = await decodeMatchData(decodedFinalFour.matchesRound1[gameIndex]);
           
           if (matchData.winner === "") {
@@ -101,14 +102,27 @@ async function main() {
               console.log(`${winner} advances to Championship Game!`);
             } catch (error) {
               console.log(`Game ${gameIndex + 1} already decided. Skipping...`);
+              console.error(error.response ? error.response.data : error.message);
             }
           }
         }
       }
     }
 
+    // Get updated Final Four data to check if all games are decided
+    const updatedFinalFourData = await contract.getFinalFourData(TOURNAMENT_YEAR);
+    const updatedDecodedFinalFour = await decodeFinalFourData(updatedFinalFourData);
+    
+    // Check if all semifinal games have a winner
+    const allSemifinalsDecided = await Promise.all(
+      updatedDecodedFinalFour.matchesRound1.map(async (match) => {
+        const matchData = await decodeMatchData(match);
+        return matchData.winner !== "";
+      })
+    );
+
     // If both semifinal games are decided, advance to Championship
-    if (decidedGames === 2) {
+    if (allSemifinalsDecided.every((gameDecided) => gameDecided)) {
       console.log("\nBoth semifinal games decided. Advancing to Championship Game...");
       const tx = await contract.advanceRound(TOURNAMENT_YEAR);
       await tx.wait();

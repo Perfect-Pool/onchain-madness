@@ -277,7 +277,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
-            yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+            yearToPPSBurnDate[_gameYear] = gameDeployer.getCurrentTimestamp() + PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
                 perfectPool.setLockWithdrawal(true);
             }
@@ -292,7 +292,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         while (processedIterations < 8) {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
-                yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+                yearToPPSBurnDate[_gameYear] = gameDeployer.getCurrentTimestamp() + PPS_BURN_DELAY;
                 if (!perfectPool.lockWithdrawal()) {
                     perfectPool.setLockWithdrawal(true);
                 }
@@ -313,7 +313,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
-            yearToPPSBurnDate[_gameYear] = block.timestamp + PPS_BURN_DELAY;
+            yearToPPSBurnDate[_gameYear] = gameDeployer.getCurrentTimestamp() + PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
                 perfectPool.setLockWithdrawal(true);
             }
@@ -349,11 +349,10 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @return True if the tokens need to be burned, false otherwise
      */
     function needsToBeBurned(uint256 _gameYear) public view returns (bool) {
-        // return
-        //     yearToPPSBurnDate[_gameYear] > 0 &&
-        //     !yearToPPSBurned[_gameYear] &&
-        //     block.timestamp > yearToPPSBurnDate[_gameYear]; //production
-        return true; // for testing
+        return
+            yearToPPSBurnDate[_gameYear] > 0 &&
+            !yearToPPSBurned[_gameYear] &&
+            gameDeployer.getCurrentTimestamp() > yearToPPSBurnDate[_gameYear]; 
     }
 
     /**
@@ -387,10 +386,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @return True if the prize can be dismissed, false otherwise
      */
     function needsToBeDismissed(uint256 _gameYear) public view returns (bool) {
-        // (uint256 currentYear,,) = OnchainMadnessLib.getCurrentDate();
-        // return
-        //     currentYear > _gameYear; //production
-        return true; // for testing
+        (uint256 currentYear,,) = gameDeployer.getCurrentDate();
+        return
+            currentYear > _gameYear; 
     }
 
     /**

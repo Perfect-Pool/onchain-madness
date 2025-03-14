@@ -21,8 +21,6 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const TOURNAMENT_YEAR = 2024;
-
 async function decodeFirstFourMatch(matchBytes) {
   const abiCoder = new ethers.utils.AbiCoder();
   const [home, away, homePoints, awayPoints, winner] = abiCoder.decode(
@@ -38,12 +36,17 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory");
+  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+    libraries: {
+      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+    },
+  });
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   // Get initial First Four data
@@ -56,7 +59,7 @@ async function main() {
 
   // Make the GET request to SPORTSRADAR_URL
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`);
     
     // Collect all First Four games from different brackets
     const firstFourGames = [];
@@ -67,6 +70,17 @@ async function main() {
         }
       });
     });
+
+    // Check if any team is still TBD in First Four
+    const hasTBDTeams = firstFourGames.some(game => 
+      game.home?.alias === "TBD" || game.away?.alias === "TBD"
+    );
+
+    // Skip initialization if any teams are still TBD
+    if (hasTBDTeams) {
+      console.log("Skipping initialization for First Four - some teams are still TBD");
+      return;
+    }
 
     // Sort games by their game number to ensure consistent order
     firstFourGames.sort((a, b) => {
@@ -93,13 +107,17 @@ async function main() {
         console.log(
           `Initializing ${matchCode} with ${homeTeam} vs ${awayTeam}`
         );
-        const tx = await contract.initFirstFourMatch(
-          TOURNAMENT_YEAR,
-          matchCode,
-          homeTeam,
-          awayTeam
-        );
-        await tx.wait(); // Wait for transaction to be mined
+        try {
+          const tx = await contract.initFirstFourMatch(
+            TOURNAMENT_YEAR,
+            matchCode,
+            homeTeam,
+            awayTeam
+          );
+          await tx.wait(); // Wait for transaction to be mined
+        } catch (error) {
+          console.error(`Error initializing ${matchCode}:`, error.message);
+        }
       }
     }
 

@@ -36,11 +36,6 @@ interface IOnchainMadnessFactory {
         bytes32 _regionName
     ) external view returns (Region memory);
 
-    function getMatch(
-        uint256 year,
-        uint8 _matchId
-    ) external view returns (Match memory);
-
     function getTeamName(
         uint256 year,
         uint8 _teamId
@@ -77,4 +72,11 @@ interface IOnchainMadnessFactory {
     function contracts(string memory _name) external view returns (address);
 
     function owner() external view returns (address);
+
+    function getCurrentDate()
+        external
+        view
+        returns (uint256 year, uint256 month, uint256 day);
+
+    function getCurrentTimestamp() external view returns (uint256);
 }

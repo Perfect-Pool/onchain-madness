@@ -49,11 +49,7 @@ async function main() {
   const nameStorage = "OM_ENTRY_STORAGE";
 
   if (networkData.OM_ENTRY_STORAGE === "") {
-    const EntryStorage = await ethers.getContractFactory("EntryStorage", {
-      libraries: {
-        OnchainMadnessLib: libraryAddress,
-      },
-    });
+    const EntryStorage = await ethers.getContractFactory("EntryStorage");
     const entryStorage = await EntryStorage.deploy(networkData.OM_DEPLOYER);
     await entryStorage.deployed();
     console.log(`EntryStorage deployed at ${entryStorage.address}`);

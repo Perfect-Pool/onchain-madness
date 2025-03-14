@@ -26,6 +26,7 @@
     "web3": "^4.1.2"
   },
   "scripts": {
+    "test": "hardhat test",
     "compile": "hardhat compile",
     "deploy": "node scripts/deploy.js",
     "clean": "hardhat clean",
@@ -43,7 +44,7 @@
     "create-game": "hardhat run scripts/game/createGame.js --network",
     "init-first-four": "hardhat run scripts/game/initFirstFour.js --network",
     "init-first-round": "hardhat run scripts/game/initFirstRound.js --network",
-    "close-bets": "hardhat run scripts/game/closeBets.js --network",
+    "init-final-four": "hardhat run scripts/game/initFinalFour.js --network",
     "update-first-four": "hardhat run scripts/game/updateFirstFour.js --network",
     "update-first-round": "hardhat run scripts/game/updateFirstRound.js --network",
     "update-second-round": "hardhat run scripts/game/updateSecondRound.js --network",
@@ -59,6 +60,10 @@
     "place-perfect-bet": "hardhat run scripts/placePerfectBet.js --network",
     "check-pool": "hardhat run scripts/checkPoolData.js --network",
     "check-prize": "hardhat run scripts/checkPrize.js --network",
-    "check-pending": "hardhat run scripts/check-pending.js --network"
+    "check-pending": "hardhat run scripts/check-pending.js --network",
+    "change-mocked-date": "hardhat run scripts/changeDate.js --network",
+    "get-final-four": "hardhat run scripts/getFinalFour.js --network",
+    "get-team-data": "hardhat run scripts/getTeamData.js --network",
+    "get-nft-image": "hardhat run scripts/getNftImage.js --network"
   }
 }

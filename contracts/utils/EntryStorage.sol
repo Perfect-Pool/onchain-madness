@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "../libraries/OnchainMadnessLib.sol";
+import "../interfaces/IOnchainMadnessFactory.sol";
 
 /**
  * @title IOnchainMadnessEntryFactory
@@ -328,8 +328,8 @@ contract EntryStorage {
         address user,
         uint256 gameYear
     ) external view returns (uint256) {
-        (uint256 currentYear, , ) = OnchainMadnessLib.getCurrentDate();
-        // if (currentYear != gameYear) return 0; //production
+        (uint256 currentYear, , ) = gameDeployer.getCurrentDate();
+        if (currentYear != gameYear) return 0;
         return ppShare[gameYear][user];
     }
 

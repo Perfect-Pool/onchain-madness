@@ -21,8 +21,6 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const TOURNAMENT_YEAR = 2024;
-
 async function decodeFirstFourMatch(matchBytes) {
   const abiCoder = new ethers.utils.AbiCoder();
   const [home, away, homePoints, awayPoints, winner] = abiCoder.decode(
@@ -38,12 +36,17 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory");
+  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+    libraries: {
+      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+    },
+  });
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   // Get initial First Four data
@@ -56,7 +59,7 @@ async function main() {
 
   // Make the GET request to SPORTSRADAR_URL
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`);
     
     // Collect all First Four games from different brackets
     const firstFourGames = [];
@@ -95,7 +98,7 @@ async function main() {
         if (!homePoints || !awayPoints) {
           continue;
         }
-        const winner = homePoints > awayPoints ? 1 : 2;
+        const winner = homePoints > awayPoints ? homeTeam : awayTeam;
 
         console.log(
           `Updating ${matchCode} result: ${homeTeam} ${homePoints} - ${awayPoints} ${awayTeam}`

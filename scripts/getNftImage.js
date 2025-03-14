@@ -18,6 +18,11 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 
 const POOL = 0;
+const NFT_ID = 1;
+
+const decodeBase64 = (base64String) => {
+  return Buffer.from(base64String.split("base64,")[1], "base64").toString("utf-8");
+};
 
 async function main() {
   // Get contract data
@@ -36,33 +41,19 @@ async function main() {
   );
   const factory = EntryFactory.attach(networkData["OM_ENTRY_DEPLOYER"]);
 
-  const [wallet] = await ethers.getSigners();
-
   try {
-    console.log("\nIterating tokens...");
-    let n = 1;
-    while (true) {
-      try {
-        await factory.tokenURI(POOL, n);
-        await new Promise((resolve) => setTimeout(resolve, 200));
-      } catch (error) {
-        console.log("\nNo more tokens on this pool.");
-        break;
-      }
-      console.log(`\nToken ID #${n}`);
-      const [, points] = await factory.betValidator(POOL, n);
-      console.log(`Points: ${points}`);
-      const [toClaim, claimed] = await factory.amountPrizeClaimed(POOL, n);
-      const shares = await factory.verifyShares(wallet.address, YEAR);
-      console.log(`Shares: ${shares}`);
-      console.log(`To Claim: ${toClaim}`);
-      console.log(`Claimed: ${claimed}`);
-      n++;
-
-      await new Promise((resolve) => setTimeout(resolve, 500));
+    console.log("\nChecking token...");
+    const tokenURI = await factory.tokenURI(POOL, NFT_ID);
+    const decoded = decodeBase64(tokenURI);
+    const svgImage = decodeBase64(JSON.parse(decoded).image);
+    //create folder if doesn't exist
+    if (!fs.existsSync(`./nft_image`)) {
+      fs.mkdirSync(`./nft_image`);
     }
+    fs.writeFileSync(`./nft_image/${YEAR}_${POOL}_${NFT_ID}.svg`, svgImage);
+    console.log("\nToken image saved successfully!");
   } catch (error) {
-    console.error("Error iterating tokens:");
+    console.error("Error checking token:");
     console.error(error.message);
     process.exit(1);
   }

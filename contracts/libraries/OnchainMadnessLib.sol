@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "../interfaces/IOnchainMadnessFactory.sol";
+
 library OnchainMadnessLib {
     /**
      * @dev Get the names of the teams based on the bets
@@ -127,11 +128,22 @@ library OnchainMadnessLib {
             if (gameResults[i] == 0) {
                 continue;
             }
-            if (teamIds[i] == gameResults[i]) {
-                betResults[i] = 1;
-                newPoints = newPoints + 1;
+            if (i >= 60 && i <= 61) {
+                // For Final Four matches (60 and 61), check if team appears in either position
+                if (teamIds[i] == gameResults[60] || teamIds[i] == gameResults[61]) {
+                    betResults[i] = 1;
+                    newPoints++;
+                } else {
+                    betResults[i] = 2;
+                }
             } else {
-                betResults[i] = 2;
+                // For regular matches, direct comparison
+                if (teamIds[i] == gameResults[i]) {
+                    betResults[i] = 1;
+                    newPoints++;
+                } else {
+                    betResults[i] = 2;
+                }
             }
         }
     }
@@ -174,6 +186,41 @@ library OnchainMadnessLib {
             day = uint8(doy - (153 * mp + 2) / 5 + 1);
             month = uint8(mp < 10 ? mp + 3 : mp - 9);
             year = uint16(yoe + era * 400 + 1);
+        }
+    }
+
+    /**
+     * @notice Convert a date to a Unix timestamp
+     * @dev Converts year, month, and day to a Unix timestamp, inverse of getCurrentDate()
+     * @param year The year (e.g., 2024)
+     * @param month The month (1-12)
+     * @param day The day (1-31)
+     * @return timestamp The Unix timestamp at 00:00:00 UTC on the specified date
+     */
+    function dateToTimestamp(
+        uint256 year,
+        uint256 month,
+        uint256 day
+    ) public pure returns (uint256 timestamp) {
+        unchecked {
+            // Adjust month and year for the algorithm
+            // If month is January or February, treat it as month 13 or 14 of the previous year
+            if (month <= 2) {
+                month += 12;
+                year -= 1;
+            }
+
+            // Calculate the number of days since the epoch (January 1, 1970)
+            // This formula is based on the algorithm used in getCurrentDate but reversed
+            uint256 a = year / 100;
+            uint256 b = a / 4;
+            uint256 c = 2 - a + b;
+            uint256 e = (36525 * (year + 4716)) / 100;
+            uint256 f = (306001 * (month + 1)) / 10000;
+            uint256 daysSinceEpoch = c + day + e + f - 2442113;
+
+            // Convert days to seconds (86400 seconds per day)
+            timestamp = daysSinceEpoch * 86400;
         }
     }
 }

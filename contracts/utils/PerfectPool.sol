@@ -5,12 +5,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "../libraries/OnchainMadnessLib.sol";
 
 interface IGamesFactory {
     function isFinished(uint256 year) external view returns (bool);
 
     function contracts(string memory key) external view returns (address);
+
+    function getCurrentDate()
+        external
+        view
+        returns (uint256 year, uint256 month, uint256 day);
 }
 
 interface IGameNft {
@@ -451,7 +455,7 @@ contract PerfectPool is ERC20, Ownable, ReentrancyGuard {
      * If the game of the current year is finished, any user can burn tokens.
      */
     function isAbleToWithdraw() public view returns (bool) {
-        (uint256 year, uint256 month, uint256 day) = OnchainMadnessLib
+        (uint256 year, uint256 month, uint256 day) = gameFactory
             .getCurrentDate();
         if (
             (gameFactory.isFinished(year) ||

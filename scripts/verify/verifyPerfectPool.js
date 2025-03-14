@@ -23,9 +23,6 @@ async function main() {
       contracts[networkName]["OM_ENTRY_DEPLOYER"],
       contracts[networkName]["OM_DEPLOYER"],
     ],
-    libraries: {
-      OnchainMadnessLib: contracts[networkName]["Libraries"]["OnchainMadnessLib"],
-    },
     contract: "contracts/utils/PerfectPool.sol:PerfectPool",
   });
 }

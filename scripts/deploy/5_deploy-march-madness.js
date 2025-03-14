@@ -30,11 +30,16 @@ async function main() {
   if (networkData.OM_DEPLOYER === "") {
     console.log(`Deploying OnchainMadnessFactory...`);
     const OnchainMadnessFactory = await ethers.getContractFactory(
-      "OnchainMadnessFactory"
+      "OnchainMadnessFactory", {
+        libraries: {
+          OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+        },
+      }
     );
     onchainMadnessFactory = await OnchainMadnessFactory.deploy(
       networkData.OM_BASE,
-      networkData.Executor
+      networkData.Executor,
+      networkName.includes("testnet")
     );
     await onchainMadnessFactory.deployed();
 

@@ -31,7 +31,11 @@ async function main() {
     constructorArguments: [
       contracts[networkName]["OM_BASE"],
       contracts[networkName]["Executor"],
+      networkName.includes("testnet")
     ],
+    libraries: {
+      OnchainMadnessLib: contracts[networkName]["Libraries"]["OnchainMadnessLib"],
+    },
     contract: "contracts/games/OnchainMadnessFactory.sol:OnchainMadnessFactory",
   });
 }

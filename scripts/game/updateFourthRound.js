@@ -21,8 +21,6 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const TOURNAMENT_YEAR = 2024;
-
 // Map to convert from API region names to contract region names
 const REGION_NAME_MAP = {
   "West Regional": "WEST",
@@ -55,12 +53,17 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory");
+  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+    libraries: {
+      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+    },
+  });
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   // Get initial regions data
@@ -81,7 +84,7 @@ async function main() {
   );
 
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`);
     const fourthRoundBrackets = response.data.rounds[4].bracketed;
 
     // Process each region

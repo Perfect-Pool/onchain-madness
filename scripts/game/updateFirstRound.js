@@ -28,11 +28,10 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const TOURNAMENT_YEAR = 2024;
-
 // Mock current time for testing
-const MOCK_DATE = "2025-03-20T12:00:00+00:00";
-const currentTime = new Date(MOCK_DATE);
+// const MOCK_DATE = "2025-03-20T12:00:00+00:00";
+// const currentTime = new Date(MOCK_DATE);
+const currentTime = new Date();
 
 // Time threshold in milliseconds (30 minutes)
 const THRESHOLD_MS = 30 * 60 * 1000;
@@ -83,12 +82,17 @@ async function main() {
   const data = JSON.parse(fs.readFileSync(variablesPath, "utf8"));
   const networkName = hre.network.name;
   const networkData = data[networkName];
+  const TOURNAMENT_YEAR = networkData.year;
 
   console.log(`Using network: ${networkName}`);
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory");
+  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+    libraries: {
+      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+    },
+  });
   const contract = Factory.attach(networkData["OM_DEPLOYER"]);
 
   // Get initial regions data
@@ -105,7 +109,7 @@ async function main() {
   );
 
   try {
-    const response = await axios.get(process.env.SPORTSRADAR_URL);
+    const response = await axios.get(process.env.SPORTSRADAR_URL + `?year=${TOURNAMENT_YEAR}`);
     const firstRoundBrackets = response.data.rounds[1].bracketed;
 
     // Track earliest game date
@@ -166,7 +170,6 @@ async function main() {
 
       // Update match results
       console.log(`\nChecking ${regionName} games for updates...`);
-      let decidedGames = 0;
 
       for (let i = 0; i < games.length; i++) {
         const game = games[i];
@@ -200,17 +203,11 @@ async function main() {
                 awayPoints
               );
               await tx.wait();
-              decidedGames++;
             } catch (error) {
               console.log(`Game ${i + 1} already decided. Skipping...`);
             }
-          } else decidedGames++;
+          }
         }
-      }
-
-      // If all games in the region are decided, check if we need to advance the round
-      if (decidedGames === games.length) {
-        console.log(`\nAll games in ${regionName} are decided`);
       }
     }
 
