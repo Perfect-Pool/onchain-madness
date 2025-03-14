@@ -9,6 +9,7 @@ const contracts = [
   { name: "OnchainMadness", path: "games/OnchainMadness.sol" },
   { name: "OnchainMadnessFactory", path: "games/OnchainMadnessFactory.sol" },
   { name: "OnchainMadnessEntry", path: "utils/OnchainMadnessEntry.sol" },
+  { name: "OnchainMadnessEntryFactory", path: "utils/OnchainMadnessEntryFactory.sol" },
   { name: "PerfectPool", path: "utils/PerfectPool.sol" },
 ];
 
