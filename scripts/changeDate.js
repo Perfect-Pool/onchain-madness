@@ -12,9 +12,9 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 require("dotenv").config();
 
-const MOCKED_YEAR = 2024;
+const MOCKED_YEAR = 2025;
 const MOCKED_MONTH = 3;
-const MOCKED_DAY = 1;
+const MOCKED_DAY = 16;
 
 async function main() {
   // Get contract data
