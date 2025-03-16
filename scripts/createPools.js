@@ -107,29 +107,6 @@ async function main() {
     console.log(`   Pool ID: ${protocolPoolId}`);
     console.log(`   Pool Address: ${protocolPoolAddress}`);
     console.log(`   Name: ${protocolName}`);
-
-    // 2. Create Public pool
-    console.log("\n2. Creating Public pool...");
-    const { receipt: publicReceipt, name: publicName } = await createPoolWithRetry(
-      deployer,
-      false,  // isProtocolPool
-      false,  // isPrivatePool
-      "",     // no PIN needed
-      "🎉 My Public Pool" // pool name with public badge icon (emoji)
-    );
-    
-    // Get pool ID from event logs
-    const publicEvent = publicReceipt.events.find(e => e.event === "EntryPoolCreated");
-    if (!publicEvent) {
-      throw new Error("EntryPoolCreated event not found in transaction receipt");
-    }
-    const [publicPoolId, publicPoolAddress] = publicEvent.args;
-    
-    console.log(`✅ Public Pool created:`);
-    console.log(`   Pool ID: ${publicPoolId}`);
-    console.log(`   Pool Address: ${publicPoolAddress}`);
-    console.log(`   Name: ${publicName}`);
-
   } catch (error) {
     console.error("Error creating pools:");
     console.error(error.message);
