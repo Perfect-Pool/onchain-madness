@@ -185,7 +185,7 @@ library OnchainMadnessLib {
 
             day = uint8(doy - (153 * mp + 2) / 5 + 1);
             month = uint8(mp < 10 ? mp + 3 : mp - 9);
-            year = uint16(yoe + era * 400 + 1);
+            year = uint16(yoe + era * 400);
         }
     }
 

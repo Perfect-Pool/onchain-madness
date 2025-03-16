@@ -1,6 +1,6 @@
 #!/bin/bash
 
-N=5
+N=3
 
 for ((i=1; i<=N; i++))
 do

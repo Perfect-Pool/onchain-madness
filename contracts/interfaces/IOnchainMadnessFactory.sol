@@ -73,6 +73,8 @@ interface IOnchainMadnessFactory {
 
     function owner() external view returns (address);
 
+    function executor() external view returns (address);
+
     function getCurrentDate()
         external
         view

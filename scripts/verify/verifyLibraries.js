@@ -10,6 +10,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying FixedData at address", addressFixedData);
 
   await hre.run("verify:verify", {
@@ -27,6 +30,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying FixedDataPart2 at address", addressFixedDataPart2);
 
   await hre.run("verify:verify", {
@@ -40,6 +46,9 @@ async function main() {
     console.error("BuildImage address not found in contracts.json");
     process.exit(1);
   }
+
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   console.log("Verifying BuildImage at address", addressBuildImage);
 
@@ -60,6 +69,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying DinamicData at address", addressDinamicData);
 
   await hre.run("verify:verify", {
@@ -73,6 +85,9 @@ async function main() {
     console.error("RegionsData address not found in contracts.json");
     process.exit(1);
   }
+
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   console.log("Verifying RegionsData at address", addressRegionsData);
 
@@ -91,6 +106,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying RegionBuilder at address", addressRegionBuilder);
 
   await hre.run("verify:verify", {
@@ -107,6 +125,9 @@ async function main() {
     console.error("OnchainMadnessLib address not found in contracts.json");
     process.exit(1);
   }
+
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   console.log("Verifying OnchainMadnessLib at address", addressOnchainMadnessLib);
 

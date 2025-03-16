@@ -101,6 +101,19 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
     }
 
     /**
+     * @notice Checks if the caller is the contract executor
+     * @notice Only the contract executor can call this function
+     */
+    modifier onlyExecutor() {
+        require(
+            msg.sender == gameDeployer.executor() ||
+                msg.sender == gameDeployer.owner(),
+            "Caller is not executor"
+        );
+        _;
+    }
+
+    /**
      * @notice Constructor for the OnchainMadnessEntryFactory contract
      * @param _implementation Address of the implementation contract
      */
@@ -246,7 +259,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      */
     function iterateYearTokens(
         uint256 _gameYear
-    ) public whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant onlyExecutor {
         (, uint8 status) = abi.decode(
             gameDeployer.getGameStatus(_gameYear),
             (uint8, uint8)
@@ -260,7 +273,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
-            yearToPPSBurnDate[_gameYear] = gameDeployer.getCurrentTimestamp() + PPS_BURN_DELAY;
+            yearToPPSBurnDate[_gameYear] =
+                gameDeployer.getCurrentTimestamp() +
+                PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
                 perfectPool.setLockWithdrawal(true);
             }
@@ -275,7 +290,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         while (processedIterations < 8) {
             if (pools[_currentPoolId] == address(0)) {
                 emit IterationFinished(_gameYear);
-                yearToPPSBurnDate[_gameYear] = gameDeployer.getCurrentTimestamp() + PPS_BURN_DELAY;
+                yearToPPSBurnDate[_gameYear] =
+                    gameDeployer.getCurrentTimestamp() +
+                    PPS_BURN_DELAY;
                 if (!perfectPool.lockWithdrawal()) {
                     perfectPool.setLockWithdrawal(true);
                 }
@@ -296,7 +313,9 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
 
         if (pools[_currentPoolId] == address(0)) {
             emit IterationFinished(_gameYear);
-            yearToPPSBurnDate[_gameYear] = gameDeployer.getCurrentTimestamp() + PPS_BURN_DELAY;
+            yearToPPSBurnDate[_gameYear] =
+                gameDeployer.getCurrentTimestamp() +
+                PPS_BURN_DELAY;
             if (!perfectPool.lockWithdrawal()) {
                 perfectPool.setLockWithdrawal(true);
             }
@@ -312,7 +331,11 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @param year The year to increase the pot for
      * @param amount The amount to increase the pot by
      */
-    function increasePot(uint256 year, uint256 amount, address poolAddress) external {
+    function increasePot(
+        uint256 year,
+        uint256 amount,
+        address poolAddress
+    ) external {
         require(
             msg.sender == gameDeployer.contracts("PERFECTPOOL"),
             "Unauthorized"
@@ -334,7 +357,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      */
     function burnYearTokens(
         uint256 _gameYear
-    ) public whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant onlyExecutor {
         require(
             needsToBeBurned(_gameYear),
             "The claim period has not ended yet."
@@ -358,7 +381,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      */
     function iterateDismissYear(
         uint256 _gameYear
-    ) public whenNotPaused nonReentrant {
+    ) public whenNotPaused nonReentrant onlyExecutor {
         require(
             needsToBeDismissed(_gameYear),
             "This year's prizes cannot be dismissed yet."
@@ -453,9 +476,8 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
      * @return True if the prize can be dismissed, false otherwise
      */
     function needsToBeDismissed(uint256 _gameYear) public view returns (bool) {
-        (uint256 currentYear,,) = gameDeployer.getCurrentDate();
-        return
-            currentYear > _gameYear; 
+        (uint256 currentYear, , ) = gameDeployer.getCurrentDate();
+        return currentYear > _gameYear;
     }
 
     /**
@@ -467,7 +489,7 @@ contract OnchainMadnessEntryFactory is Pausable, ReentrancyGuard {
         return
             yearToPPSBurnDate[_gameYear] > 0 &&
             !yearToPPSBurned[_gameYear] &&
-            gameDeployer.getCurrentTimestamp() > yearToPPSBurnDate[_gameYear]; 
+            gameDeployer.getCurrentTimestamp() > yearToPPSBurnDate[_gameYear];
     }
 
     /**

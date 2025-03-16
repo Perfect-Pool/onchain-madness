@@ -10,6 +10,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying OnchainMadnessEntry at address", addressEntry);
 
   await hre.run("verify:verify", {
@@ -24,6 +27,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying EntryStorage at address", addressEntryStorage);
 
   await hre.run("verify:verify", {
@@ -37,6 +43,9 @@ async function main() {
     console.error("BetCheck address not found in contracts.json");
     process.exit(1);
   }
+
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   console.log("Verifying BetCheck at address", addressBetCheck);
 

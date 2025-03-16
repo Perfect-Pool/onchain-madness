@@ -10,6 +10,9 @@ async function main() {
     process.exit(1);
   }
 
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
   console.log("Verifying OnchainMadness at address", address);
 
   await hre.run("verify:verify", {
@@ -23,6 +26,9 @@ async function main() {
     console.error("OnchainMadnessFactory address not found in contracts.json");
     process.exit(1);
   }
+
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
 
   console.log("Verifying OnchainMadnessFactory at address", addressDeployer);
 

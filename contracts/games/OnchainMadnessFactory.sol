@@ -160,7 +160,7 @@ contract OnchainMadnessFactory is Ownable {
      * @dev Modifier to restrict functions to the authorized executor
      */
     modifier onlyExecutor() {
-        require(msg.sender == executor, "OMF-01");
+        require(msg.sender == executor || msg.sender == owner(), "OMF-01");
         _;
     }
 
