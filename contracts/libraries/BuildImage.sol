@@ -18,7 +18,6 @@ library BuildImage {
             string(
                 abi.encodePacked(
                     FixedData.svgPartUp(),
-                    FixedData.middle(),
                     RegionsData.regionEast(betValidator, tokens),
                     RegionsData.regionSouth(betValidator, tokens),
                     RegionsData.regionWest(betValidator, tokens),

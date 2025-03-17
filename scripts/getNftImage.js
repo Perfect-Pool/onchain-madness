@@ -17,7 +17,7 @@ const path = require("path");
 const fs = require("fs");
 const { ethers } = require("hardhat");
 
-const POOL = 10;
+const POOL = 0;
 const NFT_ID = 1;
 
 const decodeBase64 = (base64String) => {

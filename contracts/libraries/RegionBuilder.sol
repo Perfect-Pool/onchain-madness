@@ -153,7 +153,7 @@ library RegionBuilder {
             string(
                 abi.encodePacked(
                     // EAST
-                    DinamicData.buildBetSquareSmall(
+                    DinamicData.buildBetSquareMedium(
                         coords[0],
                         coords[1],
                         1,
@@ -161,7 +161,7 @@ library RegionBuilder {
                         betValidator[14]
                     ),
                     // WEST
-                    DinamicData.buildBetSquareSmall(
+                    DinamicData.buildBetSquareMedium(
                         coords[2],
                         coords[3],
                         2,
@@ -169,18 +169,18 @@ library RegionBuilder {
                         betValidator[44]
                     ),
                     // SOUTH
-                    DinamicData.buildBetSquareSmall(
+                    DinamicData.buildBetSquareMedium(
                         coords[4],
                         coords[5],
-                        3,
+                        1,
                         teams[29],
                         betValidator[29]
                     ),
                     // MIDWEST
-                    DinamicData.buildBetSquareSmall(
+                    DinamicData.buildBetSquareMedium(
                         coords[6],
                         coords[7],
-                        4,
+                        2,
                         teams[59],
                         betValidator[59]
                     )

@@ -14,25 +14,7 @@ async function main() {
   const networkName = hre.network.name;
   const networkData = data[networkName]["Libraries"];
 
-  const FixedDataPart2 = await ethers.getContractFactory("FixedDataPart2");
-
-  if (networkData.FixedDataPart2 === "") {
-    console.log(`Deploying FixedDataPart2...`);
-    const fixedDataPart2 = await FixedDataPart2.deploy();
-    await fixedDataPart2.deployed();
-    console.log(`FixedDataPart2 deployed at ${fixedDataPart2.address}`);
-
-    networkData.FixedDataPart2 = fixedDataPart2.address;
-    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
-
-    await new Promise((resolve) => setTimeout(resolve, 5000));
-  }
-
-  const FixedData = await ethers.getContractFactory("FixedData", {
-    libraries: {
-      FixedDataPart2: networkData.FixedDataPart2,
-    },
-  });
+  const FixedData = await ethers.getContractFactory("FixedData");
 
   if (networkData.FixedData === "") {
     console.log(`Deploying FixedData...`);

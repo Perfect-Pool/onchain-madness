@@ -1,7 +1,7 @@
-<svg width="850" height="1329" viewBox="0 0 850 1329" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="850" height="1329" rx="32" fill="#030712" />
+<svg width="850" height="1430" viewBox="0 0 850 1430" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="850" height="1430" rx="32" fill="#030712" />
     <!-- fundo -->
-    <path d="m 40,29 h 770 v 1215 c 0,8.84 -7.163,16 -16,16 H 56 c -8.8366,0 -16,-7.16 -16,-16 z" fill="#111827" />
+    <path d="m 40,127 h 770 v 1215 c 0,8.84 -7.163,16 -16,16 H 56 c -8.837,0 -16,-7.16 -16,-16 z" fill="#111827" />
     <!-- topo -->
     <path d="M0 32C0 14.3269 14.3269 0 32 0H818C835.673 0 850 14.3269 850 32V121H0V32Z"
         fill="url(#paint0_linear_3468_11744)" />
@@ -86,20 +86,70 @@
     <path
         d="M93.268 46.1686C90.7311 43.1256 87.4035 40.8027 83.608 39.5461C86.2174 42.4328 88.2996 45.8289 89.6834 49.5783C91.1001 49.2115 92.2994 48.0704 93.268 46.1686Z"
         fill="white" />
-    <!-- prize -->
-    <text style="font-size:25px;fill:white;font-family:Arial" x="545" y="69" >Prize</text>
-    <text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">$1000.00</text>
-    <text style="font-weight:800;font-size:20px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1298">NFT ID: 23 - My Public Pool</text>
-    <text style="font-weight:600;font-size:18px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="27" y="660" transform="rotate(270, 27, 660)">perfectpool.io</text>
-    <text style="font-weight:600;font-size:18px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="823" y="660" transform="rotate(90, 823, 660)">Pool ID: 2</text>
-    <!-- BEGIN EAST -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="163">East</text>
+    <!-- titles -->
+    <text style="font-size:25px;fill:white;font-family:Arial" x="545" y="69">Prize</text><text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421"
+        y="163">East</text>
     <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="163">Round 1</text>
     <rect x="72" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
     <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="372">Round 2</text>
     <rect x="72" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
     <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="502">Round 3</text>
     <rect x="72" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="593">Round 4</text>
+    <rect x="72" y="603" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778"
+        y="163">West</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="163">Round 1</text>
+    <rect x="429" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="372">Round 2</text>
+    <rect x="429" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="502">Round 3</text>
+    <rect x="429" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="593">Round 4</text>
+    <rect x="429" y="603" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421"
+        y="684">South</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="684">Round 1</text>
+    <rect x="72" y="693" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="893">Round 2</text>
+    <rect x="72" y="902" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1023">Round 3</text>
+    <rect x="72" y="1032" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1113">Round 4</text>
+    <rect x="72" y="1123" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778"
+        y="684">Midwest</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="684">Round 1</text>
+    <rect x="429" y="693" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="893">Round 2</text>
+    <rect x="429" y="902" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="1023">Round3</text>
+    <rect x="429" y="1032" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="1113">Round 4</text>
+    <rect x="429" y="1123" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1204">Final
+        Four</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1204">Round 1</text>
+    <rect x="429" y="1213.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <rect x="72" y="1213.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1281">Last
+        Match</text>
+    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1281">Round 2</text>
+    <rect x="72" y="1286.75" width="706" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
+
+
+
+
+
+    <!-- prize -->
+    <text style="font-size:35px;fill:#86EFAC;font-family:Arial;font-weight:800" x="640" y="74">$1000.00</text>
+    <text style="font-weight:800;font-size:20px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="425" y="1400">NFT ID: 23 - My Public Pool</text>
+    <text style="font-weight:600;font-size:18px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="27" y="660"
+        transform="rotate(270, 27, 660)">perfectpool.io</text>
+    <text style="font-weight:600;font-size:18px;font-family:Arial;fill:#e2e8f0" text-anchor="middle" x="823" y="660"
+        transform="rotate(90, 823, 660)">Pool ID: 2</text>
+    <!-- BEGIN EAST -->
+    
     <!-- Round 1 -->
     <rect x="80" y="180" width="162.5" height="31.5" rx="8" fill="url(#col1_red)" fill-opacity="0.8" id="rect36" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="200"
@@ -146,15 +196,14 @@
     <rect x="250.5" y="519" width="162.5" height="31.5" rx="8" fill="#334155" id="rect49" />
     <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="539"
         id="text49">PLYR</text>
+    <!-- Round 4 -->
+    <rect x="80" y="609" width="333" height="31.5" rx="8" fill="url(#col1mid_red)" fill-opacity="0.8" id="rect110" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="245" y="630"
+        id="text110">PLYR</text>
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="603" y="630"
+        id="text110">PLYR</text>
     <!-- END EAST -->
     <!-- BEGIN WEST -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="163">West</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="163">Round 1</text>
-    <rect x="429" y="172" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="372">Round 2</text>
-    <rect x="429" y="381" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="502">Round 3</text>
-    <rect x="429" y="511" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
     <rect x="437" y="180" width="162.5" height="31.5" rx="8" fill="url(#col3_red)" fill-opacity="0.8" id="rect56" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="200"
@@ -201,154 +250,126 @@
     <rect x="607.5" y="519" width="162.5" height="31.5" rx="8" fill="#334155" id="rect69" />
     <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="539"
         id="text69">PLYR</text>
+    <!-- Round 4 -->
+    <rect x="437" y="609" width="333" height="31.5" rx="8" fill="url(#col2mid_red)" fill-opacity="0.8" id="rect110" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="603" y="630"
+        id="text110">PLYR</text>
     <!-- END WEST -->
     <!-- BEGIN SOUTH -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="421" y="673">South</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="673">Round 1</text>
-    <rect x="72" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="882">Round 2</text>
-    <rect x="72" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1012">Round 3</text>
-    <rect x="72" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
-    <rect x="80" y="690" width="162.5" height="31.5" rx="8" fill="url(#col1_red)" fill-opacity="0.8" id="rect76" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="710"
+    <rect x="80" y="701" width="162.5" height="31.5" rx="8" fill="url(#col1_red)" fill-opacity="0.8" id="rect76" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="721"
         id="text76">PLYR</text>
-    <rect x="250.5" y="690" width="162.5" height="31.5" rx="8" fill="url(#col2_red)" fill-opacity="0.8" id="rect77" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="710"
+    <rect x="250.5" y="701" width="162.5" height="31.5" rx="8" fill="url(#col2_red)" fill-opacity="0.8" id="rect77" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="721"
         id="text77">PLYR</text>
-    <rect x="80" y="729.5" width="162.5" height="31.5" rx="8" fill="url(#col1_green)" fill-opacity="0.8" id="rect78" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="750"
+    <rect x="80" y="740" width="162.5" height="31.5" rx="8" fill="url(#col1_green)" fill-opacity="0.8" id="rect78" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="760"
         id="text78">PLYR</text>
-    <rect x="250.5" y="729.5" width="162.5" height="31.5" rx="8" fill="url(#col2_green)" fill-opacity="0.8"
-        id="rect79" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="750"
+    <rect x="250.5" y="740" width="162.5" height="31.5" rx="8" fill="url(#col2_green)" fill-opacity="0.8" id="rect79" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="760"
         id="text79">PLYR</text>
-    <rect x="80" y="769" width="162.5" height="31.5" rx="8" fill="#334155" id="rect80" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="790"
+    <rect x="80" y="780" width="162.5" height="31.5" rx="8" fill="#334155" id="rect80" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="800"
         id="text80">PLYR</text>
-    <rect x="250.5" y="769" width="162.5" height="31.5" rx="8" fill="#334155" id="rect81" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="790"
+    <rect x="250.5" y="780" width="162.5" height="31.5" rx="8" fill="#334155" id="rect81" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="800"
         id="text81">PLYR</text>
-    <rect x="80" y="808.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect82" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="829"
+    <rect x="80" y="819" width="162.5" height="31.5" rx="8" fill="#334155" id="rect82" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="839"
         id="text82">PLYR</text>
-    <rect x="250.5" y="808.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect83" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="829"
+    <rect x="250.5" y="819" width="162.5" height="31.5" rx="8" fill="#334155" id="rect83" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="839"
         id="text83">PLYR</text>
     <!-- Round 2 -->
-    <rect x="80" y="899" width="162.5" height="31.5" rx="8" fill="#334155" id="rect84" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="919"
+    <rect x="80" y="910" width="162.5" height="31.5" rx="8" fill="#334155" id="rect84" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="930"
         id="text84">PLYR</text>
-    <rect x="250.5" y="899" width="162.5" height="31.5" rx="8" fill="#334155" id="rect85" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="919"
+    <rect x="250.5" y="910" width="162.5" height="31.5" rx="8" fill="#334155" id="rect85" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="930"
         id="text85">PLYR</text>
-    <rect x="80" y="938.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect86" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="959"
+    <rect x="80" y="949" width="162.5" height="31.5" rx="8" fill="#334155" id="rect86" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="969"
         id="text86">PLYR</text>
-    <rect x="250.5" y="938.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect87" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="959"
+    <rect x="250.5" y="949" width="162.5" height="31.5" rx="8" fill="#334155" id="rect87" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="969"
         id="text87">PLYR</text>
     <!-- Round 3 -->
-    <rect x="80" y="1029" width="162.5" height="31.5" rx="8" fill="#334155" id="rect88" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="1049"
+    <rect x="80" y="1040" width="162.5" height="31.5" rx="8" fill="#334155" id="rect88" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="1060"
         id="text88">PLYR</text>
-    <rect x="250.5" y="1029" width="162.5" height="31.5" rx="8" fill="#334155" id="rect89" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="1049"
+    <rect x="250.5" y="1040" width="162.5" height="31.5" rx="8" fill="#334155" id="rect89" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="1060"
         id="text89">PLYR</text>
+    <!-- Round 4 -->
+    <rect x="80" y="1130" width="333" height="31.5" rx="8" fill="url(#col1mid_red)" fill-opacity="0.8" id="rect110" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="245" y="1153"
+        id="text110">PLYR</text>
     <!-- END SOUTH -->
     <!-- BEGIN MIDWEST -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="673">Midwest</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="673">Round 1</text>
-    <rect x="429" y="682" width="349" height="166" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="882">Round 2</text>
-    <rect x="429" y="891" width="349" height="87" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="429" y="1012">Round3</text>
-    <rect x="429" y="1021" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
     <!-- Round 1 -->
-    <rect x="437" y="690" width="162.5" height="31.5" rx="8" fill="url(#col3_red)" fill-opacity="0.8" id="rect94" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="710"
+    <rect x="437" y="701" width="162.5" height="31.5" rx="8" fill="url(#col3_red)" fill-opacity="0.8" id="rect94" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="721"
         id="text94">PLYR</text>
-    <rect x="607.5" y="690" width="162.5" height="31.5" rx="8" fill="url(#col4_red)" fill-opacity="0.8" id="rect95" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="710"
+    <rect x="607.5" y="701" width="162.5" height="31.5" rx="8" fill="url(#col4_red)" fill-opacity="0.8" id="rect95" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="721"
         id="text95">PLYR</text>
-    <rect x="437" y="729.5" width="162.5" height="31.5" rx="8" fill="url(#col3_green)" fill-opacity="0.8" id="rect96" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="750"
+    <rect x="437" y="740" width="162.5" height="31.5" rx="8" fill="url(#col3_green)" fill-opacity="0.8" id="rect96" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="760"
         id="text96">PLYR</text>
-    <rect x="607.5" y="729.5" width="162.5" height="31.5" rx="8" fill="url(#col4_green)" fill-opacity="0.8"
-        id="rect97" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="750"
+    <rect x="607.5" y="740" width="162.5" height="31.5" rx="8" fill="url(#col4_green)" fill-opacity="0.8" id="rect97" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="760"
         id="text97">PLYR</text>
-    <rect x="437" y="769" width="162.5" height="31.5" rx="8" fill="#334155" id="rect98" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="790"
+    <rect x="437" y="780" width="162.5" height="31.5" rx="8" fill="#334155" id="rect98" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="800"
         id="text98">PLYR</text>
-    <rect x="607.5" y="769" width="162.5" height="31.5" rx="8" fill="#334155" id="rect99" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="790"
+    <rect x="607.5" y="780" width="162.5" height="31.5" rx="8" fill="#334155" id="rect99" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="800"
         id="text99">PLYR</text>
-    <rect x="437" y="808.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect100" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="829"
+    <rect x="437" y="819" width="162.5" height="31.5" rx="8" fill="#334155" id="rect100" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="839"
         id="text100">PLYR</text>
-    <rect x="607.5" y="808.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect101" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="829"
+    <rect x="607.5" y="819" width="162.5" height="31.5" rx="8" fill="#334155" id="rect101" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="839"
         id="text101">PLYR</text>
     <!-- Round 2 -->
-    <rect x="437" y="899" width="162.5" height="31.5" rx="8" fill="#334155" id="rect102" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="919"
+    <rect x="437" y="910" width="162.5" height="31.5" rx="8" fill="#334155" id="rect102" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="930"
         id="text102">PLYR</text>
-    <rect x="607.5" y="899" width="162.5" height="31.5" rx="8" fill="#334155" id="rect103" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="919"
+    <rect x="607.5" y="910" width="162.5" height="31.5" rx="8" fill="#334155" id="rect103" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="930"
         id="text103">PLYR</text>
-    <rect x="437" y="938.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect104" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="959"
+    <rect x="437" y="949" width="162.5" height="31.5" rx="8" fill="#334155" id="rect104" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="969"
         id="text104">PLYR</text>
-    <rect x="607.5" y="938.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect105" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="959"
+    <rect x="607.5" y="949" width="162.5" height="31.5" rx="8" fill="#334155" id="rect105" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="969"
         id="text105">PLYR</text>
     <!-- Round 3 -->
-    <rect x="437" y="1029" width="162.5" height="31.5" rx="8" fill="#334155" id="rect106" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="1049"
+    <rect x="437" y="1040" width="162.5" height="31.5" rx="8" fill="#334155" id="rect106" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="1060"
         id="text106">PLYR</text>
-    <rect x="607.5" y="1029" width="162.5" height="31.5" rx="8" fill="#334155" id="rect107" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="1049"
+    <rect x="607.5" y="1040" width="162.5" height="31.5" rx="8" fill="#334155" id="rect107" />
+    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="1060"
         id="text107">PLYR</text>
+    <!-- Round 4 -->
+    <rect x="437" y="1130" width="333" height="31.5" rx="8" fill="url(#col2mid_red)" fill-opacity="0.8" id="rect110" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="603" y="1153"
+        id="text110">PLYR</text>
     <!-- END MIDWEST -->
     <!-- FINAL FOUR -->
-    <rect x="80" y="609.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect50" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="161.5" y="629.5"
-        id="text50">PLYR</text>
-    <rect x="250.5" y="609.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect51" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="332" y="629.5"
-        id="text51">PLYR</text>
-    <rect x="437" y="609.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect70" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="518.5" y="629.5"
-        id="text70">PLYR</text>
-    <rect x="607.5" y="609.5" width="162.5" height="31.5" rx="8" fill="#334155" id="rect71" />
-    <text style="font-size:14px;fill:#94A3B8;font-family:Arial;font-weight:600" text-anchor="middle" x="689" y="629.5"
-        id="text71">PLYR</text>
-    
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="72" y="592">Final Four</text>
-    <rect x="72" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" x="429" y="592">Final Four</text>
-    <rect x="429" y="601.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
-    <!-- <rect x="80" y="1119.5" width="333" height="31.5" rx="8" fill="#334155" /> -->
-    <rect x="80" y="1119.5" width="333" height="31.5" rx="8" fill="url(#col1mid_red)" fill-opacity="0.8" id="rect110" />
+    <rect x="80" y="1221.5" width="333" height="31.5" rx="8" fill="url(#col1mid_red)" fill-opacity="0.8" id="rect110" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="246.5"
-        y="1142.25" id="text110">PLYR</text>
+        y="1244.25" id="text110">PLYR</text>
     <!-- <rect x="437" y="1119.5" width="333" height="31.5" rx="8" fill="#334155" /> -->
-    <rect x="437" y="1119.5" width="333" height="31.5" rx="8" fill="url(#col2mid_red)" fill-opacity="0.8"
+    <rect x="437" y="1221.5" width="333" height="31.5" rx="8" fill="url(#col2mid_red)" fill-opacity="0.8"
         id="rect111" />
     <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="603.5"
-        y="1142.25" id="text111">PLYR</text>
+        y="1244.25" id="text111">PLYR</text>
     <!-- END FINAL FOUR -->
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1102">Finals</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1102">Round 1</text>
-    <rect x="429" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
-    <rect x="72" y="1111.5" width="349" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
-    <text style="font-size:14px;fill:#FBBF24;font-family:Arial;font-weight:800" text-anchor="end" x="778" y="1179">Last Match</text>
-    <text style="font-size:14px;fill:white;font-family:Arial;font-weight:800" x="72" y="1179">Round 2</text>
-    <rect x="72" y="1184.75" width="706" height="47.5" rx="8" fill="#202738" fill-opacity="0.34" />
-    <rect x="80" y="1192.75" width="690" height="31.5" rx="8" fill="url(#colbig_red)" fill-opacity="0.8" />
-    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="425" y="1214"
+    
+    <rect x="80" y="1294.75" width="701" height="31.5" rx="8" fill="url(#colbig_red)" fill-opacity="0.8" />
+    <text style="font-size:14px;fill:#E2E8F0;font-family:Arial;font-weight:600" text-anchor="middle" x="425" y="1315"
         id="text116">PLYR</text>
     <defs>
         <linearGradient id="paint0_linear_3468_11744" x1="0" y1="0" x2="784.769" y2="294.705"
