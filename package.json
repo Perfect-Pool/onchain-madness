@@ -65,6 +65,7 @@
     "get-final-four": "hardhat run scripts/getFinalFour.js --network",
     "get-team-data": "hardhat run scripts/getTeamData.js --network",
     "get-nft-image": "hardhat run scripts/getNftImage.js --network",
-    "get-first-round-data": "hardhat run scripts/game/getFirstRoundData.js --network"
+    "get-first-round-data": "hardhat run scripts/game/getFirstRoundData.js --network",
+    "set-region-position": "hardhat run scripts/game/setRegionPosition.js --network"
   }
 }

@@ -116,6 +116,23 @@ async function main() {
     constructorArguments: [],
     contract: "contracts/libraries/OnchainMadnessLib.sol:OnchainMadnessLib",
   });
+
+  const addressOnchainMadnessBetLib = contracts[networkName].Libraries.OnchainMadnessBetLib;
+  if (!addressOnchainMadnessBetLib) {
+    console.error("OnchainMadnessBetLib address not found in contracts.json");
+    process.exit(1);
+  }
+
+  // Wait 5 seconds
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
+  console.log("Verifying OnchainMadnessBetLib at address", addressOnchainMadnessBetLib);
+
+  await hre.run("verify:verify", {
+    address: addressOnchainMadnessBetLib,
+    constructorArguments: [],
+    contract: "contracts/libraries/OnchainMadnessBetLib.sol:OnchainMadnessBetLib",
+  });
 }
 
 main()

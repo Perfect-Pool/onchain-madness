@@ -66,6 +66,24 @@ async function main() {
       `OnchainMadnessLib already deployed at ${networkData.OnchainMadnessLib}`
     );
   }
+
+  if (networkData.OnchainMadnessBetLib === "") {
+    console.log(`Deploying OnchainMadnessBetLib...`);
+
+    const OnchainMadnessBetLib = await ethers.getContractFactory("OnchainMadnessBetLib");
+    const onchainMadnessBetLib = await OnchainMadnessBetLib.deploy();
+    await onchainMadnessBetLib.deployed();
+    console.log(`OnchainMadnessBetLib deployed at ${onchainMadnessBetLib.address}`);
+
+    networkData.OnchainMadnessBetLib = onchainMadnessBetLib.address;
+    fs.writeFileSync(variablesPath, JSON.stringify(data, null, 2));
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
+  } else {
+    console.log(
+      `OnchainMadnessBetLib already deployed at ${networkData.OnchainMadnessBetLib}`
+    );
+  }
 }
 
 main()

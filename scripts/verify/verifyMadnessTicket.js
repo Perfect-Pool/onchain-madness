@@ -57,6 +57,7 @@ async function main() {
     contract: "contracts/utils/BetCheck.sol:BetCheck",
     libraries: {
       OnchainMadnessLib: contracts[networkName].Libraries.OnchainMadnessLib,
+      OnchainMadnessBetLib: contracts[networkName].Libraries.OnchainMadnessBetLib,
     },
   });
 

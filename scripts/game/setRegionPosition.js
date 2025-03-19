@@ -27,36 +27,16 @@ async function main() {
   console.log(`Contract address: ${networkData["OM_DEPLOYER"]}`);
 
   // Get contract instance
-  const Factory = await ethers.getContractFactory("OnchainMadnessFactory", {
+  const BetCheck = await ethers.getContractFactory("BetCheck", {
     libraries: {
-      OnchainMadnessLib: networkData["Libraries"].OnchainMadnessLib,
+      OnchainMadnessBetLib: networkData["Libraries"].OnchainMadnessBetLib,
     },
   });
-  const contract = Factory.attach(networkData["OM_DEPLOYER"]);
+  const betCheck = BetCheck.attach(networkData["BET_CHECK"]);
 
   try {
-    console.log("Resetting Championship Game...");
-    const tx = await contract.resetGame(TOURNAMENT_YEAR);
+    const tx = await betCheck.setRegionPosition(TOURNAMENT_YEAR, REGION_ORDER);
     await tx.wait();
-  } catch (error) {
-    console.log("There is no Championship Game to reset.");
-  }
-
-  try {
-    console.log("Creating Championship Game...");
-    let tx = await contract.createOnchainMadness(TOURNAMENT_YEAR);
-    await tx.wait();
-
-    const BetCheck = await ethers.getContractFactory("BetCheck", {
-      libraries: {
-        OnchainMadnessBetLib: networkData["Libraries"].OnchainMadnessBetLib,
-      },
-    });
-    const betCheck = BetCheck.attach(networkData["BET_CHECK"]);
-
-    tx = await betCheck.setRegionPosition(TOURNAMENT_YEAR, REGION_ORDER);
-    await tx.wait();
-
   } catch (error) {
     console.log("There was an error creating the Championship Game:");
     console.log(error);

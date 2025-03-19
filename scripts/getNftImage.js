@@ -18,7 +18,7 @@ const fs = require("fs");
 const { ethers } = require("hardhat");
 
 const POOL = 0;
-const NFT_ID = 1;
+const NFT_ID = 28;
 
 const decodeBase64 = (base64String) => {
   return Buffer.from(base64String.split("base64,")[1], "base64").toString("utf-8");

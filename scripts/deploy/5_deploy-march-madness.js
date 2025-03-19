@@ -128,7 +128,7 @@ async function main() {
     console.log(`Deploying BetCheck...`);
     const BetCheck = await ethers.getContractFactory("BetCheck", {
       libraries: {
-        OnchainMadnessLib: networkData.Libraries.OnchainMadnessLib,
+        OnchainMadnessBetLib: networkData.Libraries.OnchainMadnessBetLib,
       },
     });
     const betCheck = await BetCheck.deploy(networkData.OM_DEPLOYER);
