@@ -113,7 +113,7 @@ async function main() {
     const firstRoundBrackets = response.data.rounds[1].bracketed;
 
     // Print final state
-    console.log("\nFinal Regions Data:");
+    console.log("\nFirst Round Data:");
     const finalRegionsData = await contract.getAllRegionsData(TOURNAMENT_YEAR);
 
     // Process each region sequentially to maintain order

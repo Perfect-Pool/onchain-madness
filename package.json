@@ -42,6 +42,7 @@
     "verify-all": "node scripts/verify-all.js",
     "check-sports-radar": "hardhat run scripts/checkSportsRadar.js --network",
     "create-game": "hardhat run scripts/game/createGame.js --network",
+    "close-bets": "hardhat run scripts/game/closeBets.js --network",
     "init-first-four": "hardhat run scripts/game/initFirstFour.js --network",
     "init-first-round": "hardhat run scripts/game/initFirstRound.js --network",
     "init-final-four": "hardhat run scripts/game/initFinalFour.js --network",
@@ -66,6 +67,8 @@
     "get-team-data": "hardhat run scripts/getTeamData.js --network",
     "get-nft-image": "hardhat run scripts/getNftImage.js --network",
     "get-first-round-data": "hardhat run scripts/game/getFirstRoundData.js --network",
-    "set-region-position": "hardhat run scripts/game/setRegionPosition.js --network"
+    "set-region-position": "hardhat run scripts/game/setRegionPosition.js --network",
+    "convert-date": "node scripts/checkDateBrasilia.js",
+    "get-first-round-dates": "hardhat run scripts/game/getFirstRoundGameDates.js --network"
   }
 }

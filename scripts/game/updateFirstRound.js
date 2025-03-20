@@ -173,7 +173,7 @@ async function main() {
 
       for (let i = 0; i < games.length; i++) {
         const game = games[i];
-        if (game.status === "closed") {
+        if (game.status === "closed" || game.status === "complete") {
           const matchData = await decodeMatchData(
             currentRegionData.matchesRound1[i]
           );
