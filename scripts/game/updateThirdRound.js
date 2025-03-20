@@ -24,9 +24,9 @@ require("dotenv").config();
 
 // Map to convert from API region names to contract region names
 const REGION_NAME_MAP = {
+  "South Regional": "SOUTH",
   "West Regional": "WEST",
   "Midwest Regional": "MIDWEST",
-  "South Regional": "SOUTH",
   "East Regional": "EAST",
 };
 

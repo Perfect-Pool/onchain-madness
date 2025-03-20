@@ -38,9 +38,9 @@ const THRESHOLD_MS = 30 * 60 * 1000;
 
 // Map to convert from API region names to contract region names
 const REGION_NAME_MAP = {
+  "South Regional": "SOUTH",
   "West Regional": "WEST",
   "Midwest Regional": "MIDWEST",
-  "South Regional": "SOUTH",
   "East Regional": "EAST",
 };
 
@@ -169,11 +169,11 @@ async function main() {
       const currentRegionData = decodedRegions[regionIndex];
 
       // Update match results
-      console.log(`\nChecking ${regionName} games for updates...`);
+      console.log(`\nChecking ${regionName} games (${games.length}) for updates...`);
 
       for (let i = 0; i < games.length; i++) {
         const game = games[i];
-        if (game.status === "closed" || game.status === "complete") {
+        if (game.status.includes("closed") || game.status.includes("complete")) {
           const matchData = await decodeMatchData(
             currentRegionData.matchesRound1[i]
           );
@@ -210,7 +210,7 @@ async function main() {
         }
       }
     }
-
+    
     // Check if all regions have all games decided
     const updatedRegionsData = await contract.getAllRegionsData(
       TOURNAMENT_YEAR

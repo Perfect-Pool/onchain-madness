@@ -91,7 +91,7 @@ async function main() {
     // Print all games in chronological order
     console.log("\nFirst Round Games in Chronological Order:");
     allGames.forEach((game) => {
-      console.log(`- [ ] ${game.title}: ${formatter.format(new Date(game.scheduled))}`);
+      console.log(`- [ ] ${game.home.alias} vs ${game.away.alias}: ${formatter.format(new Date(game.scheduled))}`);
     });
   } catch (error) {
     console.error("Error:");
