@@ -128,9 +128,9 @@ async function main() {
 
     // If all regions have determined their champion, advance to Final Four
     if (decidedRegions === Object.keys(REGION_NAME_MAP).length) {
-      console.log("\nAll regional champions decided. Advancing to Final Four...");
-      const tx = await contract.advanceRound(TOURNAMENT_YEAR);
-      await tx.wait();
+      console.log("\nAll regional champions decided. Advancing to Final Four... (blocked)");
+      // const tx = await contract.advanceRound(TOURNAMENT_YEAR);
+      // await tx.wait();
     } else {
       console.log("\nNot all regional champions decided yet. Waiting for more results...");
     }

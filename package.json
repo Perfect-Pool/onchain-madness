@@ -70,6 +70,7 @@
     "set-region-position": "hardhat run scripts/game/setRegionPosition.js --network",
     "convert-date": "node scripts/checkDateBrasilia.js",
     "get-first-round-dates": "hardhat run scripts/game/getFirstRoundGameDates.js --network",
-    "get-third-round-dates": "hardhat run scripts/game/getThirdRoundGameDates.js --network"
+    "get-third-round-dates": "hardhat run scripts/game/getThirdRoundGameDates.js --network",
+    "get-fourth-round-dates": "hardhat run scripts/game/getFourthRoundGameDates.js --network"
   }
 }
