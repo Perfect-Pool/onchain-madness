@@ -96,7 +96,7 @@ async function main() {
 
       console.log(`\nChecking ${regionName} final game...`);
       
-      if (game.status === "closed") {
+      if (game.status === "closed" || game.status === "complete") {
         decidedRegions++;
         const matchData = await decodeMatchData(decodedRegions[regionIndex].matchRound4);
         

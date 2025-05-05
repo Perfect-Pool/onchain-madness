@@ -1,16 +1,6 @@
 /**
- * @title Place Bets Script
- * @dev This script places bets on the NCAA Tournament pools by minting NFTs
- * Each NFT represents a bracket prediction with 63 games
- * - First Four: 4 games
- * - First Round: 32 games
- * - Second Round: 16 games
- * - Sweet 16: 8 games
- * - Elite Eight: 4 games
- * - Final Four: 2 games
- * - Championship: 1 game
- *
- * Each bet costs 20 USDC and requires approval before minting
+ * @title Get NFT Image Script
+ * @dev This script retrieves the SVG image of a specific NFT token
  */
 
 const path = require("path");

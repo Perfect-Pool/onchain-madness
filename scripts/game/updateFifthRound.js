@@ -123,7 +123,7 @@ async function main() {
 
     // If both semifinal games are decided, advance to Championship
     if (allSemifinalsDecided.every((gameDecided) => gameDecided)) {
-      console.log("\nBoth semifinal games decided. Advancing to Championship Game...");
+      console.log("\nBoth semifinal games decided. Advancing to Championship Game... (blocked)");
       const tx = await contract.advanceRound(TOURNAMENT_YEAR);
       await tx.wait();
     } else {
